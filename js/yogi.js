@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Yogi View Rendering & Actions
- * File: js/yogi.js 
+ * File: js/yogi.js
  */
 
 function detectGenderByName(name) {
@@ -22,6 +22,42 @@ function getFormattedToday() {
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const year = d.getFullYear();
   return `${day}-${month}-${year}`;
+}
+
+function statCardsYogiHtml(total, male, female) {
+  return `
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; width: 100%; margin-bottom: 1.25rem;">
+      <div style="background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <div style="width: 2.75rem; height: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <p style="margin: 0; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">TOTAL ACTIVE</p>
+          <h3 style="margin: 0; font-size: 1.35rem; font-weight: 900; color: #fbbf24; font-family: monospace;">${total || 0} ဦး</h3>
+        </div>
+      </div>
+
+      <div style="background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <div style="width: 2.75rem; height: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
+          <i class="fa-solid fa-mars"></i>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <p style="margin: 0; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">ACTIVE MALE</p>
+          <h3 style="margin: 0; font-size: 1.35rem; font-weight: 900; color: #818cf8; font-family: monospace;">${male || 0} ဦး</h3>
+        </div>
+      </div>
+
+      <div style="background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <div style="width: 2.75rem; height: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);">
+          <i class="fa-solid fa-venus"></i>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <p style="margin: 0; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">ACTIVE FEMALE</p>
+          <h3 style="margin: 0; font-size: 1.35rem; font-weight: 900; color: #f472b6; font-family: monospace;">${female || 0} ဦး</h3>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 async function renderYogiStage(stageId, page = 1, searchVal = "") {
@@ -58,48 +94,20 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
 
   container.innerHTML = `
     <div class="space-y-5 view-panel">
-      <!-- Top 3 KPI Cards Grid -->
-      <div class="kpi-grid-container">
-        <div class="stats-card">
-          <div style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
-            <i class="fa-solid fa-users"></i>
-          </div>
-          <div>
-            <p>TOTAL ACTIVE</p>
-            <h3 style="color: #fbbf24;">${data.activeTotal || 0} ဦး</h3>
-          </div>
-        </div>
-        <div class="stats-card">
-          <div style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
-            <i class="fa-solid fa-mars"></i>
-          </div>
-          <div>
-            <p>ACTIVE MALE</p>
-            <h3 style="color: #818cf8;">${data.activeMale || 0} ဦး</h3>
-          </div>
-        </div>
-        <div class="stats-card">
-          <div style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);">
-            <i class="fa-solid fa-venus"></i>
-          </div>
-          <div>
-            <p>ACTIVE FEMALE</p>
-            <h3 style="color: #f472b6;">${data.activeFemale || 0} ဦး</h3>
-          </div>
-        </div>
-      </div>
+      <!-- Top 3 KPI Cards -->
+      ${statCardsYogiHtml(data.activeTotal, data.activeMale, data.activeFemale)}
 
-      <!-- Control Bar Wrapper (Matches Leaders Page Exactly) -->
-      <div class="control-bar-wrapper">
-        <div style="position: relative; flex: 1; max-width: 320px;">
+      <!-- Control Bar Wrapper -->
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; background: #0e172a; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 1rem; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;">
+        <div style="position: relative; flex: 1; min-width: 240px; max-width: 360px;">
           <input type="text" id="yogi-search-input" value="${window.escapeHtml(searchVal)}" 
             onkeydown="if(event.key==='Enter') triggerYogiSearch(${stageId})"
             placeholder="အမည် / ဖုန်း / လိပ်စာ ရှာဖွေရန်..." 
-            style="width: 100%; padding-left: 2.2rem;">
-          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: #64748b;"></i>
+            style="width: 100%; padding: 0.5rem 0.85rem 0.5rem 2.2rem; background: #070a12; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; color: #f1f5f9; font-size: 0.8rem; outline: none;">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.75rem;"></i>
         </div>
         
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
           <button onclick="renderYogiStage(${stageId}, 1, '')" class="btn-action" style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.5rem 0.85rem;">
             <i class="fa-solid fa-rotate"></i> Refresh
           </button>
@@ -116,51 +124,51 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
         </div>
       </div>
 
-      <!-- Table Container (UNIQUEID Hidden, Plain Index 1, 2, 3) -->
-      <div style="background-color: #0e172a; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 1rem; overflow: hidden;">
+      <!-- Table Container -->
+      <div style="background-color: #0e172a; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 1rem; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
         <div style="overflow-x-auto;">
-          <table>
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem;">
             <thead>
-              <tr>
-                <th>စဉ်</th>
-                <th>ရက်စွဲ</th>
-                <th>အမည်</th>
-                <th style="text-align: center;">အသက်</th>
-                <th>ဖုန်းနံပါတ်</th>
-                <th>နေရပ်လိပ်စာ</th>
-                <th>မိတ်ဆက်ယောဂီ</th>
-                <th>EMAIL</th>
-                <th style="text-align: center;">GENDER</th>
-                <th>CREATED BY</th>
-                <th>CREATED AT</th>
-                <th style="text-align: center;">STATUS</th>
-                <th style="text-align: center; position: sticky; right: 0; background: #080d1a;">ACTION</th>
+              <tr style="background-color: #080d1a; border-bottom: 2px solid rgba(245, 158, 11, 0.3); color: #fbbf24; font-size: 0.72rem; font-weight: 800;">
+                <th style="padding: 12px 14px; white-space: nowrap;">စဉ်</th>
+                <th style="padding: 12px 14px; white-space: nowrap;">ရက်စွဲ</th>
+                <th style="padding: 12px 14px; white-space: nowrap;">အမည်</th>
+                <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">အသက်</th>
+                <th style="padding: 12px 14px; white-space: nowrap;">ဖုန်းနံပါတ်</th>
+                <th style="padding: 12px 14px; white-space: nowrap;">နေရပ်လိပ်စာ</th>
+                <th style="padding: 12px 14px; white-space: nowrap;">မိတ်ဆက်ယောဂီ</th>
+                <th style="padding: 12px 14px; white-space: nowrap;">EMAIL</th>
+                <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">GENDER</th>
+                <th style="padding: 12px 14px; white-space: nowrap;">CREATED BY</th>
+                <th style="padding: 12px 14px; white-space: nowrap;">CREATED AT</th>
+                <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">STATUS</th>
+                <th style="padding: 12px 14px; white-space: nowrap; text-align: center; position: sticky; right: 0; background-color: #080d1a;">ACTION</th>
               </tr>
             </thead>
             <tbody>
               ${sortedRows.length > 0 ? sortedRows.map((y, idx) => `
-                <tr class="${y.status === 'Inactive' ? 'row-inactive' : ''}">
-                  <td style="font-weight: bold; color: #f59e0b;">${idx + 1}</td>
-                  <td>${y.regDate || '-'}</td>
-                  <td style="font-weight: 800; color: #f8fafc;">${window.escapeHtml(y.name)}</td>
-                  <td style="text-align: center;">${y.age || '-'}</td>
-                  <td>${y.phone || '-'}</td>
-                  <td>${window.escapeHtml(y.address) || '-'}</td>
-                  <td>${window.escapeHtml(y.introducer) || '-'}</td>
-                  <td>${y.email || '-'}</td>
-                  <td style="text-align: center;">
+                <tr class="${y.status === 'Inactive' ? 'row-inactive' : ''}" style="border-bottom: 1px solid rgba(30, 41, 59, 0.5);">
+                  <td style="padding: 11px 14px; font-weight: bold; color: #f59e0b;">${idx + 1}</td>
+                  <td style="padding: 11px 14px;">${y.regDate || '-'}</td>
+                  <td style="padding: 11px 14px; font-weight: 800; color: #f8fafc;">${window.escapeHtml(y.name)}</td>
+                  <td style="padding: 11px 14px; text-align: center;">${y.age || '-'}</td>
+                  <td style="padding: 11px 14px;">${y.phone || '-'}</td>
+                  <td style="padding: 11px 14px;">${window.escapeHtml(y.address) || '-'}</td>
+                  <td style="padding: 11px 14px;">${window.escapeHtml(y.introducer) || '-'}</td>
+                  <td style="padding: 11px 14px;">${y.email || '-'}</td>
+                  <td style="padding: 11px 14px; text-align: center;">
                     <span style="padding: 2px 8px; border-radius: 4px; font-weight: bold; ${y.gender === 'ကျား' ? 'background: rgba(99,102,241,0.2); color: #818cf8;' : 'background: rgba(236,72,153,0.2); color: #f472b6;'}">
                       ${y.gender || 'ကျား'}
                     </span>
                   </td>
-                  <td>${y.createdBy || 'System'}</td>
-                  <td>${y.createdAt ? y.createdAt.slice(0, 10) : '-'}</td>
-                  <td style="text-align: center;">
+                  <td style="padding: 11px 14px;">${y.createdBy || 'System'}</td>
+                  <td style="padding: 11px 14px;">${y.createdAt ? y.createdAt.slice(0, 10) : '-'}</td>
+                  <td style="padding: 11px 14px; text-align: center;">
                     <span style="padding: 3px 8px; border-radius: 6px; font-weight: bold; ${y.status === 'Active' ? 'background: rgba(16,185,129,0.2); color: #34d399;' : 'background: rgba(244,63,94,0.2); color: #f87171;'}">
                       ${y.status || 'Active'}
                     </span>
                   </td>
-                  <td style="text-align: center; position: sticky; right: 0; background-color: #0e172a;">
+                  <td style="padding: 11px 14px; text-align: center; position: sticky; right: 0; background-color: #0e172a;">
                     <div style="display: flex; gap: 4px; justify-content: center;">
                       <button onclick="openYogiModal(${stageId}, ${y.id})" class="btn-action btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
                       <button onclick="postYogiToNextStage(${y.id}, ${stageId})" class="btn-action btn-action-post" title="${stageId === 7 ? 'ယောဂီ စာရင်းဟောင်းသို့ ရွှေ့မည် (Post)' : 'နောက်တစ်ဆင့်သို့ ရွှေ့မည် (Post)'}"><i class="fa-solid fa-paper-plane"></i> Post</button>
@@ -181,7 +189,7 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
 }
 
 /**
- * 💡 Image 3 Hand-Drawn Matrix Style: "ယောဂီ စုစုပေါင်း စာရင်း" (Total Summary Matrix Table)
+ * 💡 7-COLUMN MATRIX TABLE: "ယောဂီ စုစုပေါင်း စာရင်း"
  * Displays 7 Columns (သတိ | ရုပ် | နာမ် | ရုပ်နာမ် | ခန္ဓာငါးပါး | ဥပါဒါနက္ခန္ဓာငါးပါး | သိပါယ်ဆိုက်ပွား)
  */
 async function renderTotalSummary(searchVal = "") {
@@ -206,11 +214,9 @@ async function renderTotalSummary(searchVal = "") {
     window.toggleLoading(false);
   }
 
-  // Filter Active stage groups (Level 1 to 7)
   const stageGroups = groups.filter(g => g.level <= 7);
   const searchLower = String(searchVal || "").trim().toLowerCase();
 
-  // Map rows per stage
   const levelCols = stageGroups.map(g => {
     let rows = g.rows || [];
     if (searchLower) {
@@ -219,35 +225,21 @@ async function renderTotalSummary(searchVal = "") {
     return { level: g.level, name: g.name, rows };
   });
 
-  // Calculate maximum rows needed across the 7 columns
   const maxRows = Math.max(1, ...levelCols.map(c => c.rows.length));
 
   container.innerHTML = `
     <div class="space-y-5 view-panel">
       <!-- Top 3 KPI Cards -->
-      <div class="kpi-grid-container">
-        <div class="stats-card">
-          <div style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);"><i class="fa-solid fa-users"></i></div>
-          <div><p>TOTAL ACTIVE</p><h3 style="color: #fbbf24;">${stats.totalActive || 0} ဦး</h3></div>
-        </div>
-        <div class="stats-card">
-          <div style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);"><i class="fa-solid fa-mars"></i></div>
-          <div><p>ACTIVE MALE</p><h3 style="color: #818cf8;">${stats.activeMale || 0} ဦး</h3></div>
-        </div>
-        <div class="stats-card">
-          <div style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);"><i class="fa-solid fa-venus"></i></div>
-          <div><p>ACTIVE FEMALE</p><h3 style="color: #f472b6;">${stats.activeFemale || 0} ဦး</h3></div>
-        </div>
-      </div>
+      ${statCardsYogiHtml(stats.totalActive, stats.activeMale, stats.activeFemale)}
 
       <!-- Control Bar -->
-      <div class="control-bar-wrapper">
-        <div style="position: relative; flex: 1; max-width: 320px;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; background: #0e172a; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 1rem; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;">
+        <div style="position: relative; flex: 1; min-width: 240px; max-width: 360px;">
           <input type="text" id="summary-search-input" value="${window.escapeHtml(searchVal)}" 
             onkeydown="if(event.key==='Enter') triggerSummarySearch()"
             placeholder="ယောဂီ အမည် / ဖုန်း ရှာဖွေရန်..." 
-            style="width: 100%; padding-left: 2.2rem;">
-          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: #64748b;"></i>
+            style="width: 100%; padding: 0.5rem 0.85rem 0.5rem 2.2rem; background: #070a12; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; color: #f1f5f9; font-size: 0.8rem; outline: none;">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.75rem;"></i>
         </div>
 
         <div style="display: flex; gap: 0.5rem;">
@@ -260,10 +252,10 @@ async function renderTotalSummary(searchVal = "") {
         </div>
       </div>
 
-      <!-- 💡 7-COLUMN MATRIX TABLE MATCHING USER'S HAND-DRAWN IMAGE 3 -->
+      <!-- 💡 7-COLUMN MATRIX TABLE -->
       <div style="background-color: #0e172a; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 1rem; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
         <div style="overflow-x-auto;">
-          <table style="width: 100%; text-align: center; border-collapse: collapse;">
+          <table style="width: 100%; text-align: center; border-collapse: collapse; font-size: 0.8rem;">
             <thead>
               <tr style="background: #080d1a; border-bottom: 2px solid rgba(245, 158, 11, 0.3); color: #fbbf24; font-size: 0.75rem; font-weight: 800;">
                 <th style="padding: 12px; border-right: 1px solid rgba(255,255,255,0.1);">သတိ</th>
@@ -443,11 +435,7 @@ async function saveYogiForm(event, stageId, editId = null) {
       closeYogiModal();
       renderYogiStage(stageId);
     }
-  } catch (e) {
-    console.error(e);
-  } finally {
-    window.toggleLoading(false);
-  }
+  } catch (e) { console.error(e); } finally { window.toggleLoading(false); }
 }
 
 async function toggleYogiStatus(id, currentStatus, stageId) {
