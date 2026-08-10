@@ -1,5 +1,5 @@
 /* ========================================================================
-   YOGI MANAGEMENT SYSTEM — COMPLETE UNBREAKABLE NATIVE CSS
+   YOGI MANAGEMENT SYSTEM — UNBREAKABLE DESKTOP & MOBILE RESPONSIVE CSS
    File: css/style.css
    ======================================================================== */
 
@@ -10,7 +10,10 @@
   --border-amber: rgba(245, 158, 11, 0.25);
 }
 
-/* 💡 1. Main Workspace Layout */
+/* ========================================================================
+   1. 💡 DESKTOP & LAPTOP LAYOUT (100% UNTOUCHED & UNBROKEN)
+   ======================================================================== */
+
 #erp-workspace {
   display: flex !important;
   flex-direction: row !important;
@@ -43,13 +46,13 @@
   background-color: var(--bg-dark) !important;
 }
 
-/* 💡 2. Custom Scrollbar (Horizontal & Vertical) */
+/* Custom Scrollbar (Horizontal & Vertical) */
 ::-webkit-scrollbar { width: 7px; height: 7px; }
 ::-webkit-scrollbar-track { background: #070a12; }
 ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; border: 1px solid rgba(245, 158, 11, 0.2); }
 ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
 
-/* 💡 3. Login Box Card Styling */
+/* Login Box Card Styling */
 #login-overlay {
   position: fixed !important;
   inset: 0 !important;
@@ -76,19 +79,13 @@
   position: relative !important;
 }
 
-/* 💡 4. Top 3 KPI Cards Grid (Horizontal 3 Columns) */
+/* Top 3 KPI Cards Desktop Grid */
 .kpi-grid-container {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
   gap: 1rem !important;
   width: 100% !important;
   margin-bottom: 1.25rem !important;
-}
-
-@media (max-width: 768px) {
-  .kpi-grid-container {
-    grid-template-columns: 1fr !important;
-  }
 }
 
 .stats-card { 
@@ -131,7 +128,15 @@
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace !important;
 }
 
-/* 💡 5. Control Bar & Control Buttons */
+/* Dashboard 2-Column Grid */
+.dash-grid-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 1.25rem !important;
+  width: 100% !important;
+}
+
+/* Control Bar Wrapper & Buttons */
 .control-bar-wrapper {
   display: flex !important;
   flex-direction: row !important;
@@ -143,13 +148,6 @@
   border-radius: 1rem !important;
   padding: 0.85rem 1.25rem !important;
   margin-bottom: 1.25rem !important;
-}
-
-@media (max-width: 768px) {
-  .control-bar-wrapper {
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
 }
 
 .btn-control {
@@ -194,7 +192,7 @@
 }
 .btn-control-refresh:hover { background: #334155 !important; color: #ffffff !important; }
 
-/* 💡 6. Search Input Box Height & Padding Fix */
+/* Search Inputs */
 #yogi-search-input,
 #leader-search-input,
 #summary-search-input {
@@ -219,7 +217,7 @@
   box-shadow: 0 0 10px rgba(245, 158, 11, 0.2) !important;
 }
 
-/* 💡 7. Table Styling & Horizontal Scroll Fix */
+/* Table & Scroll Container */
 .table-scroll-container {
   width: 100% !important;
   overflow-x: auto !important;
@@ -260,7 +258,7 @@ table tbody td {
   color: #cbd5e1 !important;
 }
 
-/* Sticky Action Column Fix */
+/* Sticky Action Column */
 table th.sticky-action,
 table td.sticky-action {
   position: sticky !important;
@@ -283,7 +281,7 @@ tr.row-inactive td {
   color: #64748b !important;
 }
 
-/* 💡 8. Compact Icon-only Action Buttons */
+/* Compact Icon-only Action Buttons */
 .btn-action-icon {
   width: 2rem !important;
   height: 2rem !important;
@@ -312,7 +310,7 @@ tr.row-inactive td {
 .btn-action-delete { background: rgba(225, 29, 72, 0.15) !important; color: #fda4af !important; border-color: rgba(225, 29, 72, 0.35) !important; }
 .btn-action-delete:hover { background: #e11d48 !important; color: #ffffff !important; }
 
-/* 💡 9. Centered Modal Dialog & Inputs Styling */
+/* Centered Modal Dialog & Inputs */
 .modal-overlay-bg {
   position: fixed !important;
   inset: 0 !important;
@@ -358,14 +356,7 @@ tr.row-inactive td {
   box-shadow: 0 0 10px rgba(245, 158, 11, 0.25) !important;
 }
 
-/* 💡 10. Dashboard 2-Column Grid & Mindfulness Card */
-.dash-grid-container {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
-  gap: 1.25rem !important;
-  width: 100% !important;
-}
-
+/* Mindfulness Card */
 .mindfulness-card {
   background: linear-gradient(145deg, #0e172a 0%, #090f1e 100%) !important;
   border: 1px solid rgba(245, 158, 11, 0.3) !important;
@@ -373,7 +364,7 @@ tr.row-inactive td {
   padding: 1.5rem !important;
 }
 
-/* 💡 11. Pagination Bar */
+/* Pagination Bar */
 .pagination-container {
   display: flex !important;
   align-items: center !important;
@@ -383,4 +374,66 @@ tr.row-inactive td {
   border: 1px solid rgba(245, 158, 11, 0.25) !important;
   border-radius: 1rem !important;
   margin-top: 1rem !important;
+}
+
+/* ========================================================================
+   2. 💡 MOBILE-ONLY RESPONSIVE CSS (TRIGGERS ONLY ON PHONES <= 768px)
+   Laptop / Desktop View (> 768px) remains 100% UNTOUCHED!
+   ======================================================================== */
+
+@media (max-width: 768px) {
+  /* Mobile KPI Grid */
+  .kpi-grid-container {
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Mobile Control Bar Wrapper */
+  .control-bar-wrapper {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 0.85rem !important;
+  }
+
+  .control-bar-wrapper > div {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .btn-control {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    padding: 0.65rem 0.85rem !important;
+  }
+
+  /* Mobile Table Cell Sizing */
+  table thead th,
+  table tbody td {
+    padding: 9px 12px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Mobile Modal Dialog */
+  .modal-dialog-box {
+    padding: 1.25rem !important;
+    max-width: 95% !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+
+  .modal-dialog-box div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Mobile Header Clock Text Scale */
+  #header-live-datetime {
+    font-size: 0.68rem !important;
+  }
+
+  /* Mobile Pagination Bar */
+  .pagination-container {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+  }
 }
