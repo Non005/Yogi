@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Authentication Logic
- * File: js/auth.js
+ * File: js/auth.js 
  */
 
 function getStorageKeys() {
