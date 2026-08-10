@@ -32,47 +32,47 @@
   </style>
 </head>
 
-<body class="bg-[#090d16] font-sans flex h-screen w-screen overflow-hidden text-slate-300">
+<body class="bg-[#090d16] font-sans flex h-screen w-screen overflow-hidden text-slate-300 select-none">
 
   <!-- Login Overlay -->
-  <div id="login-overlay" class="fixed inset-0 bg-[#090d16] z-[100] flex items-center justify-center p-4">
-    <div class="relative w-full max-w-md bg-[#0e131f]/90 border border-amber-500/20 backdrop-blur-xl rounded-3xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8)] text-center overflow-hidden space-y-6">
-      <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div id="login-overlay" class="fixed inset-0 bg-[#070a12]/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+    <div class="relative w-full max-w-md bg-gradient-to-b from-[#131b2e] to-[#0a101d] border border-amber-500/30 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.9)] text-center overflow-hidden space-y-6">
+      <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-56 h-56 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div class="text-center">
-        <div class="inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-b from-amber-500/15 to-amber-600/5 border border-amber-500/30 shadow-inner mb-3">
-          <i class="fa-solid fa-dharmachakra text-4xl text-amber-400 filter drop-shadow-[0_2px_8px_rgba(245,158,11,0.5)]"></i>
+      <div class="text-center relative z-10">
+        <div class="inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-b from-amber-500/20 to-amber-600/10 border border-amber-500/40 shadow-lg shadow-amber-500/10 mb-3">
+          <i class="fa-solid fa-dharmachakra text-4xl text-amber-400 filter drop-shadow-[0_0_12px_rgba(245,158,11,0.6)] animate-spin-slow"></i>
         </div>
-        <h2 class="text-xl font-black tracking-tight mb-1 bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-transparent">Zoom ပဋ္ဌာန်း မိသားစု</h2>
-        <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-amber-200/70 pb-3 border-b border-amber-500/10">တရားဆွေးနွေးပွဲ · ယောဂီများ စီမံခန့်ခွဲမှု</p>
+        <h2 class="text-2xl font-black tracking-tight mb-1 bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">Zoom ပဋ္ဌာန်း မိသားစု</h2>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.25em] text-amber-300/80 pb-3 border-b border-amber-500/20">တရားဆွေးနွေးပွဲ · ယောဂီများ စီမံခန့်ခွဲမှု</p>
       </div>
 
-      <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs text-left">
+      <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs text-left relative z-10">
         <div>
-          <label class="block font-bold text-[11px] text-slate-300 uppercase tracking-widest mb-1.5">Select Role / User</label>
+          <label class="block font-bold text-[11px] text-amber-200/90 uppercase tracking-widest mb-1.5">Select Role / User</label>
           <select id="login-username" required
-            class="w-full p-3 bg-[#070a12]/80 border border-slate-700/60 rounded-xl text-xs text-slate-100 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 transition font-bold">
+            class="w-full p-3 bg-[#080d1a] border border-amber-500/30 rounded-xl text-xs text-slate-100 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/25 transition font-bold cursor-pointer">
           </select>
         </div>
         <div>
-          <label class="block font-bold text-[11px] text-slate-300 uppercase tracking-widest mb-1.5">Password</label>
+          <label class="block font-bold text-[11px] text-amber-200/90 uppercase tracking-widest mb-1.5">Password</label>
           <input type="password" id="login-password" required placeholder="လျှို့ဝှက်နံပါတ် ရိုက်ထည့်ပါ..."
-            class="w-full p-3 bg-[#070a12]/80 border border-slate-700/60 rounded-xl text-xs text-slate-100 placeholder:text-slate-600 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 transition">
+            class="w-full p-3 bg-[#080d1a] border border-amber-500/30 rounded-xl text-xs text-slate-100 placeholder:text-slate-600 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/25 transition">
         </div>
         <div id="login-error" class="hidden text-rose-400 font-semibold text-[11px] bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-xl text-center"></div>
         <button type="submit"
-          class="w-full py-3.5 mt-2 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 text-xs tracking-wider active:scale-[0.99]">
+          class="w-full py-3.5 mt-2 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 text-xs tracking-wider active:scale-[0.99]">
           <span>စနစ်အတွင်းသို့ ဝင်မည်</span>
           <i class="fa-solid fa-arrow-right-to-bracket text-sm"></i>
         </button>
       </form>
 
-      <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+      <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 relative z-10">
         <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="font-medium text-slate-400">System Ready</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+          <span class="font-bold text-slate-400">System Ready</span>
         </div>
-        <span class="font-mono text-slate-500">v1.0</span>
+        <span class="font-mono text-amber-400/80 font-extrabold">v1.0</span>
       </div>
     </div>
   </div>
@@ -81,32 +81,38 @@
   <div id="erp-workspace" class="hidden h-screen w-screen flex flex-row overflow-hidden bg-[#090d16]">
     
     <!-- Sidebar -->
-    <aside id="main-sidebar" class="w-64 bg-[#0c1322] border-r border-slate-800 flex flex-col h-full shrink-0 z-30 transition-transform duration-300 -translate-x-full md:translate-x-0 fixed md:relative top-0 left-0 bottom-0 shadow-2xl">
-      <div class="h-[64px] px-3.5 border-b border-slate-800 flex items-center justify-between bg-[#0e172a] shrink-0">
-        <div class="flex items-center gap-2 font-extrabold text-xs sm:text-sm text-slate-100 min-w-0 overflow-hidden">
-          <i class="fa-solid fa-dharmachakra text-amber-400 text-base shrink-0"></i>
-          <span class="truncate font-bold whitespace-nowrap">Zoom ယောဂီစာရင်း</span>
+    <aside id="main-sidebar" class="w-64 bg-[#0c1220] border-r border-slate-800/80 flex flex-col h-full shrink-0 z-30 transition-transform duration-300 -translate-x-full md:translate-x-0 fixed md:relative top-0 left-0 bottom-0 shadow-2xl">
+      <div class="h-[64px] px-4 border-b border-slate-800/80 flex items-center justify-between bg-[#0e172a] shrink-0">
+        <div class="flex items-center gap-2.5 font-black text-xs sm:text-sm text-amber-400 min-w-0 overflow-hidden">
+          <i class="fa-solid fa-dharmachakra text-amber-400 text-base shrink-0 filter drop-shadow-[0_0_6px_rgba(245,158,11,0.4)]"></i>
+          <span class="truncate font-extrabold whitespace-nowrap tracking-wide">Zoom ယောဂီစာရင်း</span>
         </div>
-        <button onclick="handleLogout()" class="text-slate-500 hover:text-rose-400 transition p-1 rounded-lg shrink-0" title="Logout">
+        <button onclick="handleLogout()" class="text-slate-400 hover:text-rose-400 transition p-1.5 rounded-lg shrink-0 hover:bg-slate-800/60" title="Logout">
           <i class="fa-solid fa-power-off text-xs"></i>
         </button>
       </div>
-      <nav class="flex-1 px-2.5 py-3 space-y-1 overflow-y-auto" id="sidebar-nav"></nav>
+      <nav class="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto" id="sidebar-nav"></nav>
     </aside>
 
     <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/80 z-20 hidden md:hidden"></div>
 
     <!-- Main Workspace Right Container -->
     <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-[#090d16]">
-      <header class="h-[64px] bg-[#0c1322] border-b border-slate-800 px-4 md:px-6 flex items-center justify-between shrink-0 z-10">
+      <!-- Top Header Bar -->
+      <header class="h-[64px] bg-[#0c1220] border-b border-slate-800/80 px-4 md:px-6 flex items-center justify-between shrink-0 z-10">
         <div class="flex items-center gap-3 overflow-hidden">
-          <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-slate-100 p-2 rounded-lg bg-slate-800/80 border border-slate-700/60 shrink-0">
+          <button onclick="toggleMobileSidebar()" class="md:hidden text-amber-400 hover:text-amber-300 p-2 rounded-xl bg-slate-800/80 border border-amber-500/20 shrink-0">
             <i class="fa-solid fa-bars text-sm"></i>
           </button>
-          <h1 id="page-title" class="text-sm md:text-base font-extrabold text-slate-100 truncate">ပင်မစာမျက်နှာ</h1>
+          <h1 id="page-title" class="text-sm md:text-base font-black text-amber-300/90 truncate tracking-wide">ပင်မစာမျက်နှာ</h1>
         </div>
-        <div class="text-xs font-bold text-emerald-400 bg-[#111c44] border border-emerald-500/20 px-3.5 py-1.5 rounded-lg shrink-0">
-          User: <span id="live-user-name">-</span>
+
+        <!-- Date / Time / User Status Bar -->
+        <div class="text-[11px] md:text-xs font-bold text-amber-300 bg-[#070d18] border border-amber-500/30 px-3.5 py-1.5 rounded-xl shrink-0 shadow-inner flex items-center gap-1.5 font-mono tracking-wide">
+          <span class="text-slate-400">Date:</span>
+          <span id="header-live-datetime" class="text-amber-300 font-extrabold">Mon 10 Aug 26 | 10:35 pm</span>
+          <span class="text-amber-500/60 font-black mx-1">|</span>
+          <span id="live-user-name" class="text-emerald-400 font-extrabold">Admin</span>
         </div>
       </header>
 
@@ -117,9 +123,10 @@
 
   </div>
 
+  <!-- Loading Overlay -->
   <div id="loading-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[150] flex flex-col items-center justify-center hidden">
-    <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-amber-500 mb-3"></div>
-    <p class="text-xs font-bold text-slate-200 tracking-wide">ဆောင်ရွက်နေပါသည် ခဏစောင့်ပါ...</p>
+    <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-amber-400 mb-3"></div>
+    <p class="text-xs font-bold text-amber-200 tracking-wide">ဆောင်ရွက်နေပါသည် ခဏစောင့်ပါ...</p>
   </div>
 
   <div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 pointer-events-none"></div>
@@ -137,6 +144,37 @@
         if (bd) bd.classList.add('hidden');
       }
     }
+
+    // Live Date & Time Updater for Header Format: Mon 10 Aug 26 | 10:35 pm
+    function startHeaderClock() {
+      function updateClock() {
+        const datetimeEl = document.getElementById('header-live-datetime');
+        if (!datetimeEl) return;
+        
+        const now = new Date();
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        const dayName = days[now.getDay()];
+        const dateNum = String(now.getDate()).padStart(2, '0');
+        const monthName = months[now.getMonth()];
+        const yearShort = String(now.getFullYear()).slice(-2);
+
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0 hour is 12
+        const hoursStr = String(hours).padStart(2, '0');
+
+        datetimeEl.textContent = `${dayName} ${dateNum} ${monthName} ${yearShort} | ${hoursStr}:${minutes} ${ampm}`;
+      }
+
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', startHeaderClock);
   </script>
 
   <script src="js/config.js"></script>
