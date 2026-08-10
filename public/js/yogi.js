@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Level Pages (Kammatthana Yogi Lists)
- * File: js/yogi.js
+ * File: js/yogi.js 
  */
 
 window.LevelState = {}; // { [level]: { page, searchVal } }
