@@ -16,7 +16,10 @@
   </script>
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/tailwind.min.css">
+  
+  <!-- 💡 Tailwind Runtime Engine (Ensures GitHub Pages renders all grid/flex classes 100%) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
   <link rel="stylesheet" href="css/fontawesome.min.css">
   <link rel="stylesheet" href="css/style.css">
 
@@ -36,12 +39,12 @@
 
   <!-- Login Overlay -->
   <div id="login-overlay" class="fixed inset-0 bg-[#070a12]/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-    <div class="relative w-full max-w-md bg-gradient-to-b from-[#131b2e] to-[#0a101d] border border-amber-500/30 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.9)] text-center overflow-hidden space-y-6">
+    <div class="relative w-full max-w-md bg-gradient-to-b from-[#131b2e] to-[#0a101d] border border-amber-500/40 rounded-3xl p-8 shadow-[0_25px_60px_rgba(0,0,0,0.9)] text-center overflow-hidden space-y-6">
       <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-56 h-56 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
       <div class="text-center relative z-10">
         <div class="inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-b from-amber-500/20 to-amber-600/10 border border-amber-500/40 shadow-lg shadow-amber-500/10 mb-3">
-          <i class="fa-solid fa-dharmachakra text-4xl text-amber-400 filter drop-shadow-[0_0_12px_rgba(245,158,11,0.6)] animate-spin-slow"></i>
+          <i class="fa-solid fa-dharmachakra text-4xl text-amber-400 filter drop-shadow-[0_0_12px_rgba(245,158,11,0.6)]"></i>
         </div>
         <h2 class="text-2xl font-black tracking-tight mb-1 bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">Zoom ပဋ္ဌာန်း မိသားစု</h2>
         <p class="text-[11px] font-extrabold uppercase tracking-[0.25em] text-amber-300/80 pb-3 border-b border-amber-500/20">တရားဆွေးနွေးပွဲ · ယောဂီများ စီမံခန့်ခွဲမှု</p>
@@ -80,9 +83,9 @@
   <!-- Main Workspace -->
   <div id="erp-workspace" class="hidden h-screen w-screen flex flex-row overflow-hidden bg-[#090d16]">
     
-    <!-- Sidebar -->
-    <aside id="main-sidebar" class="w-64 bg-[#0c1220] border-r border-slate-800/80 flex flex-col h-full shrink-0 z-30 transition-transform duration-300 -translate-x-full md:translate-x-0 fixed md:relative top-0 left-0 bottom-0 shadow-2xl">
-      <div class="h-[64px] px-4 border-b border-slate-800/80 flex items-center justify-between bg-[#0e172a] shrink-0">
+    <!-- Left Sidebar -->
+    <aside id="main-sidebar" class="w-64 bg-[#0c1220] border-r border-amber-500/20 flex flex-col h-full shrink-0 z-30 transition-transform duration-300 -translate-x-full md:translate-x-0 fixed md:relative top-0 left-0 bottom-0 shadow-2xl">
+      <div class="h-[64px] px-4 border-b border-amber-500/20 flex items-center justify-between bg-[#0e172a] shrink-0">
         <div class="flex items-center gap-2.5 font-black text-xs sm:text-sm text-amber-400 min-w-0 overflow-hidden">
           <i class="fa-solid fa-dharmachakra text-amber-400 text-base shrink-0 filter drop-shadow-[0_0_6px_rgba(245,158,11,0.4)]"></i>
           <span class="truncate font-extrabold whitespace-nowrap tracking-wide">Zoom ယောဂီစာရင်း</span>
@@ -96,10 +99,9 @@
 
     <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/80 z-20 hidden md:hidden"></div>
 
-    <!-- Main Workspace Right Container -->
+    <!-- Right Main Workspace Container -->
     <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-[#090d16]">
-      <!-- Top Header Bar -->
-      <header class="h-[64px] bg-[#0c1220] border-b border-slate-800/80 px-4 md:px-6 flex items-center justify-between shrink-0 z-10">
+      <header class="h-[64px] bg-[#0c1220] border-b border-amber-500/20 px-4 md:px-6 flex items-center justify-between shrink-0 z-10">
         <div class="flex items-center gap-3 overflow-hidden">
           <button onclick="toggleMobileSidebar()" class="md:hidden text-amber-400 hover:text-amber-300 p-2 rounded-xl bg-slate-800/80 border border-amber-500/20 shrink-0">
             <i class="fa-solid fa-bars text-sm"></i>
@@ -107,7 +109,6 @@
           <h1 id="page-title" class="text-sm md:text-base font-black text-amber-300/90 truncate tracking-wide">ပင်မစာမျက်နှာ</h1>
         </div>
 
-        <!-- Date / Time / User Status Bar -->
         <div class="text-[11px] md:text-xs font-bold text-amber-300 bg-[#070d18] border border-amber-500/30 px-3.5 py-1.5 rounded-xl shrink-0 shadow-inner flex items-center gap-1.5 font-mono tracking-wide">
           <span class="text-slate-400">Date:</span>
           <span id="header-live-datetime" class="text-amber-300 font-extrabold">Mon 10 Aug 26 | 10:35 pm</span>
@@ -116,14 +117,13 @@
         </div>
       </header>
 
-      <main class="flex-1 p-4 md:p-6 overflow-y-auto relative">
+      <main class="flex-1 p-4 md:p-6 overflow-y-auto relative bg-[#090d16]">
         <div id="view-container" class="max-w-7xl mx-auto w-full"></div>
       </main>
     </div>
 
   </div>
 
-  <!-- Loading Overlay -->
   <div id="loading-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[150] flex flex-col items-center justify-center hidden">
     <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-amber-400 mb-3"></div>
     <p class="text-xs font-bold text-amber-200 tracking-wide">ဆောင်ရွက်နေပါသည် ခဏစောင့်ပါ...</p>
@@ -145,7 +145,6 @@
       }
     }
 
-    // Live Date & Time Updater for Header Format: Mon 10 Aug 26 | 10:35 pm
     function startHeaderClock() {
       function updateClock() {
         const datetimeEl = document.getElementById('header-live-datetime');
@@ -164,7 +163,7 @@
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const ampm = hours >= 12 ? 'pm' : 'am';
         hours = hours % 12;
-        hours = hours ? hours : 12; // 0 hour is 12
+        hours = hours ? hours : 12;
         const hoursStr = String(hours).padStart(2, '0');
 
         datetimeEl.textContent = `${dayName} ${dateNum} ${monthName} ${yearShort} | ${hoursStr}:${minutes} ${ampm}`;
