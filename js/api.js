@@ -3,7 +3,6 @@
  * File: js/api.js
  */
 
-// Safe Storage Keys Helper
 const CONFIG_KEYS = {
   TOKEN: (window.CONFIG && window.CONFIG.STORAGE_KEY_TOKEN) || "yogi_auth_token",
   USER: (window.CONFIG && window.CONFIG.STORAGE_KEY_USER) || "yogi_user_name",
@@ -34,11 +33,8 @@ window.toggleLoading = function (show) {
 window.escapeHtml = function (str) {
   if (str === undefined || str === null) return "";
   return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 };
 
 window.showToast = function (type, message) {
@@ -60,27 +56,8 @@ window.showToast = function (type, message) {
   }, 3600);
 };
 
-/**
- * Handle Session Expiration
- */
-window.handleSessionExpired = window.handleSessionExpired || function () {
-  window.showToast("ERROR", "အကောင့်ဝင်ရောက်မှု သက်တမ်းကုန်ဆုံးသွားပါပြီ။ ပြန်လည် Login ဝင်ပါ။");
-  localStorage.removeItem(CONFIG_KEYS.TOKEN);
-  localStorage.removeItem(CONFIG_KEYS.USER);
-  localStorage.removeItem(CONFIG_KEYS.EXPIRES);
-  if (window.AppState) {
-    window.AppState.authToken = null;
-    window.AppState.currentUser = null;
-  }
-  document.documentElement.className = "dark not-authed";
-};
-
-/**
- * Central API call. Read actions are cached in-memory for instant re-renders;
- * write actions invalidate the cache.
- */
 window.callApi = async function (action, payload = {}, opts = {}) {
-  const method = opts.method || (action.startsWith("get") || action === "checkLogin" || action === "ping" ? "GET" : "POST");
+  const method = opts.method || (action.startsWith("get") || action === "ping" ? "GET" : "POST");
   const isRead = action.startsWith("get");
   const cacheKey = `${action}:${JSON.stringify(payload)}`;
 
@@ -92,10 +69,9 @@ window.callApi = async function (action, payload = {}, opts = {}) {
   const headers = { "Content-Type": "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  let url = (window.CONFIG && window.CONFIG.API_URL) || window.getApiUrl();
+  let url = (window.CONFIG && window.CONFIG.API_URL) || "https://yogi-list.kotuntunwin1985.workers.dev";
   const fetchOpts = { method, headers };
 
-  // Sanitize Payload (remove undefined/null values)
   const cleanPayload = {};
   Object.keys(payload).forEach(key => {
     if (payload[key] !== undefined && payload[key] !== null) {
@@ -114,7 +90,8 @@ window.callApi = async function (action, payload = {}, opts = {}) {
   try {
     response = await fetch(url, fetchOpts);
   } catch (err) {
-    window.showToast("ERROR", "ဆာဗာ ချိတ်ဆက်မှု မအောင်မြင်ပါ — အင်တာနက် စစ်ဆေးပါ။");
+    console.error("Fetch Error:", err);
+    window.showToast("ERROR", `ဆာဗာ ချိတ်ဆက်၍မရပါ: ${err.message}`);
     throw err;
   }
 
