@@ -11,6 +11,9 @@ function getStorageKeys() {
   };
 }
 
+/**
+ * Check Session Validity on Page Load
+ */
 function checkExistingSession() {
   const keys = getStorageKeys();
   const token = localStorage.getItem(keys.TOKEN);
@@ -35,6 +38,9 @@ function checkExistingSession() {
   }
 }
 
+/**
+ * Handle Login Form Submit
+ */
 async function handleLoginSubmit(event) {
   event.preventDefault();
   
@@ -47,37 +53,48 @@ async function handleLoginSubmit(event) {
   const username = usernameSelect.value.trim();
   const password = passwordInput.value.trim();
 
-  if (errorDiv) errorDiv.classList.add("hidden");
+  if (errorDiv) {
+    errorDiv.innerText = "";
+    errorDiv.classList.add("hidden");
+  }
+  
   if (typeof window.toggleLoading === "function") window.toggleLoading(true);
 
   try {
     const res = await window.callApi("checkLogin", { username, password });
 
-    if (res.success) {
+    if (res && res.success) {
       const keys = getStorageKeys();
+      const userName = (res.user && res.user.username) ? res.user.username : username;
+      const expiresInMs = res.expiresInMs || (24 * 60 * 60 * 1000); // 24 Hours fallback
+
       if (window.AppState) {
         window.AppState.authToken = res.token;
-        window.AppState.currentUser = res.user.username;
+        window.AppState.currentUser = userName;
       }
 
       localStorage.setItem(keys.TOKEN, res.token);
-      localStorage.setItem(keys.USER, res.user.username);
-      localStorage.setItem(keys.EXPIRES, Date.now() + res.expiresInMs);
+      localStorage.setItem(keys.USER, userName);
+      localStorage.setItem(keys.EXPIRES, Date.now() + expiresInMs);
 
       document.documentElement.className = "dark is-authed";
 
       const liveUserEl = document.getElementById("live-user-name");
-      if (liveUserEl) liveUserEl.innerText = res.user.username;
+      if (liveUserEl) liveUserEl.innerText = userName;
+
+      // Reset password field
+      passwordInput.value = "";
 
       if (typeof window.initApp === "function") {
         window.initApp();
       }
+
       if (typeof window.showToast === "function") {
-        window.showToast("SUCCESS", `${res.user.username} မင်္ဂလာပါ! အကောင့်ဝင်ရောက်မှု အောင်မြင်ပါသည်။`);
+        window.showToast("SUCCESS", `${userName} မင်္ဂလာပါ! အကောင့်ဝင်ရောက်မှု အောင်မြင်ပါသည်။`);
       }
     } else {
       if (errorDiv) {
-        errorDiv.innerText = res.message || "အသုံးပြုသူအမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။";
+        errorDiv.innerText = (res && res.message) || "အသုံးပြုသူအမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။";
         errorDiv.classList.remove("hidden");
       }
     }
@@ -91,16 +108,23 @@ async function handleLoginSubmit(event) {
   }
 }
 
+/**
+ * Handle Manual Logout
+ */
 function handleLogout() {
   const keys = getStorageKeys();
   localStorage.removeItem(keys.TOKEN);
-  localStorage.removeItem(keys.USER);
   localStorage.removeItem(keys.EXPIRES);
+  // Keep localStorage.getItem(keys.USER) for dropdown memory if needed
 
   if (window.AppState) {
     window.AppState.authToken = null;
     window.AppState.currentUser = null;
   }
+
+  // Clear password input
+  const passInput = document.getElementById("login-password");
+  if (passInput) passInput.value = "";
 
   document.documentElement.className = "dark not-authed";
   if (typeof window.showToast === "function") {
@@ -108,10 +132,12 @@ function handleLogout() {
   }
 }
 
+/**
+ * Handle Session Expiry (Unauthorized 401)
+ */
 function handleSessionExpired() {
   const keys = getStorageKeys();
   localStorage.removeItem(keys.TOKEN);
-  localStorage.removeItem(keys.USER);
   localStorage.removeItem(keys.EXPIRES);
 
   if (window.AppState) {
@@ -119,24 +145,35 @@ function handleSessionExpired() {
     window.AppState.currentUser = null;
   }
 
+  const passInput = document.getElementById("login-password");
+  if (passInput) passInput.value = "";
+
   document.documentElement.className = "dark not-authed";
   if (typeof window.showToast === "function") {
     window.showToast("ERROR", "Session ကုန်ဆုံးသွားပါပြီ။ ပြန်လည် Login ဝင်ပေးပါ။");
   }
 }
 
+/**
+ * Load 11 Pre-seeded Accounts into Dropdown
+ */
 function loadUsersDropdown() {
   const select = document.getElementById("login-username");
   if (!select) return;
+
+  const keys = getStorageKeys();
+  const lastUser = localStorage.getItem(keys.USER) || "Admin";
 
   const users = window.LOGIN_USERS || [
     "Admin",
     "ဓမ္မဝန်ဆောင် ၁", "ဓမ္မဝန်ဆောင် ၂", "ဓမ္မဝန်ဆောင် ၃", "ဓမ္မဝန်ဆောင် ၄", "ဓမ္မဝန်ဆောင် ၅",
     "ဓမ္မဝန်ဆောင် ၆", "ဓမ္မဝန်ဆောင် ၇", "ဓမ္မဝန်ဆောင် ၈", "ဓမ္မဝန်ဆောင် ၉", "ဓမ္မဝန်ဆောင် ၁၀"
   ];
-  select.innerHTML = users.map(u => `<option value="${u}">${u}</option>`).join("");
+
+  select.innerHTML = users.map(u => `<option value="${u}" ${u === lastUser ? 'selected' : ''}>${u}</option>`).join("");
 }
 
+// Global Window Exports
 window.checkExistingSession = checkExistingSession;
 window.handleLoginSubmit = handleLoginSubmit;
 window.handleLogout = handleLogout;
