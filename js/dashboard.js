@@ -3,7 +3,7 @@
  * File: js/dashboard.js
  */
 
-// 💡 1. 01, 02 နံပါတ်များ ဖယ်ရှားထားပြီး၊ စာလုံးများ ကြီးပေးထားကာ ERP Wisdom ဖယ်ရှားထားသော Quote Box
+// 💡 1. 01, 02 နံပါတ်များ ဖယ်ရှားထားပြီး၊ စာလုံးကြီးပေးထားကာ ERP Wisdom ဖယ်ရှားထားသော Quote Box
 const QUOTE_BOX_HTML = `
   <div class="mindfulness-card" style="background: linear-gradient(145deg, #0e172a 0%, #090f1e 100%); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 1.25rem; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
     <div style="display: flex; flex-direction: column; gap: 0.85rem; font-family: Georgia, serif; font-size: 0.95rem; line-height: 1.7;">
@@ -53,9 +53,9 @@ const QUOTE_BOX_HTML = `
 
 function statCardsHtml(total, male, female) {
   return `
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; width: 100%; margin-bottom: 1.25rem;">
-      <div style="background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-        <div style="width: 2.75rem; height: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
+    <div class="kpi-grid-container">
+      <div class="stats-card">
+        <div style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
           <i class="fa-solid fa-users"></i>
         </div>
         <div style="display: flex; flex-direction: column;">
@@ -64,8 +64,8 @@ function statCardsHtml(total, male, female) {
         </div>
       </div>
 
-      <div style="background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-        <div style="width: 2.75rem; height: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
+      <div class="stats-card">
+        <div style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
           <i class="fa-solid fa-mars"></i>
         </div>
         <div style="display: flex; flex-direction: column;">
@@ -74,8 +74,8 @@ function statCardsHtml(total, male, female) {
         </div>
       </div>
 
-      <div style="background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-        <div style="width: 2.75rem; height: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);">
+      <div class="stats-card">
+        <div style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);">
           <i class="fa-solid fa-venus"></i>
         </div>
         <div style="display: flex; flex-direction: column;">
