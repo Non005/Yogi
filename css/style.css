@@ -1,11 +1,13 @@
-/* css/style.css - GOLDEN ERP SYSTEM EYE-COMFORT DARK STYLES & PRINT ENGINE */
+/* ========================================================================
+   YOGI MANAGEMENT SYSTEM — EYE-COMFORT DARK STYLES & PRINT ENGINE
+   File: css/style.css
+   ======================================================================== */
 
 /* 💡 Force Browser Elements Dark Scheme & Comfort Theme */
 :root { 
   color-scheme: dark; 
 }
 
-/* ⬇️ ဤနေရာကြားထဲတွင် ကူးထည့်လိုက်ပါ ⬇️ */
 /* 💡 GUARANTEED GOLD GRADIENT TEXT WITH BROWSER FALLBACK */
 .text-gold-gradient {
   color: #fbbf24 !important; /* Fallback: Browser က Gradient မပံ့ပိုးပါက ဒီအရောင် ပေါ်မည် */
@@ -43,11 +45,11 @@
   background-color: rgba(30, 41, 59, 0.5) !important; 
   color: #f1f5f9 !important;
 }
-.nav-btn.active { 
+.nav-btn.active, .nav-btn-active { 
   background-color: #1e293b !important; 
   color: #f8fafc !important; 
   font-weight: 700 !important; 
-  border-left: 4px solid #6366f1; 
+  border-left: 4px solid #f59e0b !important; 
 }
 
 /* 💡 Soften Sidebar Section Heading Labels */
@@ -66,7 +68,6 @@
   border: 1.5px solid rgba(71, 85, 105, 0.45) !important;
   border-radius: 0.85rem !important;
   box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
-  /* ── Compact fixed height so all pages look identical ── */
   min-height: 82px !important;
   padding: 0.85rem 1.1rem !important;
   display: flex !important;
@@ -77,8 +78,8 @@
 
 .stats-card:hover {
   transform: translateY(-2px) !important;
-  border-color: rgba(99, 102, 241, 0.5) !important;
-  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(99, 102, 241, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(245, 158, 11, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.12) !important;
 }
 
 /* Icon box — fixed size, glowing container */
@@ -96,7 +97,7 @@
   font-size: 1.15rem !important;
 }
 
-/* Text area — fills remaining space, min-width 0 to allow shrink */
+/* Text area — fills remaining space */
 .stats-card > div:last-child {
   flex: 1 1 0 !important;
   min-width: 0 !important;
@@ -117,7 +118,7 @@
   line-height: 1.2 !important;
 }
 
-/* Amount / Value — auto-scale font, no wrap, nowrap MMK */
+/* Amount / Value — auto-scale font, no wrap */
 .stats-card > div:last-child h3 {
   font-size: clamp(0.85rem, 1.6vw, 1.1rem) !important;
   font-weight: 800 !important;
@@ -130,12 +131,13 @@
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace !important;
   letter-spacing: -0.01em !important;
 }
+
 .table-container { 
   border-radius: 0.75rem; 
   border: 1px solid rgba(30, 41, 59, 0.35) !important; 
 }
 
-/* 💡 Soften Harsh White Borders for Containers & Pagination Trays */
+/* 💡 Soften Harsh Borders for Containers & Trays */
 div.border-slate-800, 
 div.border-slate-700,
 div.border-slate-850 {
@@ -175,7 +177,7 @@ table tbody tr:hover {
   background-color: rgba(30, 41, 59, 0.2) !important; 
 }
 
-/* 💡 FIX STICKY ACTION COLUMN OPAQUE BACKGROUND (PREVENTS SCROLL OVERLAP BLEED) */
+/* 💡 FIX STICKY ACTION COLUMN OPAQUE BACKGROUND */
 table th.sticky,
 table td.sticky,
 th.right-0,
@@ -193,32 +195,49 @@ td.right-0 {
   color: #f1f5f9 !important;
 }
 
-/* 💡 DEBIT, CREDIT & BALANCE COLUMN COLOR HIGHLIGHTS */
+/* 💡 COLOR HIGHLIGHTS */
 .text-emerald-400,
 td.text-emerald-400,
 span.text-emerald-400 {
-  color: #34d399 !important; /* Emerald Green for Debit / Income */
+  color: #34d399 !important;
 }
 
 .text-rose-400,
 td.text-rose-400,
 span.text-rose-400 {
-  color: #f87171 !important; /* Rose Red for Credit / Expense / Liabilities */
+  color: #f87171 !important;
 }
 
 .text-indigo-400,
 td.text-indigo-400,
 span.text-indigo-400 {
-  color: #818cf8 !important; /* Indigo Blue for Balances */
+  color: #818cf8 !important;
+}
+
+.text-amber-400,
+td.text-amber-400,
+span.text-amber-400 {
+  color: #fbbf24 !important;
 }
 
 .text-teal-400,
 td.text-teal-400,
 span.text-teal-400 {
-  color: #2dd4bf !important; /* Teal for Fund */
+  color: #2dd4bf !important;
 }
 
-/* 💡 ACTION DELETE BUTTON RED HIGHLIGHT */
+/* 💡 ACTION BUTTON STYLING & DELETE BUTTON HIGHLIGHT */
+.action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all .15s ease;
+}
+
 button[onclick*="delete"] i,
 button[onclick*="Delete"] i,
 .btn-delete i,
@@ -233,16 +252,7 @@ button[onclick*="Delete"]:hover i,
   transform: scale(1.15);
 }
 
-/* 💡 GLOBAL MODAL OPAQUE BACKGROUND FIX - PREVENTS BACKGROUND TABLE BLEED */
-#bck-modal > div,
-#office-modal > div,
-#income-modal > div,
-#student-modal > div,
-#staff-modal > div,
-#promo-modal > div,
-#uniform-modal > div,
-#cashier-modal > div,
-#grade-modal > div,
+/* 💡 GLOBAL MODAL OPAQUE BACKGROUND FIX */
 div[id$="-modal"] > div {
   background-color: #0c1322 !important;
   opacity: 1 !important;
@@ -256,8 +266,7 @@ div[id$="-modal"].fixed.inset-0 {
 }
 
 /* =============================================================
-   💡 ENTERPRISE FORM FIELD SYSTEM — Professional Modal Inputs
-   Clear field boundaries, strong labels, pro focus states
+   ENTERPRISE FORM FIELD SYSTEM — Professional Modal Inputs
    ============================================================= */
 
 /* Base inputs inside modals */
@@ -266,19 +275,19 @@ div[id$="-modal"] select,
 div[id$="-modal"] textarea {
   display: block !important;
   width: 100% !important;
-  background-color: #080e1c !important;          /* Deeper inset feel */
-  border: 1.5px solid rgba(71, 85, 105, 0.55) !important;  /* Clearly visible border */
+  background-color: #080e1c !important;
+  border: 1.5px solid rgba(71, 85, 105, 0.55) !important;
   border-radius: 8px !important;
   color: #e2e8f0 !important;
   font-size: 0.8125rem !important;
   padding: 0.6rem 0.875rem !important;
   min-height: 2.5rem !important;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.15s ease !important;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.35) !important;  /* Inset depth */
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.35) !important;
   letter-spacing: 0.01em !important;
 }
 
-/* Select arrow color fix */
+/* Select arrow styling */
 div[id$="-modal"] select {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
   background-position: right 0.65rem center !important;
@@ -296,13 +305,14 @@ div[id$="-modal"] textarea {
   line-height: 1.55 !important;
 }
 
-/* Number / Amount inputs — slightly brighter */
-div[id$="-modal"] input[type="number"] {
+/* Number / Phone inputs */
+div[id$="-modal"] input[type="number"],
+div[id$="-modal"] input[type="tel"] {
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace !important;
   font-variant-numeric: lining-nums tabular-nums !important;
   font-size: 0.875rem !important;
   letter-spacing: 0.04em !important;
-  color: #a5f3fc !important;  /* Soft cyan for amount fields */
+  color: #a5f3fc !important;
   border-color: rgba(56, 189, 248, 0.25) !important;
 }
 
@@ -313,22 +323,17 @@ div[id$="-modal"] input[type="date"] {
   font-size: 0.8125rem !important;
 }
 
-/* ─── Focus State ──────────────────────────── */
+/* Focus State */
 div[id$="-modal"] input:focus,
 div[id$="-modal"] select:focus,
 div[id$="-modal"] textarea:focus {
-  border-color: #6366f1 !important;
+  border-color: #f59e0b !important;
   background-color: #0a1128 !important;
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.18), inset 0 2px 6px rgba(0,0,0,0.4) !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18), inset 0 2px 6px rgba(0,0,0,0.4) !important;
   outline: none !important;
 }
 
-div[id$="-modal"] input[type="number"]:focus {
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 3px rgba(56,189,248,0.15), inset 0 2px 6px rgba(0,0,0,0.4) !important;
-}
-
-/* ─── Placeholder ──────────────────────────── */
+/* Placeholder */
 div[id$="-modal"] input::placeholder,
 div[id$="-modal"] textarea::placeholder {
   color: #3d4f6b !important;
@@ -336,10 +341,10 @@ div[id$="-modal"] textarea::placeholder {
   opacity: 1 !important;
 }
 
-/* ─── Modal Form Labels ─────────────────────── */
+/* Modal Form Labels */
 div[id$="-modal"] label {
   display: block !important;
-  font-size: 0.6875rem !important;     /* 11px */
+  font-size: 0.6875rem !important; /* 11px */
   font-weight: 700 !important;
   letter-spacing: 0.07em !important;
   text-transform: uppercase !important;
@@ -347,22 +352,7 @@ div[id$="-modal"] label {
   margin-bottom: 0.35rem !important;
 }
 
-/* ─── Field Group Spacing ───────────────────── */
-div[id$="-modal"] .grid > div,
-div[id$="-modal"] .space-y-4 > div,
-div[id$="-modal"] .space-y-3 > div {
-  position: relative !important;
-}
-
-/* ─── Hover State (pre-focus affordance) ─────── */
-div[id$="-modal"] input:not(:focus):hover,
-div[id$="-modal"] select:not(:focus):hover,
-div[id$="-modal"] textarea:not(:focus):hover {
-  border-color: rgba(99, 102, 241, 0.4) !important;
-  background-color: #090f1e !important;
-}
-
-/* ─── Global plain page inputs (search bars, date range, etc.) ─ */
+/* Global plain inputs */
 input, select, textarea {
   background-color: #0b1120 !important;
   border: 1.5px solid rgba(51, 65, 85, 0.6) !important;
@@ -372,22 +362,18 @@ input, select, textarea {
   border-radius: 6px !important;
 }
 input:focus, select:focus, textarea:focus {
-  border-color: #6366f1 !important;
+  border-color: #f59e0b !important;
   outline: none !important;
-  box-shadow: 0 0 0 2px rgba(99,102,241,0.18) !important;
-}
-textarea::placeholder, input::placeholder {
-  color: #3d4f6b !important;
-  opacity: 1 !important;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.18) !important;
 }
 
-/* 💡 Force Monospace English Digits on all Number Fields */
+/* Monospace Digits */
 input[type="number"], input.font-mono, td.font-mono, span.font-mono, .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
   font-variant-numeric: lining-nums tabular-nums !important;
 }
 
-/* 💡 View Panel Animation */
+/* View Panel Animation */
 .view-panel { 
   animation: fadeIn 0.2s ease-out; 
 }
@@ -396,7 +382,11 @@ input[type="number"], input.font-mono, td.font-mono, span.font-mono, .font-mono 
   to { opacity: 1; transform: translateY(0); } 
 }
 
-/* 💡 Search Box Width Responsive Rule */
+/* Responsive Rules */
+@media (max-width: 768px) {
+  aside.w-64 { position: fixed; z-index: 90; height: 100%; }
+}
+
 @media (min-width: 768px) {
   .search-container .relative.w-full,
   div[class*="border-slate-800"] > .relative.w-full {
@@ -404,25 +394,11 @@ input[type="number"], input.font-mono, td.font-mono, span.font-mono, .font-mono 
   }
 }
 
-/* 💡 PERMISSION CONTROL - HIDE DELETE BUTTONS WHEN CAN_DELETE IS FALSE */
-body.hide-delete-btn .btn-delete,
-body.hide-delete-btn .action-delete,
-body.hide-delete-btn button[onclick*="delete"],
-body.hide-delete-btn button[onclick*="Delete"],
-body.hide-delete-btn button[title*="Delete"],
-body.hide-delete-btn button[title*="delete"],
-body.hide-delete-btn a[onclick*="delete"] {
-  display: none !important;
-  pointer-events: none !important;
-  visibility: hidden !important;
-}
-
-/* 💡 GLOBAL PRINT STYLING - Default Hidden on Screen */
+/* GLOBAL PRINT STYLING */
 #invoice-print-area, #payslip-print-area {
   display: none !important;
 }
 
-/* 💡 A4 DUAL-COPY PRINT ENGINE */
 @media print {
   body > *:not(.active-print) {
     display: none !important;
@@ -444,25 +420,6 @@ body.hide-delete-btn a[onclick*="delete"] {
     z-index: 999999 !important;
     visibility: visible !important;
     font-family: sans-serif !important;
-  }
-
-  .invoice-section, .payslip-section {
-    height: 46vh !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    border: 1px solid black !important;
-    padding: 12px !important;
-    border-radius: 6px !important;
-  }
-
-  .invoice-divider, .payslip-divider {
-    height: 4vh !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 10px !important;
-    color: #475569 !important;
   }
 
   table {
