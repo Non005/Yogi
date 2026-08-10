@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zoom ယောဂီစာရင်း စီမံခန့်ခွဲမှုစနစ်</title>
 
-  <!-- Session Authorization Guard -->
   <script>
     (function () {
       var token = localStorage.getItem('yogi_auth_token');
@@ -16,19 +15,13 @@
     })();
   </script>
 
-  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-
-  <!-- Local CSS Imports -->
   <link rel="stylesheet" href="css/tailwind.min.css">
   <link rel="stylesheet" href="css/fontawesome.min.css">
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Google Fonts for Myanmar Text -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- SheetJS for Excel Import/Export -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
@@ -39,7 +32,7 @@
   </style>
 </head>
 
-<body class="bg-[#090d16] font-sans h-screen w-screen overflow-hidden text-slate-300">
+<body class="bg-[#090d16] font-sans flex h-screen w-screen overflow-hidden text-slate-300">
 
   <!-- Login Overlay -->
   <div id="login-overlay" class="fixed inset-0 bg-[#090d16] z-[100] flex items-center justify-center p-4">
@@ -84,27 +77,26 @@
     </div>
   </div>
 
-  <!-- Main Workspace Layout (Perfect Flexbox Unbreakable) -->
+  <!-- Main Workspace -->
   <div id="erp-workspace" class="hidden h-screen w-screen flex flex-row overflow-hidden bg-[#090d16]">
     
-    <!-- 1. Left Sidebar Navigation -->
+    <!-- Sidebar -->
     <aside id="main-sidebar" class="w-64 bg-[#0c1322] border-r border-slate-800 flex flex-col h-full shrink-0 z-30 transition-transform duration-300 -translate-x-full md:translate-x-0 fixed md:relative top-0 left-0 bottom-0 shadow-2xl">
-      <div class="h-[64px] px-4 border-b border-slate-800 flex items-center justify-between bg-[#0e172a] shrink-0">
-        <div class="flex items-center gap-2.5 font-extrabold text-sm text-slate-100 overflow-hidden">
-          <i class="fa-solid fa-dharmachakra text-amber-400 text-lg shrink-0"></i>
-          <span class="truncate font-bold">Zoom ယောဂီစာရင်း</span>
+      <div class="h-[64px] px-3.5 border-b border-slate-800 flex items-center justify-between bg-[#0e172a] shrink-0">
+        <div class="flex items-center gap-2 font-extrabold text-xs sm:text-sm text-slate-100 min-w-0 overflow-hidden">
+          <i class="fa-solid fa-dharmachakra text-amber-400 text-base shrink-0"></i>
+          <span class="truncate font-bold whitespace-nowrap">Zoom ယောဂီစာရင်း</span>
         </div>
-        <button onclick="handleLogout()" class="text-slate-500 hover:text-rose-400 transition p-1.5 rounded-lg shrink-0" title="Logout">
+        <button onclick="handleLogout()" class="text-slate-500 hover:text-rose-400 transition p-1 rounded-lg shrink-0" title="Logout">
           <i class="fa-solid fa-power-off text-xs"></i>
         </button>
       </div>
       <nav class="flex-1 px-2.5 py-3 space-y-1 overflow-y-auto" id="sidebar-nav"></nav>
     </aside>
 
-    <!-- 2. Mobile Backdrop Overlay -->
     <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/80 z-20 hidden md:hidden"></div>
 
-    <!-- 3. Right Content Main Area -->
+    <!-- Main Workspace Right Container -->
     <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-[#090d16]">
       <header class="h-[64px] bg-[#0c1322] border-b border-slate-800 px-4 md:px-6 flex items-center justify-between shrink-0 z-10">
         <div class="flex items-center gap-3 overflow-hidden">
@@ -125,16 +117,13 @@
 
   </div>
 
-  <!-- Loading Overlay -->
   <div id="loading-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[150] flex flex-col items-center justify-center hidden">
     <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-amber-500 mb-3"></div>
     <p class="text-xs font-bold text-slate-200 tracking-wide">ဆောင်ရွက်နေပါသည် ခဏစောင့်ပါ...</p>
   </div>
 
-  <!-- Toast Notifications Container -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Mobile Sidebar Toggle Helper -->
   <script>
     function toggleMobileSidebar() {
       var sb = document.getElementById('main-sidebar');
@@ -150,7 +139,6 @@
     }
   </script>
 
-  <!-- Script Modules Execution Order -->
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
