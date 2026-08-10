@@ -1,4 +1,4 @@
-# Zoom ယောဂီစာရင်း — Yogi Management System
+# Zoom ယောဂီစာရင်း — Yogi Management System 
 
 Cloudflare Workers + D1 ပေါ်တွင် အလုပ်လုပ်သော ယောဂီများ (ကမ္မဋ္ဌာန်းအဆင့် ၇ ဆင့်) စီမံခန့်ခွဲရေးစနစ်။
 
