@@ -83,7 +83,7 @@ async function handleLoginSubmit(event) {
     }
   } catch (err) {
     if (errorDiv) {
-      errorDiv.innerText = "ဆာဗာ ချိတ်ဆက်မှု အမှား ဖြစ်ပေါ်ခဲ့သည်။";
+      errorDiv.innerText = `ဆာဗာ အမှား: ${err.message || String(err)}`;
       errorDiv.classList.remove("hidden");
     }
   } finally {
