@@ -60,6 +60,10 @@ function statCardsLeadersHtml(total, male, female) {
   `;
 }
 
+/**
+ * Render Leader Yogi List
+ * Limit: 30 items per page with Pagination
+ */
 async function renderLeaders(page = 1, searchVal = "") {
   const container = document.getElementById("view-container");
   if (!container) return;
@@ -69,8 +73,10 @@ async function renderLeaders(page = 1, searchVal = "") {
 
   window.toggleLoading(true);
   let data = { rows: [], total: 0, activeTotal: 0, activeMale: 0, activeFemale: 0 };
+  const limit = 30; // 💡 Default 30 items per page
+
   try {
-    const res = await window.callApi("getLeaderData", { page, searchVal, limit: 1000 });
+    const res = await window.callApi("getLeaderData", { page, searchVal, limit });
     if (res.success && res.data) data = res.data;
   } catch (e) {
     console.error("getLeaderData Error:", e);
@@ -79,6 +85,9 @@ async function renderLeaders(page = 1, searchVal = "") {
   }
 
   const rawRows = data.rows || [];
+  const totalCount = data.total || 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / limit));
+
   const sortedRows = [...rawRows].sort((a, b) => {
     if (a.status === 'Active' && b.status === 'Inactive') return -1;
     if (a.status === 'Inactive' && b.status === 'Active') return 1;
@@ -89,10 +98,10 @@ async function renderLeaders(page = 1, searchVal = "") {
 
   container.innerHTML = `
     <div class="space-y-5 view-panel">
-      <!-- Top 3 KPI Cards Grid -->
+      <!-- Top 3 KPI Cards -->
       ${statCardsLeadersHtml(data.activeTotal, data.activeMale, data.activeFemale)}
 
-      <!-- Action Control Bar -->
+      <!-- Control Bar Wrapper -->
       <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; background: #0e172a; border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 1rem; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;">
         <div style="position: relative; flex: 1; min-width: 240px; max-width: 360px;">
           <input type="text" id="leader-search-input" value="${window.escapeHtml(searchVal)}" 
@@ -115,7 +124,7 @@ async function renderLeaders(page = 1, searchVal = "") {
         </div>
       </div>
 
-      <!-- Leader Table -->
+      <!-- Leader Table (1 Single Line Cells, Plain Index 1, 2, 3) -->
       <div style="background-color: #0e172a; border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 1rem; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
         <div style="overflow-x-auto;">
           <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem;">
@@ -136,28 +145,29 @@ async function renderLeaders(page = 1, searchVal = "") {
             <tbody>
               ${sortedRows.length > 0 ? sortedRows.map((l, idx) => `
                 <tr class="${l.status === 'Inactive' ? 'row-inactive' : ''}" style="border-bottom: 1px solid rgba(30, 41, 59, 0.5);">
-                  <td style="padding: 11px 14px; font-weight: bold; color: #818cf8;">${idx + 1}</td>
-                  <td style="padding: 11px 14px;">${l.regDate || '-'}</td>
-                  <td style="padding: 11px 14px; font-weight: 800; color: #f8fafc;">${window.escapeHtml(l.name)}</td>
-                  <td style="padding: 11px 14px; text-align: center;">${l.age || '-'}</td>
-                  <td style="padding: 11px 14px; text-align: center;">
+                  <td style="padding: 11px 14px; font-weight: bold; color: #818cf8; white-space: nowrap;">${(page - 1) * limit + idx + 1}</td>
+                  <td style="padding: 11px 14px; white-space: nowrap;">${l.regDate || '-'}</td>
+                  <td style="padding: 11px 14px; font-weight: 800; color: #f8fafc; white-space: nowrap;">${window.escapeHtml(l.name)}</td>
+                  <td style="padding: 11px 14px; text-align: center; white-space: nowrap;">${l.age || '-'}</td>
+                  <td style="padding: 11px 14px; text-align: center; white-space: nowrap;">
                     <span style="padding: 2px 8px; border-radius: 4px; font-weight: bold; ${l.gender === 'ကျား' ? 'background: rgba(99,102,241,0.2); color: #818cf8;' : 'background: rgba(236,72,153,0.2); color: #f472b6;'}">
                       ${l.gender || 'ကျား'}
                     </span>
                   </td>
-                  <td style="padding: 11px 14px;">${l.phone || '-'}</td>
-                  <td style="padding: 11px 14px;">${window.escapeHtml(l.address) || '-'}</td>
-                  <td style="padding: 11px 14px;">${l.email || '-'}</td>
-                  <td style="padding: 11px 14px; text-align: center;">
+                  <td style="padding: 11px 14px; white-space: nowrap;">${l.phone || '-'}</td>
+                  <td style="padding: 11px 14px; white-space: nowrap;">${window.escapeHtml(l.address) || '-'}</td>
+                  <td style="padding: 11px 14px; white-space: nowrap;">${l.email || '-'}</td>
+                  <td style="padding: 11px 14px; text-align: center; white-space: nowrap;">
                     <span style="padding: 3px 8px; border-radius: 6px; font-weight: bold; ${l.status === 'Active' ? 'background: rgba(16,185,129,0.2); color: #34d399;' : 'background: rgba(244,63,94,0.2); color: #f87171;'}">
                       ${l.status || 'Active'}
                     </span>
                   </td>
-                  <td style="padding: 11px 14px; text-align: center; position: sticky; right: 0; background-color: #0e172a;">
-                    <div style="display: flex; gap: 4px; justify-content: center;">
-                      <button onclick="openLeaderModal(${l.id})" class="btn-action btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
-                      <button onclick="toggleLeaderStatus(${l.id}, '${l.status}')" class="btn-action ${l.status === 'Active' ? 'btn-action-inactive' : 'btn-action-active'}"><i class="fa-solid ${l.status === 'Active' ? 'fa-user-xmark' : 'fa-user-check'}"></i></button>
-                      <button onclick="deleteLeader(${l.id})" class="btn-action btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
+                  <td style="padding: 11px 14px; text-align: center; position: sticky; right: 0; background-color: #0e172a; white-space: nowrap;">
+                    <div style="display: flex; gap: 6px; justify-content: center;">
+                      <!-- Restored Sleek Icon-only Action Buttons -->
+                      <button onclick="openLeaderModal(${l.id})" class="btn-action-icon btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
+                      <button onclick="toggleLeaderStatus(${l.id}, '${l.status}')" class="btn-action-icon ${l.status === 'Active' ? 'btn-action-inactive' : 'btn-action-active'}" title="${l.status === 'Active' ? 'Inactive ပြုလုပ်မည်' : 'Active ပြုလုပ်မည်'}"><i class="fa-solid ${l.status === 'Active' ? 'fa-user-xmark' : 'fa-user-check'}"></i></button>
+                      <button onclick="deleteLeader(${l.id})" class="btn-action-icon btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -168,10 +178,30 @@ async function renderLeaders(page = 1, searchVal = "") {
           </table>
         </div>
       </div>
+
+      <!-- Pagination Bar -->
+      ${totalPages > 1 ? `
+        <div class="pagination-container">
+          <button onclick="renderLeaders(${page - 1}, '${window.escapeHtml(searchVal)}')" ${page <= 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-action" style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.4rem 0.85rem;">
+            <i class="fa-solid fa-chevron-left"></i> Previous
+          </button>
+
+          <span style="font-size: 0.75rem; font-weight: 800; color: #818cf8;">
+            Page <b style="color: #ffffff;">${page}</b> of <b>${totalPages}</b> (Total: ${totalCount})
+          </span>
+
+          <button onclick="renderLeaders(${page + 1}, '${window.escapeHtml(searchVal)}')" ${page >= totalPages ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-action" style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.4rem 0.85rem;">
+            Next <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      ` : ''}
     </div>
   `;
 }
 
+/**
+ * Centered Modal with EMAIL field included
+ */
 function openLeaderModal(leaderId = null) {
   let existingData = null;
   if (leaderId) {
