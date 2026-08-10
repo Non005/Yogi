@@ -1,95 +1,92 @@
 /**
- * YOGI MANAGEMENT SYSTEM — App Shell (Sidebar, Routing, Modal)
+ * YOGI MANAGEMENT SYSTEM — Main Router & Navigation Logic
  * File: js/app.js
  */
 
-const PAGE_TITLES = {
-  home: "ပင်မစာမျက်နှာ",
-  total: "ယောဂီ စုစုပေါင်း စာရင်း",
-  leaders: "ဦးဆောင်ဆွေးနွေး ယောဂီ"
-};
-window.LEVELS.forEach(l => { PAGE_TITLES["level" + l.id] = l.name; });
+window.initApp = function () {
+  const liveUserEl = document.getElementById("live-user-name");
+  if (liveUserEl && window.AppState && window.AppState.currentUser) {
+    liveUserEl.innerText = String(window.AppState.currentUser);
+  }
 
-function buildSidebar() {
+  renderSidebar();
+  if (typeof window.renderDashboard === "function") {
+    window.renderDashboard();
+  }
+};
+
+window.switchTab = function (tabName, param = null) {
+  const nav = document.getElementById("sidebar-nav");
+  if (nav) {
+    const btns = nav.querySelectorAll(".nav-btn");
+    btns.forEach(b => b.classList.remove("nav-btn-active"));
+  }
+
+  if (tabName === "home" || tabName === "dashboard") {
+    if (typeof window.renderDashboard === "function") window.renderDashboard();
+  } else if (tabName === "level" || tabName === "yogi" || tabName === "stage") {
+    const levelId = Number(param || 1);
+    if (typeof window.renderYogiStage === "function") window.renderYogiStage(levelId);
+  } else if (tabName === "total_summary") {
+    if (typeof window.renderTotalSummary === "function") window.renderTotalSummary();
+  } else if (tabName === "leaders" || tabName === "leader") {
+    if (typeof window.renderLeaders === "function") window.renderLeaders();
+  }
+};
+
+function renderSidebar() {
   const nav = document.getElementById("sidebar-nav");
   if (!nav) return;
 
   let html = `
-    <button onclick="switchTab('home')" id="btn-home" class="nav-btn w-full text-left px-3.5 py-2 rounded-lg flex items-center gap-2.5 text-xs font-semibold">
-      <i class="fa-solid fa-gauge-high w-4 text-center text-indigo-400"></i> ပင်မစာမျက်နှာ
+    <button onclick="switchTab('home')" class="nav-btn nav-btn-active w-full text-left p-2.5 rounded-xl font-extrabold text-xs flex items-center gap-2.5">
+      <i class="fa-solid fa-house text-amber-400 text-sm shrink-0"></i>
+      <span class="truncate">ပင်မစာမျက်နှာ</span>
     </button>
-    <p class="text-[9px] font-bold text-slate-500 px-3 uppercase tracking-wider mt-3 mb-1">ကမ္မဋ္ဌာန်း အဆင့်များ</p>
+    <p class="pt-3 pb-1 px-3 text-[10px] font-black text-slate-500 uppercase tracking-widest">ကမ္မဋ္ဌာန်း အဆင့်များ</p>
   `;
 
-  window.LEVELS.forEach((l, idx) => {
+  const levels = (window.LEVELS || []).filter(l => l.id <= 7);
+  levels.forEach(l => {
     html += `
-      <button onclick="switchTab('level${l.id}')" id="btn-level${l.id}" class="nav-btn w-full text-left px-3.5 py-2 rounded-lg flex items-center gap-2.5 text-xs font-semibold">
-        <i class="fa-solid ${l.icon} text-${l.color}-400 w-4 text-center"></i> ${idx + 1}။ ${window.escapeHtml(l.name)}
-      </button>`;
+      <button onclick="switchTab('level', ${l.id})" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+        <span class="w-5 h-5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-[10px] shrink-0 font-mono">${l.id}</span>
+        <span class="truncate">${l.name}</span>
+      </button>
+    `;
   });
 
   html += `
-    <p class="text-[9px] font-bold text-slate-500 px-3 uppercase tracking-wider mt-3 mb-1">စာရင်းချုပ်များ</p>
-    <button onclick="switchTab('total')" id="btn-total" class="nav-btn w-full text-left px-3.5 py-2 rounded-lg flex items-center gap-2.5 text-xs font-semibold">
-      <i class="fa-solid fa-list-check text-amber-300 w-4 text-center"></i> ယောဂီ စုစုပေါင်း စာရင်း
+    <p class="pt-3 pb-1 px-3 text-[10px] font-black text-slate-500 uppercase tracking-widest">အခြား စာရင်းများ</p>
+    <button onclick="switchTab('total_summary')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+      <i class="fa-solid fa-list-check text-emerald-400 text-sm shrink-0"></i>
+      <span class="truncate">ယောဂီ စုစုပေါင်း စာရင်း</span>
     </button>
-    <button onclick="switchTab('leaders')" id="btn-leaders" class="nav-btn w-full text-left px-3.5 py-2 rounded-lg flex items-center gap-2.5 text-xs font-semibold">
-      <i class="fa-solid fa-user-tie text-violet-300 w-4 text-center"></i> ဦးဆောင်ဆွေးနွေး ယောဂီ
+    <button onclick="switchTab('level', 8)" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+      <i class="fa-solid fa-box-archive text-purple-400 text-sm shrink-0"></i>
+      <span class="truncate">ယောဂီ စာရင်းဟောင်း</span>
+    </button>
+    <button onclick="switchTab('leaders')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+      <i class="fa-solid fa-user-tie text-indigo-400 text-sm shrink-0"></i>
+      <span class="truncate">ဦးဆောင်ဆွေးနွေး ယောဂီ</span>
     </button>
   `;
 
   nav.innerHTML = html;
+
+  const btns = nav.querySelectorAll(".nav-btn");
+  btns.forEach(btn => {
+    btn.addEventListener("click", function () {
+      btns.forEach(b => b.classList.remove("nav-btn-active"));
+      this.classList.add("nav-btn-active");
+    });
+  });
 }
 
-window.switchTab = function (tab) {
-  window.AppState.currentTab = tab;
+window.renderSidebar = renderSidebar;
 
-  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("nav-btn-active"));
-  const activeBtn = document.getElementById("btn-" + tab);
-  if (activeBtn) activeBtn.classList.add("nav-btn-active");
-
-  document.getElementById("page-title").textContent = PAGE_TITLES[tab] || tab;
-
-  const container = document.getElementById("view-container");
-  container.innerHTML = `<div class="flex items-center justify-center py-24 text-slate-500 text-xs"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> ဖွင့်နေပါသည်...</div>`;
-
-  if (tab === "home") return window.renderHomePage(container);
-  if (tab === "total") return window.renderTotalListPage(container);
-  if (tab === "leaders") return window.renderLeaderPage(container);
-  if (tab.startsWith("level")) {
-    const level = Number(tab.replace("level", ""));
-    return window.renderLevelPage(container, level);
+document.addEventListener("DOMContentLoaded", () => {
+  if (typeof window.checkExistingSession === "function") {
+    window.checkExistingSession();
   }
-};
-
-/* --------------------------------- Modal --------------------------------- */
-
-window.openModal = function (title, bodyHtml, opts = {}) {
-  closeModal();
-  const wrap = document.createElement("div");
-  wrap.id = "app-modal";
-  wrap.className = "fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] flex items-center justify-center p-4";
-  wrap.innerHTML = `
-    <div class="w-full ${opts.wide ? "max-w-2xl" : "max-w-md"} bg-[#0e131f] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-800 shrink-0">
-        <h3 class="text-sm font-bold text-slate-100">${window.escapeHtml(title)}</h3>
-        <button onclick="closeModal()" class="text-slate-500 hover:text-rose-400 transition"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="p-5 overflow-y-auto">${bodyHtml}</div>
-    </div>
-  `;
-  document.body.appendChild(wrap);
-  wrap.addEventListener("click", (e) => { if (e.target === wrap) closeModal(); });
-};
-
-window.closeModal = function () {
-  const m = document.getElementById("app-modal");
-  if (m) m.remove();
-};
-
-/* --------------------------------- Boot ----------------------------------- */
-
-document.addEventListener("DOMContentLoaded", function () {
-  buildSidebar();
-  checkExistingSession();
 });
