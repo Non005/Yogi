@@ -108,6 +108,23 @@ function handleLogout() {
   }
 }
 
+function handleSessionExpired() {
+  const keys = getStorageKeys();
+  localStorage.removeItem(keys.TOKEN);
+  localStorage.removeItem(keys.USER);
+  localStorage.removeItem(keys.EXPIRES);
+
+  if (window.AppState) {
+    window.AppState.authToken = null;
+    window.AppState.currentUser = null;
+  }
+
+  document.documentElement.className = "dark not-authed";
+  if (typeof window.showToast === "function") {
+    window.showToast("ERROR", "Session ကုန်ဆုံးသွားပါပြီ။ ပြန်လည် Login ဝင်ပေးပါ။");
+  }
+}
+
 function loadUsersDropdown() {
   const select = document.getElementById("login-username");
   if (!select) return;
@@ -123,6 +140,7 @@ function loadUsersDropdown() {
 window.checkExistingSession = checkExistingSession;
 window.handleLoginSubmit = handleLoginSubmit;
 window.handleLogout = handleLogout;
+window.handleSessionExpired = handleSessionExpired;
 window.loadUsersDropdown = loadUsersDropdown;
 
 document.addEventListener("DOMContentLoaded", () => {
