@@ -18,8 +18,43 @@ const QUOTE_BOX_HTML = `
   </div>
 `;
 
-window.renderHomePage = async function (container) {
-  const res = await window.callApi("getDashboardData", {});
+function statCardsHtml(total, male, female) {
+  return `
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="stats-card">
+        <div class="bg-amber-500/10 text-amber-400 border border-amber-500/20"><i class="fa-solid fa-users"></i></div>
+        <div><p>TOTAL ACTIVE</p><h3 class="text-amber-400">${total || 0} ဦး</h3></div>
+      </div>
+      <div class="stats-card">
+        <div class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"><i class="fa-solid fa-mars"></i></div>
+        <div><p>ACTIVE MALE</p><h3 class="text-indigo-400">${male || 0} ဦး</h3></div>
+      </div>
+      <div class="stats-card">
+        <div class="bg-pink-500/10 text-pink-400 border border-pink-500/20"><i class="fa-solid fa-venus"></i></div>
+        <div><p>ACTIVE FEMALE</p><h3 class="text-pink-400">${female || 0} ဦး</h3></div>
+      </div>
+    </div>
+  `;
+}
+
+window.renderDashboard = async function () {
+  const container = document.getElementById("view-container");
+  if (!container) return;
+
+  const titleEl = document.getElementById("page-title");
+  if (titleEl) titleEl.innerText = "ပင်မစာမျက်နှာ";
+
+  window.toggleLoading(true);
+  let res;
+  try {
+    res = await window.callApi("getDashboardData", {});
+  } catch (err) {
+    console.error("getDashboardData Error:", err);
+    window.toggleLoading(false);
+    return;
+  }
+  window.toggleLoading(false);
+
   if (!res.success) {
     container.innerHTML = `<div class="text-rose-400 text-xs">${window.escapeHtml(res.message)}</div>`;
     return;
