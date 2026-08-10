@@ -297,3 +297,13 @@ tr.row-inactive td {
   border-radius: 1rem !important;
   margin-top: 1rem !important;
 }
+
+/* 💡 Search Input များ အထက်အောက် အမြင့် (Height) မြှင့်ရန် */
+#yogi-search-input,
+#leader-search-input,
+#summary-search-input {
+  padding-top: 0.75rem !important;    /* အထက် နေရာလွတ် */
+  padding-bottom: 0.75rem !important; /* အောက် နေရာလွတ် */
+  min-height: 44px !important;         /* Search Box အမြင့် */
+  font-size: 0.85rem !important;      /* စာရိုက်စာလုံး အရွယ်အစား */
+}
