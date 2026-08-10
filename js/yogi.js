@@ -1,5 +1,5 @@
 /**
- * YOGI MANAGEMENT SYSTEM — Yogi View Rendering & Actions
+ * YOGI MANAGEMENT SYSTEM — Yogi Stages Core Logic
  * File: js/yogi.js
  */
 
@@ -60,6 +60,10 @@ function statCardsYogiHtml(total, male, female) {
   `;
 }
 
+/**
+ * Render Yogi Stage View
+ * Limit: 30 items per page with Pagination
+ */
 async function renderYogiStage(stageId, page = 1, searchVal = "") {
   const container = document.getElementById("view-container");
   if (!container) return;
@@ -74,8 +78,10 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
 
   window.toggleLoading(true);
   let data = { rows: [], total: 0, activeTotal: 0, activeMale: 0, activeFemale: 0 };
+  const limit = 30; // 💡 Default 30 items per page
+
   try {
-    const res = await window.callApi("getYogiData", { level: stageId, page, searchVal, limit: 1000 });
+    const res = await window.callApi("getYogiData", { level: stageId, page, searchVal, limit });
     if (res.success && res.data) data = res.data;
   } catch (err) {
     console.error("getYogiData Error:", err);
@@ -84,6 +90,9 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
   }
 
   const rawRows = data.rows || [];
+  const totalCount = data.total || 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / limit));
+
   const sortedRows = [...rawRows].sort((a, b) => {
     if (a.status === 'Active' && b.status === 'Inactive') return -1;
     if (a.status === 'Inactive' && b.status === 'Active') return 1;
@@ -97,7 +106,7 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
       <!-- Top 3 KPI Cards -->
       ${statCardsYogiHtml(data.activeTotal, data.activeMale, data.activeFemale)}
 
-      <!-- Control Bar Wrapper -->
+      <!-- Restored Control Bar Buttons -->
       <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; background: #0e172a; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 1rem; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;">
         <div style="position: relative; flex: 1; min-width: 240px; max-width: 360px;">
           <input type="text" id="yogi-search-input" value="${window.escapeHtml(searchVal)}" 
@@ -124,7 +133,7 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
         </div>
       </div>
 
-      <!-- Table Container -->
+      <!-- Table Container (1 Single Line Cells, Plain Index 1, 2, 3) -->
       <div style="background-color: #0e172a; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 1rem; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
         <div style="overflow-x-auto;">
           <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem;">
@@ -148,32 +157,33 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
             <tbody>
               ${sortedRows.length > 0 ? sortedRows.map((y, idx) => `
                 <tr class="${y.status === 'Inactive' ? 'row-inactive' : ''}" style="border-bottom: 1px solid rgba(30, 41, 59, 0.5);">
-                  <td style="padding: 11px 14px; font-weight: bold; color: #f59e0b;">${idx + 1}</td>
-                  <td style="padding: 11px 14px;">${y.regDate || '-'}</td>
-                  <td style="padding: 11px 14px; font-weight: 800; color: #f8fafc;">${window.escapeHtml(y.name)}</td>
-                  <td style="padding: 11px 14px; text-align: center;">${y.age || '-'}</td>
-                  <td style="padding: 11px 14px;">${y.phone || '-'}</td>
-                  <td style="padding: 11px 14px;">${window.escapeHtml(y.address) || '-'}</td>
-                  <td style="padding: 11px 14px;">${window.escapeHtml(y.introducer) || '-'}</td>
-                  <td style="padding: 11px 14px;">${y.email || '-'}</td>
-                  <td style="padding: 11px 14px; text-align: center;">
+                  <td style="padding: 11px 14px; font-weight: bold; color: #f59e0b; white-space: nowrap;">${(page - 1) * limit + idx + 1}</td>
+                  <td style="padding: 11px 14px; white-space: nowrap;">${y.regDate || '-'}</td>
+                  <td style="padding: 11px 14px; font-weight: 800; color: #f8fafc; white-space: nowrap;">${window.escapeHtml(y.name)}</td>
+                  <td style="padding: 11px 14px; text-align: center; white-space: nowrap;">${y.age || '-'}</td>
+                  <td style="padding: 11px 14px; white-space: nowrap;">${y.phone || '-'}</td>
+                  <td style="padding: 11px 14px; white-space: nowrap;">${window.escapeHtml(y.address) || '-'}</td>
+                  <td style="padding: 11px 14px; white-space: nowrap;">${window.escapeHtml(y.introducer) || '-'}</td>
+                  <td style="padding: 11px 14px; white-space: nowrap;">${y.email || '-'}</td>
+                  <td style="padding: 11px 14px; text-align: center; white-space: nowrap;">
                     <span style="padding: 2px 8px; border-radius: 4px; font-weight: bold; ${y.gender === 'ကျား' ? 'background: rgba(99,102,241,0.2); color: #818cf8;' : 'background: rgba(236,72,153,0.2); color: #f472b6;'}">
                       ${y.gender || 'ကျား'}
                     </span>
                   </td>
-                  <td style="padding: 11px 14px;">${y.createdBy || 'System'}</td>
-                  <td style="padding: 11px 14px;">${y.createdAt ? y.createdAt.slice(0, 10) : '-'}</td>
-                  <td style="padding: 11px 14px; text-align: center;">
+                  <td style="padding: 11px 14px; white-space: nowrap;">${y.createdBy || 'System'}</td>
+                  <td style="padding: 11px 14px; white-space: nowrap;">${y.createdAt ? y.createdAt.slice(0, 10) : '-'}</td>
+                  <td style="padding: 11px 14px; text-align: center; white-space: nowrap;">
                     <span style="padding: 3px 8px; border-radius: 6px; font-weight: bold; ${y.status === 'Active' ? 'background: rgba(16,185,129,0.2); color: #34d399;' : 'background: rgba(244,63,94,0.2); color: #f87171;'}">
                       ${y.status || 'Active'}
                     </span>
                   </td>
-                  <td style="padding: 11px 14px; text-align: center; position: sticky; right: 0; background-color: #0e172a;">
-                    <div style="display: flex; gap: 4px; justify-content: center;">
-                      <button onclick="openYogiModal(${stageId}, ${y.id})" class="btn-action btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
-                      <button onclick="postYogiToNextStage(${y.id}, ${stageId})" class="btn-action btn-action-post" title="${stageId === 7 ? 'ယောဂီ စာရင်းဟောင်းသို့ ရွှေ့မည် (Post)' : 'နောက်တစ်ဆင့်သို့ ရွှေ့မည် (Post)'}"><i class="fa-solid fa-paper-plane"></i> Post</button>
-                      <button onclick="toggleYogiStatus(${y.id}, '${y.status}', ${stageId})" class="btn-action ${y.status === 'Active' ? 'btn-action-inactive' : 'btn-action-active'}"><i class="fa-solid ${y.status === 'Active' ? 'fa-user-xmark' : 'fa-user-check'}"></i></button>
-                      <button onclick="deleteYogi(${y.id}, ${stageId})" class="btn-action btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
+                  <td style="padding: 11px 14px; text-align: center; position: sticky; right: 0; background-color: #0e172a; white-space: nowrap;">
+                    <div style="display: flex; gap: 6px; justify-content: center;">
+                      <!-- Restored Sleek Icon-only Action Buttons -->
+                      <button onclick="openYogiModal(${stageId}, ${y.id})" class="btn-action-icon btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
+                      <button onclick="postYogiToNextStage(${y.id}, ${stageId})" class="btn-action-icon btn-action-post" title="${stageId === 7 ? 'ယောဂီ စာရင်းဟောင်းသို့ ရွှေ့မည် (Post)' : 'နောက်တစ်ဆင့်သို့ ရွှေ့မည် (Post)'}"><i class="fa-solid fa-paper-plane"></i></button>
+                      <button onclick="toggleYogiStatus(${y.id}, '${y.status}', ${stageId})" class="btn-action-icon ${y.status === 'Active' ? 'btn-action-inactive' : 'btn-action-active'}" title="${y.status === 'Active' ? 'Inactive ပြုလုပ်မည်' : 'Active ပြုလုပ်မည်'}"><i class="fa-solid ${y.status === 'Active' ? 'fa-user-xmark' : 'fa-user-check'}"></i></button>
+                      <button onclick="deleteYogi(${y.id}, ${stageId})" class="btn-action-icon btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -184,121 +194,30 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
           </table>
         </div>
       </div>
+
+      <!-- Pagination Bar -->
+      ${totalPages > 1 ? `
+        <div class="pagination-container">
+          <button onclick="renderYogiStage(${stageId}, ${page - 1}, '${window.escapeHtml(searchVal)}')" ${page <= 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-action" style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.4rem 0.85rem;">
+            <i class="fa-solid fa-chevron-left"></i> Previous
+          </button>
+
+          <span style="font-size: 0.75rem; font-weight: 800; color: #fbbf24;">
+            Page <b style="color: #ffffff;">${page}</b> of <b>${totalPages}</b> (Total: ${totalCount})
+          </span>
+
+          <button onclick="renderYogiStage(${stageId}, ${page + 1}, '${window.escapeHtml(searchVal)}')" ${page >= totalPages ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-action" style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.4rem 0.85rem;">
+            Next <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      ` : ''}
     </div>
   `;
 }
 
 /**
- * 💡 7-COLUMN MATRIX TABLE: "ယောဂီ စုစုပေါင်း စာရင်း"
- * Displays 7 Columns (သတိ | ရုပ် | နာမ် | ရုပ်နာမ် | ခန္ဓာငါးပါး | ဥပါဒါနက္ခန္ဓာငါးပါး | သိပါယ်ဆိုက်ပွား)
+ * Centered Pop-up Modal Window for Adding / Editing Yogi
  */
-async function renderTotalSummary(searchVal = "") {
-  const container = document.getElementById("view-container");
-  if (!container) return;
-
-  const titleEl = document.getElementById("page-title");
-  if (titleEl) titleEl.innerText = "ယောဂီ စုစုပေါင်း စာရင်း";
-
-  window.toggleLoading(true);
-  let groups = [];
-  let stats = { totalActive: 0, activeMale: 0, activeFemale: 0 };
-
-  try {
-    const res = await window.callApi("getTotalListData");
-    const dashRes = await window.callApi("getDashboardData");
-    if (res.success && res.data) groups = res.data;
-    if (dashRes.success && dashRes.data) stats = dashRes.data;
-  } catch (e) {
-    console.error(e);
-  } finally {
-    window.toggleLoading(false);
-  }
-
-  const stageGroups = groups.filter(g => g.level <= 7);
-  const searchLower = String(searchVal || "").trim().toLowerCase();
-
-  const levelCols = stageGroups.map(g => {
-    let rows = g.rows || [];
-    if (searchLower) {
-      rows = rows.filter(r => String(r.name || "").toLowerCase().includes(searchLower) || String(r.phone || "").includes(searchLower));
-    }
-    return { level: g.level, name: g.name, rows };
-  });
-
-  const maxRows = Math.max(1, ...levelCols.map(c => c.rows.length));
-
-  container.innerHTML = `
-    <div class="space-y-5 view-panel">
-      <!-- Top 3 KPI Cards -->
-      ${statCardsYogiHtml(stats.totalActive, stats.activeMale, stats.activeFemale)}
-
-      <!-- Control Bar -->
-      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; background: #0e172a; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 1rem; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;">
-        <div style="position: relative; flex: 1; min-width: 240px; max-width: 360px;">
-          <input type="text" id="summary-search-input" value="${window.escapeHtml(searchVal)}" 
-            onkeydown="if(event.key==='Enter') triggerSummarySearch()"
-            placeholder="ယောဂီ အမည် / ဖုန်း ရှာဖွေရန်..." 
-            style="width: 100%; padding: 0.5rem 0.85rem 0.5rem 2.2rem; background: #070a12; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; color: #f1f5f9; font-size: 0.8rem; outline: none;">
-          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.75rem;"></i>
-        </div>
-
-        <div style="display: flex; gap: 0.5rem;">
-          <button onclick="renderTotalSummary('')" class="btn-action" style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.5rem 0.85rem;">
-            <i class="fa-solid fa-rotate"></i> Refresh
-          </button>
-          <button onclick="exportYogiToExcel('Total_Summary')" class="btn-action" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.5rem 0.85rem;">
-            <i class="fa-solid fa-file-excel"></i> Export Excel
-          </button>
-        </div>
-      </div>
-
-      <!-- 💡 7-COLUMN MATRIX TABLE -->
-      <div style="background-color: #0e172a; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 1rem; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
-        <div style="overflow-x-auto;">
-          <table style="width: 100%; text-align: center; border-collapse: collapse; font-size: 0.8rem;">
-            <thead>
-              <tr style="background: #080d1a; border-bottom: 2px solid rgba(245, 158, 11, 0.3); color: #fbbf24; font-size: 0.75rem; font-weight: 800;">
-                <th style="padding: 12px; border-right: 1px solid rgba(255,255,255,0.1);">သတိ</th>
-                <th style="padding: 12px; border-right: 1px solid rgba(255,255,255,0.1);">ရုပ်</th>
-                <th style="padding: 12px; border-right: 1px solid rgba(255,255,255,0.1);">နာမ်</th>
-                <th style="padding: 12px; border-right: 1px solid rgba(255,255,255,0.1);">ရုပ်နာမ်</th>
-                <th style="padding: 12px; border-right: 1px solid rgba(255,255,255,0.1);">ခန္ဓာငါးပါး</th>
-                <th style="padding: 12px; border-right: 1px solid rgba(255,255,255,0.1);">ဥပါဒါနက္ခန္ဓာငါးပါး</th>
-                <th style="padding: 12px;">သိပါယ်ဆိုက်ပွား</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${Array.from({ length: maxRows }).map((_, rIdx) => `
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                  ${levelCols.map((col, cIdx) => {
-                    const yogi = col.rows[rIdx];
-                    const borderRight = cIdx < 6 ? 'border-right: 1px solid rgba(255,255,255,0.08);' : '';
-                    return `
-                      <td style="padding: 10px 8px; font-size: 0.8rem; ${borderRight}">
-                        ${yogi ? `
-                          <div style="display: inline-flex; align-items: center; gap: 4px; font-weight: bold; color: #f1f5f9;">
-                            <span>${window.escapeHtml(yogi.name)}</span>
-                            <span style="font-size: 0.65rem; font-family: monospace; padding: 1px 4px; border-radius: 3px; ${yogi.gender === 'ကျား' ? 'color: #818cf8; background: rgba(99,102,241,0.15);' : 'color: #f472b6; background: rgba(236,72,153,0.15);'}">${yogi.gender}</span>
-                          </div>
-                        ` : ''}
-                      </td>
-                    `;
-                  }).join('')}
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function triggerSummarySearch() {
-  const input = document.getElementById("summary-search-input");
-  if (input) renderTotalSummary(input.value.trim());
-}
-
 function openYogiModal(stageId, yogiId = null) {
   let existingData = null;
   if (yogiId) {
@@ -552,8 +471,6 @@ function handleExcelImport(e, stageId) {
 // Global Window Exports
 window.renderYogiStage = renderYogiStage;
 window.renderLevelPage = renderYogiStage;
-window.renderTotalSummary = renderTotalSummary;
-window.triggerSummarySearch = triggerSummarySearch;
 window.toggleYogiStatus = toggleYogiStatus;
 window.postYogiToNextStage = postYogiToNextStage;
 window.deleteYogi = deleteYogi;
