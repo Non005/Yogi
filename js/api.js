@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — API Bridge
- * File: js/api.js
+ * File: js/api.js 
  */
 
 const CONFIG_KEYS = {
