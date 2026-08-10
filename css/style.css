@@ -1,22 +1,17 @@
 /* ========================================================================
-   YOGI MANAGEMENT SYSTEM — EYE-COMFORT DARK STYLES & PRINT ENGINE
+   YOGI MANAGEMENT SYSTEM — EYE-COMFORT DARK STYLES
    File: css/style.css
    ======================================================================== */
 
 :root { color-scheme: dark; }
 
-/* Scrollbar */
+/* Custom Eye-Friendly Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #090d16; }
 ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
-/* Sidebar Layout Fixes */
-#main-sidebar {
-  width: 16rem !important; /* 256px */
-  flex-shrink: 0 !important;
-}
-
+/* Sidebar Navigation Buttons */
 .nav-btn { 
   transition: all 0.18s ease; 
   font-size: 0.75rem !important;
@@ -34,7 +29,7 @@
   border-left: 3.5px solid #f59e0b !important; 
 }
 
-/* High-Visibility KPI Cards */
+/* High-Visibility Glassmorphism KPI Stats Cards */
 .stats-card { 
   background: linear-gradient(135deg, #121d33 0%, #0c1424 100%) !important; 
   border: 1.5px solid rgba(71, 85, 105, 0.45) !important;
