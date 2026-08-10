@@ -15,13 +15,47 @@ window.initApp = function () {
   }
 };
 
-window.switchTab = function (tabName, param = null) {
+/**
+ * Updates Active Highlight Class on Sidebar Buttons
+ */
+function updateActiveNav(tabName, param) {
   const nav = document.getElementById("sidebar-nav");
-  if (nav) {
-    const btns = nav.querySelectorAll(".nav-btn");
-    btns.forEach(b => b.classList.remove("nav-btn-active"));
+  if (!nav) return;
+
+  const btns = nav.querySelectorAll(".nav-btn");
+  btns.forEach(b => {
+    b.classList.remove("nav-btn-active");
+    const btnTab = b.getAttribute("data-tab");
+    const btnParam = b.getAttribute("data-param");
+
+    if (btnTab === tabName) {
+      if (param !== null && param !== undefined) {
+        if (String(btnParam) === String(param)) {
+          b.classList.add("nav-btn-active");
+        }
+      } else if (!btnParam) {
+        b.classList.add("nav-btn-active");
+      }
+    }
+  });
+}
+
+/**
+ * Main Tab Router Function
+ */
+window.switchTab = function (tabName, param = null) {
+  // Update sidebar active highlight
+  updateActiveNav(tabName, param);
+
+  // Auto-close mobile sidebar on selection if open
+  const sidebar = document.getElementById("main-sidebar");
+  if (sidebar && !sidebar.classList.contains("-translate-x-full") && window.innerWidth < 768) {
+    if (typeof window.toggleMobileSidebar === "function") {
+      window.toggleMobileSidebar();
+    }
   }
 
+  // Render view panels
   if (tabName === "home" || tabName === "dashboard") {
     if (typeof window.renderDashboard === "function") window.renderDashboard();
   } else if (tabName === "level" || tabName === "yogi" || tabName === "stage") {
@@ -34,53 +68,50 @@ window.switchTab = function (tabName, param = null) {
   }
 };
 
+/**
+ * Renders Dynamic Sidebar Navigation
+ */
 function renderSidebar() {
   const nav = document.getElementById("sidebar-nav");
   if (!nav) return;
 
   let html = `
-    <button onclick="switchTab('home')" class="nav-btn nav-btn-active w-full text-left p-2.5 rounded-xl font-extrabold text-xs flex items-center gap-2.5">
+    <button data-tab="home" onclick="switchTab('home')" class="nav-btn nav-btn-active w-full text-left p-2.5 rounded-xl font-extrabold text-xs flex items-center gap-2.5">
       <i class="fa-solid fa-house text-amber-400 text-sm shrink-0"></i>
       <span class="truncate">ပင်မစာမျက်နှာ</span>
     </button>
-    <p class="pt-3 pb-1 px-3 text-[10px] font-black text-slate-500 uppercase tracking-widest">ကမ္မဋ္ဌာန်း အဆင့်များ</p>
+    <p class="pt-3 pb-1 px-3 text-[10px] font-black text-amber-400/70 uppercase tracking-widest">ကမ္မဋ္ဌာန်း အဆင့်များ</p>
   `;
 
+  // Meditation Levels 1 to 7
   const levels = (window.LEVELS || []).filter(l => l.id <= 7);
   levels.forEach(l => {
     html += `
-      <button onclick="switchTab('level', ${l.id})" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
-        <span class="w-5 h-5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-[10px] shrink-0 font-mono">${l.id}</span>
+      <button data-tab="level" data-param="${l.id}" onclick="switchTab('level', ${l.id})" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+        <span class="w-5 h-5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-[10px] shrink-0 font-mono font-extrabold">${l.id}</span>
         <span class="truncate">${l.name}</span>
       </button>
     `;
   });
 
+  // Other Lists
   html += `
-    <p class="pt-3 pb-1 px-3 text-[10px] font-black text-slate-500 uppercase tracking-widest">အခြား စာရင်းများ</p>
-    <button onclick="switchTab('total_summary')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+    <p class="pt-3 pb-1 px-3 text-[10px] font-black text-amber-400/70 uppercase tracking-widest">အခြား စာရင်းများ</p>
+    <button data-tab="total_summary" onclick="switchTab('total_summary')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
       <i class="fa-solid fa-list-check text-emerald-400 text-sm shrink-0"></i>
       <span class="truncate">ယောဂီ စုစုပေါင်း စာရင်း</span>
     </button>
-    <button onclick="switchTab('level', 8)" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+    <button data-tab="level" data-param="8" onclick="switchTab('level', 8)" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
       <i class="fa-solid fa-box-archive text-purple-400 text-sm shrink-0"></i>
       <span class="truncate">ယောဂီ စာရင်းဟောင်း</span>
     </button>
-    <button onclick="switchTab('leaders')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+    <button data-tab="leaders" onclick="switchTab('leaders')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
       <i class="fa-solid fa-user-tie text-indigo-400 text-sm shrink-0"></i>
       <span class="truncate">ဦးဆောင်ဆွေးနွေး ယောဂီ</span>
     </button>
   `;
 
   nav.innerHTML = html;
-
-  const btns = nav.querySelectorAll(".nav-btn");
-  btns.forEach(btn => {
-    btn.addEventListener("click", function () {
-      btns.forEach(b => b.classList.remove("nav-btn-active"));
-      this.classList.add("nav-btn-active");
-    });
-  });
 }
 
 window.renderSidebar = renderSidebar;
