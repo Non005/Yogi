@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Authentication
- * File: js/auth.js
+ * File: js/auth.js 
  */
 
 function populateLoginDropdown() {
