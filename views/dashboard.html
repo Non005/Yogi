@@ -1,0 +1,58 @@
+<!-- views/dashboard.html — Dashboard Template -->
+<div class="space-y-6">
+  <!-- KPI Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="dashboard-kpi-cards">
+    <div class="stats-card">
+      <div class="bg-amber-500/10 text-amber-400 border border-amber-500/20">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <div>
+        <p>စုစုပေါင်း ACTIVE ယောဂီ</p>
+        <h3 class="text-amber-400" id="dash-total-active">0 ဦး</h3>
+      </div>
+    </div>
+    
+    <div class="stats-card">
+      <div class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+        <i class="fa-solid fa-mars"></i>
+      </div>
+      <div>
+        <p>ကျား ယောဂီ</p>
+        <h3 class="text-indigo-400" id="dash-total-male">0 ဦး</h3>
+      </div>
+    </div>
+    
+    <div class="stats-card">
+      <div class="bg-pink-500/10 text-pink-400 border border-pink-500/20">
+        <i class="fa-solid fa-venus"></i>
+      </div>
+      <div>
+        <p>မ ယောဂီ</p>
+        <h3 class="text-pink-400" id="dash-total-female">0 ဦး</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage Summary Table -->
+  <div class="bg-[#0e172a] border border-slate-800 rounded-2xl p-5 shadow-xl">
+    <h3 class="font-extrabold text-sm text-slate-100 mb-4 flex items-center gap-2">
+      <i class="fa-solid fa-chart-pie text-amber-400"></i>
+      ကမ္မဋ္ဌာန်း အဆင့်များအလိုက် ယောဂီဦးရေ အကျဉ်းချုပ်
+    </h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-[#070a12] text-slate-400 text-[11px] uppercase border-b border-slate-800">
+          <tr>
+            <th class="p-3">ကမ္မဋ္ဌာန်း အဆင့်</th>
+            <th class="p-3 text-center">Active စုစုပေါင်း</th>
+            <th class="p-3 text-center">ကျား</th>
+            <th class="p-3 text-center">မ</th>
+          </tr>
+        </thead>
+        <tbody id="dash-levels-tbody" class="divide-y divide-slate-800/60">
+          <!-- JS မှတစ်ဆင့် Dynamic Render သွားမည် -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
