@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Main Router & Navigation Logic
- * File: js/app.js 
+ * File: js/app.js  
  */
 
 // Default Fallback Levels in case window.LEVELS is not loaded yet
