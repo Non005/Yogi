@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Yogi View Rendering & Actions
- * File: js/yogi.js
+ * File: js/yogi.js 
  */
 
 function detectGenderByName(name) {
