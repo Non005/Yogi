@@ -2,9 +2,17 @@
  * YOGI MANAGEMENT SYSTEM — API Bridge
  * File: js/api.js
  */
+
+// Safe Storage Keys Helper
+const CONFIG_KEYS = {
+  TOKEN: (window.CONFIG && window.CONFIG.STORAGE_KEY_TOKEN) || "yogi_auth_token",
+  USER: (window.CONFIG && window.CONFIG.STORAGE_KEY_USER) || "yogi_user_name",
+  EXPIRES: (window.CONFIG && window.CONFIG.STORAGE_KEY_EXPIRES) || "yogi_token_expires_at"
+};
+
 window.AppState = window.AppState || {
-  currentUser: localStorage.getItem(window.CONFIG.STORAGE_KEY_USER) || null,
-  authToken: localStorage.getItem(window.CONFIG.STORAGE_KEY_TOKEN) || null,
+  currentUser: localStorage.getItem(CONFIG_KEYS.USER) || null,
+  authToken: localStorage.getItem(CONFIG_KEYS.TOKEN) || null,
   currentTab: "home"
 };
 
@@ -26,23 +34,45 @@ window.toggleLoading = function (show) {
 window.escapeHtml = function (str) {
   if (str === undefined || str === null) return "";
   return String(str)
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 };
 
 window.showToast = function (type, message) {
   const box = document.getElementById("toast-container");
   if (!box) return;
   const el = document.createElement("div");
-  const ok = type === "SUCCESS";
-  el.className = `p-3.5 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-bold transition-all transform translate-y-4 opacity-0 duration-300 pointer-events-auto bg-[#0e131f] border ${ok ? "border-emerald-500/50 text-emerald-300" : "border-rose-500/50 text-rose-300"}`;
-  el.innerHTML = `<i class="fa-solid ${ok ? "fa-circle-check" : "fa-circle-exclamation"} text-sm"></i><span>${window.escapeHtml(message)}</span>`;
+  const isSuccess = String(type).toUpperCase() === "SUCCESS";
+  
+  el.className = `p-3.5 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-bold transition-all transform translate-y-4 opacity-0 duration-300 pointer-events-auto bg-[#0e131f] border ${
+    isSuccess ? "border-emerald-500/50 text-emerald-300" : "border-rose-500/50 text-rose-300"
+  }`;
+  el.innerHTML = `<i class="fa-solid ${isSuccess ? "fa-circle-check" : "fa-circle-exclamation"} text-sm"></i><span>${window.escapeHtml(message)}</span>`;
+  
   box.appendChild(el);
   requestAnimationFrame(() => el.classList.remove("translate-y-4", "opacity-0"));
   setTimeout(() => {
     el.classList.add("translate-y-4", "opacity-0");
     setTimeout(() => el.remove(), 300);
   }, 3600);
+};
+
+/**
+ * Handle Session Expiration
+ */
+window.handleSessionExpired = window.handleSessionExpired || function () {
+  window.showToast("ERROR", "အကောင့်ဝင်ရောက်မှု သက်တမ်းကုန်ဆုံးသွားပါပြီ။ ပြန်လည် Login ဝင်ပါ။");
+  localStorage.removeItem(CONFIG_KEYS.TOKEN);
+  localStorage.removeItem(CONFIG_KEYS.USER);
+  localStorage.removeItem(CONFIG_KEYS.EXPIRES);
+  if (window.AppState) {
+    window.AppState.authToken = null;
+    window.AppState.currentUser = null;
+  }
+  document.documentElement.className = "dark not-authed";
 };
 
 /**
@@ -58,18 +88,26 @@ window.callApi = async function (action, payload = {}, opts = {}) {
     return window.gReadCache[cacheKey];
   }
 
-  const token = window.AppState.authToken || localStorage.getItem(window.CONFIG.STORAGE_KEY_TOKEN) || "";
+  const token = window.AppState.authToken || localStorage.getItem(CONFIG_KEYS.TOKEN) || "";
   const headers = { "Content-Type": "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  let url = window.CONFIG.API_URL;
+  let url = (window.CONFIG && window.CONFIG.API_URL) || window.getApiUrl();
   const fetchOpts = { method, headers };
 
+  // Sanitize Payload (remove undefined/null values)
+  const cleanPayload = {};
+  Object.keys(payload).forEach(key => {
+    if (payload[key] !== undefined && payload[key] !== null) {
+      cleanPayload[key] = payload[key];
+    }
+  });
+
   if (method === "GET") {
-    const qs = new URLSearchParams({ action, token, ...payload });
-    url += `?${qs.toString()}`;
+    const params = new URLSearchParams({ action, token, ...cleanPayload });
+    url += `?${params.toString()}`;
   } else {
-    fetchOpts.body = JSON.stringify({ action, token, ...payload });
+    fetchOpts.body = JSON.stringify({ action, token, ...cleanPayload });
   }
 
   let response;
