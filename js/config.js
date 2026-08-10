@@ -5,24 +5,28 @@
 (function () {
   "use strict";
 
-  // ကမ္မဋ္ဌာန်း အဆင့်များ စာရင်း
+  // ကမ္မဋ္ဌာန်း အဆင့်များ စာရင်း (1 to 7 + Stage 8 Alumni)
   window.LEVELS = [
     { id: 1, key: "level1", name: "သတိကိုယ့်စိတ် ကိုယ်သိပါ", icon: "fa-hands-praying", color: "amber" },
     { id: 2, key: "level2", name: "ရုပ် ကမ္မဋ္ဌာန်း", icon: "fa-leaf", color: "emerald" },
     { id: 3, key: "level3", name: "နာမ် ကမ္မဋ္ဌာန်း", icon: "fa-brain", color: "sky" },
     { id: 4, key: "level4", name: "ရုပ်နာမ် ကမ္မဋ္ဌာန်း", icon: "fa-atom", color: "cyan" },
     { id: 5, key: "level5", name: "ခန္ဓာငါးပါး ကမ္မဋ္ဌာန်း", icon: "fa-layer-group", color: "rose" },
-    { id: 6, key: "level6", name: "ဥပါနက္ခခန္ဓာငါးပါး ကမ္မဋ္ဌာန်း", icon: "fa-circle-nodes", color: "teal" },
+    { id: 6, key: "level6", name: "ဥပါဒါနက္ခန္ဓာငါးပါး ကမ္မဋ္ဌာန်း", icon: "fa-circle-nodes", color: "teal" },
     { id: 7, key: "level7", name: "သိ-ပါယ်-ဆိုက်-ပွား ကမ္မဋ္ဌာန်း", icon: "fa-sun", color: "indigo" },
     { id: 8, key: "old_yogis", name: "ယောဂီ စာရင်းဟောင်း", icon: "fa-box-archive", color: "purple" }
   ];
 
+  // Pre-seeded Login User Accounts
   window.LOGIN_USERS = [
     "Admin",
     "ဓမ္မဝန်ဆောင် ၁", "ဓမ္မဝန်ဆောင် ၂", "ဓမ္မဝန်ဆောင် ၃", "ဓမ္မဝန်ဆောင် ၄", "ဓမ္မဝန်ဆောင် ၅",
     "ဓမ္မဝန်ဆောင် ၆", "ဓမ္မဝန်ဆောင် ၇", "ဓမ္မဝန်ဆောင် ၈", "ဓမ္မဝန်ဆောင် ၉", "ဓမ္မဝန်ဆောင် ၁၀"
   ];
 
+  /**
+   * Resolves API URL based on Environment
+   */
   function getApiUrl() {
     const hostname = window.location.hostname;
     if (hostname === "localhost" || hostname === "127.0.0.1") {
@@ -31,7 +35,30 @@
     return localStorage.getItem("prod_api_url") || "https://yogi-list.kotuntunwin1985.workers.dev";
   }
 
+  /**
+   * Get Level Info by ID
+   */
+  function getLevelById(id) {
+    const numId = Number(id);
+    return window.LEVELS.find(l => l.id === numId) || {
+      id: numId,
+      name: numId === 8 ? "ယောဂီ စာရင်းဟောင်း" : `အဆင့် (${numId})`,
+      icon: "fa-dharmachakra",
+      color: "amber"
+    };
+  }
+
+  /**
+   * Get Level Info by Key
+   */
+  function getLevelByKey(key) {
+    return window.LEVELS.find(l => l.key === key) || null;
+  }
+
+  // Global Exports
   window.getApiUrl = getApiUrl;
+  window.getLevelById = getLevelById;
+  window.getLevelByKey = getLevelByKey;
 
   window.CONFIG = {
     get API_URL() { return getApiUrl(); },
