@@ -4,17 +4,56 @@
  */
 
 const QUOTE_BOX_HTML = `
-  <div class="p-4 rounded-xl space-y-2.5 font-serif italic text-xs sm:text-sm shadow-inner mt-3" style="background-color: rgba(9, 13, 22, 0.7); border: 1px solid rgba(245, 158, 11, 0.25);">
-    <p style="color: #fef08a;" class="leading-relaxed">In every sight, -- မင်း ဘာပဲမြင်မြင် ... </p>
-    <p style="color: #7dd3fc;" class="leading-relaxed">In every sound, -- မင်း ဘာပဲကြားကြား ... </p>
-    <p style="color: #6ee7b7;" class="leading-relaxed">In every smell, -- မင်း ဘယ်လို အနံ့ပဲရရ ...</p>
-    <p style="color: #fda4af;" class="leading-relaxed">In every taste, -- မင်း ဘာပဲစားစား ... </p>
-    <p style="color: #5eead4;" class="leading-relaxed">In every touch, -- မင်း ဘာနဲ့ပဲ ထိတွေ့ရပါစေ ... </p>
-    <p style="color: #fbbf24; border-top: 1px solid rgba(245, 158, 11, 0.25);" class="font-extrabold not-italic pt-2 text-xs sm:text-sm leading-relaxed">In every thought -- မင်း ဘာပဲ တွေးတွေး... —stay mindful. -- အမြဲသတိ ထားပါလေ ...</p>
-  </div>
-  <div class="pt-2.5 flex justify-between items-center text-xs mt-3" style="border-top: 1px solid rgba(245, 158, 11, 0.2);">
-    <span class="font-black" style="color: #fbbf24;">Appamadena sampadetha <span class="font-sans font-normal italic text-[10px]" style="color: #f59e0b;">— The Buddha</span></span>
-    <span class="text-[9px] font-black px-3 py-1 rounded-full font-sans uppercase" style="background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">ERP Wisdom</span>
+  <div class="mindfulness-card space-y-4">
+    <div class="space-y-3 font-serif text-xs sm:text-sm md:text-base leading-relaxed">
+      <div class="flex items-start gap-2.5 border-b border-amber-500/15 pb-2.5">
+        <span class="text-amber-400 font-extrabold not-italic font-mono text-xs mt-0.5">01.</span>
+        <p class="italic"><span class="text-amber-200 font-extrabold">In every sight,</span> <span class="text-slate-400 not-italic font-sans text-xs">-- မင်း ဘာပဲမြင်မြင် ...</span></p>
+      </div>
+
+      <div class="flex items-start gap-2.5 border-b border-amber-500/15 pb-2.5">
+        <span class="text-sky-400 font-extrabold not-italic font-mono text-xs mt-0.5">02.</span>
+        <p class="italic"><span class="text-sky-300 font-extrabold">In every sound,</span> <span class="text-slate-400 not-italic font-sans text-xs">-- မင်း ဘာပဲကြားကြား ...</span></p>
+      </div>
+
+      <div class="flex items-start gap-2.5 border-b border-amber-500/15 pb-2.5">
+        <span class="text-emerald-400 font-extrabold not-italic font-mono text-xs mt-0.5">03.</span>
+        <p class="italic"><span class="text-emerald-300 font-extrabold">In every smell,</span> <span class="text-slate-400 not-italic font-sans text-xs">-- မင်း ဘယ်လို အနံ့ပဲရရ ...</span></p>
+      </div>
+
+      <div class="flex items-start gap-2.5 border-b border-amber-500/15 pb-2.5">
+        <span class="text-rose-400 font-extrabold not-italic font-mono text-xs mt-0.5">04.</span>
+        <p class="italic"><span class="text-rose-300 font-extrabold">In every taste,</span> <span class="text-slate-400 not-italic font-sans text-xs">-- မင်း ဘာပဲစားစား ...</span></p>
+      </div>
+
+      <div class="flex items-start gap-2.5 border-b border-amber-500/15 pb-2.5">
+        <span class="text-teal-400 font-extrabold not-italic font-mono text-xs mt-0.5">05.</span>
+        <p class="italic"><span class="text-teal-300 font-extrabold">In every touch,</span> <span class="text-slate-400 not-italic font-sans text-xs">-- မင်း ဘာနဲ့ပဲ ထိတွေ့ရပါစေ ...</span></p>
+      </div>
+
+      <div class="pt-1">
+        <div class="bg-gradient-to-r from-amber-500/15 via-amber-600/10 to-transparent border border-amber-500/35 p-3.5 rounded-xl shadow-inner space-y-1">
+          <p class="text-amber-300 font-black not-italic text-sm sm:text-base leading-relaxed flex items-center gap-2">
+            <i class="fa-solid fa-quote-left text-amber-400/60 text-xs"></i>
+            <span>In every thought -- မင်း ဘာပဲ တွေးတွေး ...</span>
+          </p>
+          <p class="text-xs sm:text-sm text-amber-200 font-extrabold tracking-wide pl-5">
+            — stay mindful. -- အမြဲသတိ ထားပါလေ ...
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-3 flex flex-wrap items-center justify-between border-t border-amber-500/20 text-xs gap-2">
+      <div class="flex items-center gap-1.5 font-extrabold text-amber-400">
+        <i class="fa-solid fa-dharmachakra text-xs"></i>
+        <span>Appamadena sampadetha</span>
+        <span class="text-[11px] font-sans font-normal italic text-slate-400">— The Buddha</span>
+      </div>
+      <span class="text-[10px] font-extrabold px-3 py-1 rounded-full font-sans uppercase bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-inner">
+        ERP Wisdom
+      </span>
+    </div>
   </div>
 `;
 
@@ -55,48 +94,71 @@ window.renderDashboard = async function () {
   }
   window.toggleLoading(false);
 
-  if (!res.success) {
-    container.innerHTML = `<div class="text-rose-400 text-xs">${window.escapeHtml(res.message)}</div>`;
+  if (!res || !res.success) {
+    container.innerHTML = `<div class="text-rose-400 text-xs p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-center">${window.escapeHtml(res ? res.message : "ဒေတာရယူ၍ မရပါ။")}</div>`;
     return;
   }
+
   const d = res.data;
 
-  const breakdownRows = d.perLevel.map(l => `
-    <tr class="border-b border-slate-800/60">
-      <td class="px-3 py-2 font-semibold text-slate-200">${window.escapeHtml(l.name)}</td>
-      <td class="px-3 py-2 text-sky-400 font-bold">${l.male}</td>
-      <td class="px-3 py-2 text-rose-400 font-bold">${l.female}</td>
-      <td class="px-3 py-2 text-emerald-400 font-black">${l.total}</td>
-    </tr>`).join("");
+  const breakdownRows = (d.perLevel || []).map(l => `
+    <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors">
+      <td class="px-4 py-3 font-extrabold text-slate-200">${window.escapeHtml(l.name)}</td>
+      <td class="px-4 py-3 text-sky-400 font-bold font-mono text-center">${l.male || 0}</td>
+      <td class="px-4 py-3 text-rose-400 font-bold font-mono text-center">${l.female || 0}</td>
+      <td class="px-4 py-3 text-amber-400 font-black font-mono text-center">${l.total || 0}</td>
+    </tr>
+  `).join("");
 
   container.innerHTML = `
-    ${statCardsHtml(d.totalActive, d.activeMale, d.activeFemale)}
+    <div class="space-y-6 view-panel">
+      <!-- Top 3 KPI Cards -->
+      ${statCardsHtml(d.totalActive, d.activeMale, d.activeFemale)}
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div class="bg-[#0e131f] border border-amber-500/20 rounded-2xl p-5">
-        <h3 class="text-xs font-black text-amber-300 uppercase tracking-wider mb-1 flex items-center gap-2"><i class="fa-solid fa-dharmachakra"></i> Mindfulness Reminder</h3>
-        ${QUOTE_BOX_HTML}
-      </div>
-
-      <div class="bg-[#0e131f] border border-slate-800 rounded-2xl overflow-hidden">
-        <div class="px-4 py-3 bg-[#0c1322] border-b border-slate-800">
-          <h3 class="text-xs font-black text-slate-100"><i class="fa-solid fa-chart-simple text-indigo-400 mr-1.5"></i>ကမ္မဋ္ဌာန်း အဆင့်အလိုက် စာရင်း (Active)</h3>
+      <!-- Grid: Mindfulness Reminder (Left) + Breakdown Table (Right) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Mindfulness Reminder Card -->
+        <div class="space-y-2">
+          <h3 class="text-xs font-black text-amber-300 uppercase tracking-wider flex items-center gap-2 px-1">
+            <i class="fa-solid fa-dharmachakra text-amber-400"></i>
+            <span>Mindfulness Reminder</span>
+          </h3>
+          ${QUOTE_BOX_HTML}
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-[11px] text-slate-300">
-            <thead class="text-slate-500 text-[9px] uppercase tracking-wider">
-              <tr><th class="px-3 py-2 text-left">အဆင့်</th><th class="px-3 py-2 text-left">Male</th><th class="px-3 py-2 text-left">Female</th><th class="px-3 py-2 text-left">Total</th></tr>
-            </thead>
-            <tbody>
-              ${breakdownRows}
-              <tr class="bg-[#0c1322]">
-                <td class="px-3 py-2.5 font-black text-violet-300">ဦးဆောင်ဆွေးနွေး ယောဂီ</td>
-                <td class="px-3 py-2.5 text-sky-400 font-bold">${d.leaders.male}</td>
-                <td class="px-3 py-2.5 text-rose-400 font-bold">${d.leaders.female}</td>
-                <td class="px-3 py-2.5 text-emerald-400 font-black">${d.leaders.total}</td>
-              </tr>
-            </tbody>
-          </table>
+
+        <!-- Stage Breakdown Table (Active) -->
+        <div class="space-y-2">
+          <h3 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2 px-1">
+            <i class="fa-solid fa-chart-pie text-indigo-400"></i>
+            <span>ကမ္မဋ္ဌာန်း အဆင့်အလိုက် စာရင်း (Active)</span>
+          </h3>
+
+          <div class="bg-[#0e172a] border border-amber-500/20 rounded-2xl overflow-hidden shadow-xl">
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr>
+                    <th class="px-4 py-3 text-left">ကမ္မဋ္ဌာန်း အဆင့်</th>
+                    <th class="px-4 py-3 text-center">ကျား (MALE)</th>
+                    <th class="px-4 py-3 text-center">မ (FEMALE)</th>
+                    <th class="px-4 py-3 text-center">ACTIVE စုစုပေါင်း</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  ${breakdownRows}
+                  <tr class="bg-[#080d1a] border-t-2 border-amber-500/20">
+                    <td class="px-4 py-3.5 font-black text-amber-300 flex items-center gap-2">
+                      <i class="fa-solid fa-user-tie text-indigo-400"></i>
+                      <span>ဦးဆောင်ဆွေးနွေး ယောဂီ</span>
+                    </td>
+                    <td class="px-4 py-3.5 text-sky-400 font-extrabold font-mono text-center">${d.leaders ? d.leaders.male : 0}</td>
+                    <td class="px-4 py-3.5 text-rose-400 font-extrabold font-mono text-center">${d.leaders ? d.leaders.female : 0}</td>
+                    <td class="px-4 py-3.5 text-emerald-400 font-black font-mono text-center">${d.leaders ? d.leaders.total : 0}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
