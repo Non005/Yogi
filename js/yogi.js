@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Yogi View Rendering
- * File: js/yogi.js 
+ * File: js/yogi.js
  */
 
 async function renderYogiStage(stageId, page = 1, searchVal = "") {
@@ -310,7 +310,9 @@ function handleExcelImport(e, stageId) {
   reader.readAsArrayBuffer(file);
 }
 
+// Global Export with Aliases
 window.renderYogiStage = renderYogiStage;
+window.renderLevelPage = renderYogiStage; // 💡 Alias
 window.toggleYogiStatus = toggleYogiStatus;
 window.postYogiToNextStage = postYogiToNextStage;
 window.deleteYogi = deleteYogi;
