@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Yogi View Rendering
- * File: js/yogi.js
+ * File: js/yogi.js 
  */
 
 async function renderYogiStage(stageId, page = 1, searchVal = "") {
