@@ -106,7 +106,7 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
       <!-- Top 3 KPI Cards -->
       ${statCardsYogiHtml(data.activeTotal, data.activeMale, data.activeFemale)}
 
-      <!-- Restored Control Bar -->
+      <!-- Restored Control Bar Buttons -->
       <div class="control-bar-wrapper">
         <div style="position: relative; flex: 1; min-width: 240px; max-width: 360px;">
           <input type="text" id="yogi-search-input" value="${window.escapeHtml(searchVal)}" 
@@ -156,27 +156,27 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
           <tbody>
             ${sortedRows.length > 0 ? sortedRows.map((y, idx) => `
               <tr class="${y.status === 'Inactive' ? 'row-inactive' : ''}">
-                <td style="font-weight: bold; color: #f59e0b;">${(page - 1) * limit + idx + 1}</td>
-                <td>${y.regDate || '-'}</td>
-                <td style="font-weight: 800; color: #f8fafc;">${window.escapeHtml(y.name)}</td>
-                <td style="text-align: center;">${y.age || '-'}</td>
-                <td>${y.phone || '-'}</td>
-                <td>${window.escapeHtml(y.address) || '-'}</td>
-                <td>${window.escapeHtml(y.introducer) || '-'}</td>
-                <td>${y.email || '-'}</td>
-                <td style="text-align: center;">
+                <td style="font-weight: bold; color: #f59e0b; white-space: nowrap;">${(page - 1) * limit + idx + 1}</td>
+                <td style="white-space: nowrap;">${y.regDate || '-'}</td>
+                <td style="font-weight: 800; color: #f8fafc; white-space: nowrap;">${window.escapeHtml(y.name)}</td>
+                <td style="text-align: center; white-space: nowrap;">${y.age || '-'}</td>
+                <td style="white-space: nowrap;">${y.phone || '-'}</td>
+                <td style="white-space: nowrap;">${window.escapeHtml(y.address) || '-'}</td>
+                <td style="white-space: nowrap;">${window.escapeHtml(y.introducer) || '-'}</td>
+                <td style="white-space: nowrap;">${y.email || '-'}</td>
+                <td style="text-align: center; white-space: nowrap;">
                   <span style="padding: 2px 8px; border-radius: 4px; font-weight: bold; ${y.gender === 'ကျား' ? 'background: rgba(99,102,241,0.2); color: #818cf8;' : 'background: rgba(236,72,153,0.2); color: #f472b6;'}">
                     ${y.gender || 'ကျား'}
                   </span>
                 </td>
-                <td>${y.createdBy || 'System'}</td>
-                <td>${y.createdAt ? y.createdAt.slice(0, 10) : '-'}</td>
-                <td style="text-align: center;">
+                <td style="white-space: nowrap;">${y.createdBy || 'System'}</td>
+                <td style="white-space: nowrap;">${y.createdAt ? y.createdAt.slice(0, 10) : '-'}</td>
+                <td style="text-align: center; white-space: nowrap;">
                   <span style="padding: 3px 8px; border-radius: 6px; font-weight: bold; ${y.status === 'Active' ? 'background: rgba(16,185,129,0.2); color: #34d399;' : 'background: rgba(244,63,94,0.2); color: #f87171;'}">
                     ${y.status || 'Active'}
                   </span>
                 </td>
-                <td class="sticky-action" style="text-align: center;">
+                <td class="sticky-action" style="text-align: center; white-space: nowrap;">
                   <div style="display: flex; gap: 6px; justify-content: center;">
                     <button onclick="openYogiModal(${stageId}, ${y.id})" class="btn-action-icon btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
                     <button onclick="postYogiToNextStage(${y.id}, ${stageId})" class="btn-action-icon btn-action-post" title="${stageId === 7 ? 'ယောဂီ စာရင်းဟောင်းသို့ ရွှေ့မည် (Post)' : 'နောက်တစ်ဆင့်သို့ ရွှေ့မည် (Post)'}"><i class="fa-solid fa-paper-plane"></i></button>
