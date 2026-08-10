@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Authentication Logic
- * File: js/auth.js 
+ * File: js/auth.js
  */
 
 async function handleLoginSubmit(event) {
@@ -76,3 +76,4 @@ function loadUsersDropdown() {
 document.addEventListener("DOMContentLoaded", () => {
   loadUsersDropdown();
 });
+
