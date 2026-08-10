@@ -3,6 +3,27 @@
  * File: js/auth.js
  */
 
+function checkExistingSession() {
+  const token = localStorage.getItem(window.CONFIG.STORAGE_KEY_TOKEN);
+  const expiresAt = Number(localStorage.getItem(window.CONFIG.STORAGE_KEY_EXPIRES) || 0);
+  const user = localStorage.getItem(window.CONFIG.STORAGE_KEY_USER);
+
+  if (token && expiresAt && Date.now() < expiresAt && user) {
+    window.AppState.authToken = token;
+    window.AppState.currentUser = user;
+    document.documentElement.className = "dark is-authed";
+    
+    const liveUserEl = document.getElementById("live-user-name");
+    if (liveUserEl) liveUserEl.innerText = user;
+
+    if (typeof window.initApp === "function") {
+      window.initApp();
+    }
+  } else {
+    document.documentElement.className = "dark not-authed";
+  }
+}
+
 async function handleLoginSubmit(event) {
   event.preventDefault();
   
@@ -30,7 +51,10 @@ async function handleLoginSubmit(event) {
       localStorage.setItem(window.CONFIG.STORAGE_KEY_EXPIRES, Date.now() + res.expiresInMs);
 
       document.documentElement.className = "dark is-authed";
-      
+
+      const liveUserEl = document.getElementById("live-user-name");
+      if (liveUserEl) liveUserEl.innerText = res.user.username;
+
       if (typeof window.initApp === "function") {
         window.initApp();
       }
@@ -73,7 +97,12 @@ function loadUsersDropdown() {
   select.innerHTML = users.map(u => `<option value="${u}">${u}</option>`).join("");
 }
 
+window.checkExistingSession = checkExistingSession;
+window.handleLoginSubmit = handleLoginSubmit;
+window.handleLogout = handleLogout;
+window.loadUsersDropdown = loadUsersDropdown;
+
 document.addEventListener("DOMContentLoaded", () => {
   loadUsersDropdown();
+  checkExistingSession();
 });
-
