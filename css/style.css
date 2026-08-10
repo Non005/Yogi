@@ -5,6 +5,11 @@
 
 :root { 
   color-scheme: dark; 
+  --bg-dark: #090d16;
+  --bg-sidebar: #0c1220;
+  --bg-card: #0e172a;
+  --accent-amber: #f59e0b;
+  --border-amber: rgba(245, 158, 11, 0.2);
 }
 
 /* 💡 Unbreakable Main Workspace Layout (Sidebar & Content Side-by-Side) */
@@ -14,26 +19,25 @@
   width: 100vw !important;
   height: 100vh !important;
   overflow: hidden !important;
-  background-color: #090d16 !important;
+  background-color: var(--bg-dark) !important;
 }
 
-/* 💡 Left Sidebar: Fixed 250px on left, never floats or overlaps */
+/* 💡 Left Sidebar */
 #main-sidebar {
   width: 250px !important;
   min-width: 250px !important;
   max-width: 250px !important;
   flex-shrink: 0 !important;
   height: 100% !important;
-  background-color: #0c1322 !important;
-  border-right: 1px solid rgba(51, 65, 85, 0.6) !important;
+  background-color: var(--bg-sidebar) !important;
+  border-right: 1px solid var(--border-amber) !important;
   display: flex !important;
   flex-direction: column !important;
   z-index: 30 !important;
   position: relative !important;
-  transform: none !important;
 }
 
-/* 💡 Right Main Content Area: Takes remaining width cleanly */
+/* 💡 Right Main Content Area */
 #erp-workspace > div.flex-1,
 #erp-workspace > div.min-w-0 {
   flex: 1 1 0% !important;
@@ -42,94 +46,212 @@
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
-  background-color: #090d16 !important;
+  background-color: var(--bg-dark) !important;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #090d16; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
 ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
 /* Sidebar Navigation Buttons */
 .nav-btn { 
-  transition: all 0.18s ease; 
-  font-size: 0.75rem !important;
+  transition: all 0.2s ease !important; 
+  font-size: 0.78rem !important;
   font-weight: 600 !important;
   color: #94a3b8 !important;
+  border-radius: 0.75rem !important;
+  padding: 0.65rem 0.85rem !important;
+  margin-bottom: 0.25rem !important;
 }
 .nav-btn:hover { 
-  background-color: rgba(30, 41, 59, 0.6) !important; 
-  color: #f1f5f9 !important;
+  background-color: rgba(245, 158, 11, 0.1) !important; 
+  color: #fef3c7 !important;
 }
 .nav-btn.active, .nav-btn-active { 
-  background-color: #1e293b !important; 
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.2) 0%, rgba(30, 41, 59, 0.6) 100%) !important; 
   color: #fbbf24 !important; 
   font-weight: 800 !important; 
-  border-left: 3.5px solid #f59e0b !important; 
+  border-left: 4px solid #f59e0b !important; 
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-/* High-Visibility KPI Cards */
+/* High-Visibility KPI Cards (Horizontal Alignment Optimized) */
 .stats-card { 
-  background: linear-gradient(135deg, #121d33 0%, #0c1424 100%) !important; 
-  border: 1.5px solid rgba(71, 85, 105, 0.45) !important;
-  border-radius: 0.85rem !important;
-  box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
-  min-height: 80px !important;
-  padding: 0.85rem 1.1rem !important;
+  background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%) !important; 
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+  border-radius: 1.1rem !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
+  min-height: 85px !important;
+  padding: 1rem 1.25rem !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.85rem !important;
+  gap: 1rem !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.stats-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 12px 35px -5px rgba(245, 158, 11, 0.15) !important;
 }
 
 .stats-card > div:first-child {
   flex-shrink: 0 !important;
-  width: 2.75rem !important;
-  height: 2.75rem !important;
+  width: 3rem !important;
+  height: 3rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-radius: 0.65rem !important;
+  border-radius: 0.85rem !important;
+  font-size: 1.25rem !important;
 }
 
 .stats-card > div:last-child p {
-  font-size: 0.6rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.07em !important;
+  font-size: 0.65rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
   text-transform: uppercase !important;
   color: #94a3b8 !important;
+  margin-bottom: 0.15rem !important;
 }
 
 .stats-card > div:last-child h3 {
-  font-size: 1.15rem !important;
-  font-weight: 800 !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace !important;
 }
 
+/* Mindfulness Reminder Box */
+.mindfulness-card {
+  background: linear-gradient(145deg, #0e172a 0%, #090f1e 100%) !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+  border-radius: 1.25rem !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+}
+
 /* Table Styling */
+table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
 table thead th {
   position: sticky; top: 0; z-index: 20;
-  background-color: #070b16 !important;
-  padding: 12px 14px; 
-  font-size: 0.7rem !important;
+  background-color: #080d1a !important;
+  padding: 13px 16px !important; 
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
   text-transform: uppercase; 
-  letter-spacing: 0.05em; 
-  color: #94a3b8 !important;
-  border-bottom: 1px solid rgba(30, 41, 59, 0.5) !important;
+  letter-spacing: 0.06em; 
+  color: #fbbf24 !important;
+  border-bottom: 1.5px solid rgba(245, 158, 11, 0.3) !important;
   white-space: nowrap !important;
 }
 
 table tbody td {
-  padding: 10px 14px; 
-  border-bottom: 1px solid rgba(30, 41, 59, 0.3) !important;
-  font-size: 0.78rem !important; 
+  padding: 11px 16px !important; 
+  border-bottom: 1px solid rgba(30, 41, 59, 0.5) !important;
+  font-size: 0.8rem !important; 
   white-space: nowrap !important;
   color: #cbd5e1 !important;
 }
 
-/* View Panel Animation */
+/* Active Row Styling */
+tr.row-active {
+  background-color: transparent !important;
+  transition: background-color 0.15s ease !important;
+}
+tr.row-active:hover {
+  background-color: rgba(245, 158, 11, 0.06) !important;
+}
+
+/* Inactive Row Styling (Distinct & Dimmed at Bottom) */
+tr.row-inactive {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  opacity: 0.65 !important;
+}
+tr.row-inactive:hover {
+  opacity: 0.85 !important;
+  background-color: rgba(30, 41, 59, 0.6) !important;
+}
+tr.row-inactive td {
+  color: #64748b !important;
+  text-decoration: line-through decoration-slate-600 !important;
+}
+
+/* Action Buttons Styling */
+.btn-action {
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+}
+
+.btn-action-edit {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  color: #60a5fa !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+.btn-action-edit:hover {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+.btn-action-post {
+  background-color: rgba(245, 158, 11, 0.18) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+.btn-action-post:hover {
+  background-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+.btn-action-active {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+.btn-action-active:hover {
+  background-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-action-inactive {
+  background-color: rgba(244, 63, 94, 0.15) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(244, 63, 94, 0.3) !important;
+}
+.btn-action-inactive:hover {
+  background-color: rgba(244, 63, 94, 0.3) !important;
+}
+
+.btn-action-delete {
+  background-color: rgba(225, 29, 72, 0.18) !important;
+  color: #fda4af !important;
+  border: 1px solid rgba(225, 29, 72, 0.35) !important;
+}
+.btn-action-delete:hover {
+  background-color: rgba(225, 29, 72, 0.35) !important;
+}
+
+/* Animations */
 .view-panel { animation: fadeIn 0.2s ease-out; }
 @keyframes fadeIn { 
   from { opacity: 0; transform: translateY(4px); } 
   to { opacity: 1; transform: translateY(0); } 
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spinSlow 18s linear infinite;
 }
