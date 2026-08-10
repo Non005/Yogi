@@ -26,34 +26,34 @@ function getFormattedToday() {
 
 function statCardsLeadersHtml(total, male, female) {
   return `
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; width: 100%; margin-bottom: 1.25rem;">
-      <div style="background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-        <div style="width: 2.75rem; height: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
+    <div class="kpi-grid-container">
+      <div class="stats-card">
+        <div style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
           <i class="fa-solid fa-user-tie"></i>
         </div>
-        <div style="display: flex; flex-direction: column;">
-          <p style="margin: 0; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">TOTAL LEADERS</p>
-          <h3 style="margin: 0; font-size: 1.35rem; font-weight: 900; color: #818cf8; font-family: monospace;">${total || 0} ဦး</h3>
+        <div>
+          <p>TOTAL LEADERS</p>
+          <h3 style="color: #818cf8;">${total || 0} ဦး</h3>
         </div>
       </div>
 
-      <div style="background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-        <div style="width: 2.75rem; height: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
+      <div class="stats-card">
+        <div style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
           <i class="fa-solid fa-mars"></i>
         </div>
-        <div style="display: flex; flex-direction: column;">
-          <p style="margin: 0; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">MALE LEADERS</p>
-          <h3 style="margin: 0; font-size: 1.35rem; font-weight: 900; color: #818cf8; font-family: monospace;">${male || 0} ဦး</h3>
+        <div>
+          <p>MALE LEADERS</p>
+          <h3 style="color: #818cf8;">${male || 0} ဦး</h3>
         </div>
       </div>
 
-      <div style="background: linear-gradient(135deg, #111a2e 0%, #0a1120 100%); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-        <div style="width: 2.75rem; height: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);">
+      <div class="stats-card">
+        <div style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);">
           <i class="fa-solid fa-venus"></i>
         </div>
-        <div style="display: flex; flex-direction: column;">
-          <p style="margin: 0; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">FEMALE LEADERS</p>
-          <h3 style="margin: 0; font-size: 1.35rem; font-weight: 900; color: #f472b6; font-family: monospace;">${female || 0} ဦး</h3>
+        <div>
+          <p>FEMALE LEADERS</p>
+          <h3 style="color: #f472b6;">${female || 0} ဦး</h3>
         </div>
       </div>
     </div>
@@ -98,103 +98,99 @@ async function renderLeaders(page = 1, searchVal = "") {
 
   container.innerHTML = `
     <div class="space-y-5 view-panel">
-      <!-- Top 3 KPI Cards -->
+      <!-- Top 3 KPI Cards Grid -->
       ${statCardsLeadersHtml(data.activeTotal, data.activeMale, data.activeFemale)}
 
       <!-- Control Bar Wrapper -->
-      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; background: #0e172a; border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 1rem; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;">
+      <div class="control-bar-wrapper">
         <div style="position: relative; flex: 1; min-width: 240px; max-width: 360px;">
           <input type="text" id="leader-search-input" value="${window.escapeHtml(searchVal)}" 
             onkeydown="if(event.key==='Enter') triggerLeaderSearch()"
             placeholder="အမည် / ဖုန်း ရှာဖွေရန်..." 
-            style="width: 100%; padding: 0.5rem 0.85rem 0.5rem 2.2rem; background: #070a12; border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 0.75rem; color: #f1f5f9; font-size: 0.8rem; outline: none;">
+            style="width: 100%; padding-left: 2.2rem; background: #070a12; border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 0.75rem; color: #f1f5f9; font-size: 0.8rem; outline: none;">
           <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.75rem;"></i>
         </div>
 
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-          <button onclick="renderLeaders(1, '')" class="btn-action" style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.5rem 0.85rem;">
+          <button onclick="renderLeaders(1, '')" class="btn-control btn-control-refresh" title="ပြန်လည်ရယူပါ">
             <i class="fa-solid fa-rotate"></i> Refresh
           </button>
-          <button onclick="exportLeaderToExcel()" class="btn-action" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.5rem 0.85rem;">
+          <button onclick="exportLeaderToExcel()" class="btn-control btn-control-export" title="Excel ထုတ်ယူမည်">
             <i class="fa-solid fa-file-excel"></i> Export Excel
           </button>
-          <button onclick="openLeaderModal()" class="btn-action" style="background: linear-gradient(90deg, #6366f1, #4f46e5); color: #ffffff; font-weight: 900; padding: 0.5rem 1rem;">
+          <button onclick="openLeaderModal()" class="btn-control" style="background: linear-gradient(90deg, #6366f1, #4f46e5); color: #ffffff; font-weight: 900; padding: 0.5rem 1rem;">
             <i class="fa-solid fa-plus"></i> + ဦးဆောင်ယောဂီ အသစ်ထည့်မည်
           </button>
         </div>
       </div>
 
       <!-- Leader Table (1 Single Line Cells, Plain Index 1, 2, 3) -->
-      <div style="background-color: #0e172a; border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 1rem; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-        <div style="overflow-x-auto;">
-          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem;">
-            <thead>
-              <tr style="background-color: #080d1a; border-bottom: 2px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-size: 0.72rem; font-weight: 800;">
-                <th style="padding: 12px 14px; white-space: nowrap;">စဉ်</th>
-                <th style="padding: 12px 14px; white-space: nowrap;">ရက်စွဲ</th>
-                <th style="padding: 12px 14px; white-space: nowrap;">အမည်</th>
-                <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">အသက်</th>
-                <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">GENDER</th>
-                <th style="padding: 12px 14px; white-space: nowrap;">ဖုန်းနံပါတ်</th>
-                <th style="padding: 12px 14px; white-space: nowrap;">နေရပ်လိပ်စာ</th>
-                <th style="padding: 12px 14px; white-space: nowrap;">EMAIL</th>
-                <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">STATUS</th>
-                <th style="padding: 12px 14px; white-space: nowrap; text-align: center; position: sticky; right: 0; background-color: #080d1a;">ACTION</th>
+      <div class="table-scroll-container">
+        <table>
+          <thead>
+            <tr style="background-color: #080d1a; border-bottom: 2px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-size: 0.72rem; font-weight: 800;">
+              <th style="padding: 12px 14px; white-space: nowrap;">စဉ်</th>
+              <th style="padding: 12px 14px; white-space: nowrap;">ရက်စွဲ</th>
+              <th style="padding: 12px 14px; white-space: nowrap;">အမည်</th>
+              <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">အသက်</th>
+              <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">GENDER</th>
+              <th style="padding: 12px 14px; white-space: nowrap;">ဖုန်းနံပါတ်</th>
+              <th style="padding: 12px 14px; white-space: nowrap;">နေရပ်လိပ်စာ</th>
+              <th style="padding: 12px 14px; white-space: nowrap;">EMAIL</th>
+              <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">STATUS</th>
+              <th class="sticky-action" style="padding: 12px 14px; white-space: nowrap; text-align: center;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sortedRows.length > 0 ? sortedRows.map((l, idx) => `
+              <tr class="${l.status === 'Inactive' ? 'row-inactive' : ''}">
+                <td style="padding: 11px 14px; font-weight: bold; color: #818cf8; white-space: nowrap;">${(page - 1) * limit + idx + 1}</td>
+                <td style="white-space: nowrap;">${l.regDate || '-'}</td>
+                <td style="font-weight: 800; color: #f8fafc; white-space: nowrap;">${window.escapeHtml(l.name)}</td>
+                <td style="text-align: center; white-space: nowrap;">${l.age || '-'}</td>
+                <td style="text-align: center; white-space: nowrap;">
+                  <span style="padding: 2px 8px; border-radius: 4px; font-weight: bold; ${l.gender === 'ကျား' ? 'background: rgba(99,102,241,0.2); color: #818cf8;' : 'background: rgba(236,72,153,0.2); color: #f472b6;'}">
+                    ${l.gender || 'ကျား'}
+                  </span>
+                </td>
+                <td style="white-space: nowrap;">${l.phone || '-'}</td>
+                <td style="white-space: nowrap;">${window.escapeHtml(l.address) || '-'}</td>
+                <td style="white-space: nowrap;">${l.email || '-'}</td>
+                <td style="text-align: center; white-space: nowrap;">
+                  <span style="padding: 3px 8px; border-radius: 6px; font-weight: bold; ${l.status === 'Active' ? 'background: rgba(16,185,129,0.2); color: #34d399;' : 'background: rgba(244,63,94,0.2); color: #f87171;'}">
+                    ${l.status || 'Active'}
+                  </span>
+                </td>
+                <td class="sticky-action" style="text-align: center; white-space: nowrap;">
+                  <div style="display: flex; gap: 6px; justify-content: center;">
+                    <!-- Restored Sleek Icon-only Action Buttons -->
+                    <button onclick="openLeaderModal(${l.id})" class="btn-action-icon btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="toggleLeaderStatus(${l.id}, '${l.status}')" class="btn-action-icon ${l.status === 'Active' ? 'btn-action-inactive' : 'btn-action-active'}" title="${l.status === 'Active' ? 'Inactive ပြုလုပ်မည်' : 'Active ပြုလုပ်မည်'}"><i class="fa-solid ${l.status === 'Active' ? 'fa-user-xmark' : 'fa-user-check'}"></i></button>
+                    <button onclick="deleteLeader(${l.id})" class="btn-action-icon btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              ${sortedRows.length > 0 ? sortedRows.map((l, idx) => `
-                <tr class="${l.status === 'Inactive' ? 'row-inactive' : ''}" style="border-bottom: 1px solid rgba(30, 41, 59, 0.5);">
-                  <td style="padding: 11px 14px; font-weight: bold; color: #818cf8; white-space: nowrap;">${(page - 1) * limit + idx + 1}</td>
-                  <td style="padding: 11px 14px; white-space: nowrap;">${l.regDate || '-'}</td>
-                  <td style="padding: 11px 14px; font-weight: 800; color: #f8fafc; white-space: nowrap;">${window.escapeHtml(l.name)}</td>
-                  <td style="padding: 11px 14px; text-align: center; white-space: nowrap;">${l.age || '-'}</td>
-                  <td style="padding: 11px 14px; text-align: center; white-space: nowrap;">
-                    <span style="padding: 2px 8px; border-radius: 4px; font-weight: bold; ${l.gender === 'ကျား' ? 'background: rgba(99,102,241,0.2); color: #818cf8;' : 'background: rgba(236,72,153,0.2); color: #f472b6;'}">
-                      ${l.gender || 'ကျား'}
-                    </span>
-                  </td>
-                  <td style="padding: 11px 14px; white-space: nowrap;">${l.phone || '-'}</td>
-                  <td style="padding: 11px 14px; white-space: nowrap;">${window.escapeHtml(l.address) || '-'}</td>
-                  <td style="padding: 11px 14px; white-space: nowrap;">${l.email || '-'}</td>
-                  <td style="padding: 11px 14px; text-align: center; white-space: nowrap;">
-                    <span style="padding: 3px 8px; border-radius: 6px; font-weight: bold; ${l.status === 'Active' ? 'background: rgba(16,185,129,0.2); color: #34d399;' : 'background: rgba(244,63,94,0.2); color: #f87171;'}">
-                      ${l.status || 'Active'}
-                    </span>
-                  </td>
-                  <td style="padding: 11px 14px; text-align: center; position: sticky; right: 0; background-color: #0e172a; white-space: nowrap;">
-                    <div style="display: flex; gap: 6px; justify-content: center;">
-                      <!-- Restored Sleek Icon-only Action Buttons -->
-                      <button onclick="openLeaderModal(${l.id})" class="btn-action-icon btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
-                      <button onclick="toggleLeaderStatus(${l.id}, '${l.status}')" class="btn-action-icon ${l.status === 'Active' ? 'btn-action-inactive' : 'btn-action-active'}" title="${l.status === 'Active' ? 'Inactive ပြုလုပ်မည်' : 'Active ပြုလုပ်မည်'}"><i class="fa-solid ${l.status === 'Active' ? 'fa-user-xmark' : 'fa-user-check'}"></i></button>
-                      <button onclick="deleteLeader(${l.id})" class="btn-action-icon btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                  </td>
-                </tr>
-              `).join('') : `
-                <tr><td colspan="10" style="text-align: center; padding: 3rem; color: #64748b;">ဦးဆောင်ယောဂီ စာရင်း မရှိသေးပါ။</td></tr>
-              `}
-            </tbody>
-          </table>
-        </div>
+            `).join('') : `
+              <tr><td colspan="10" style="text-align: center; padding: 3rem; color: #64748b;">ဦးဆောင်ယောဂီ စာရင်း မရှိသေးပါ။</td></tr>
+            `}
+          </tbody>
+        </table>
       </div>
 
-      <!-- Pagination Bar -->
-      ${totalPages > 1 ? `
-        <div class="pagination-container">
-          <button onclick="renderLeaders(${page - 1}, '${window.escapeHtml(searchVal)}')" ${page <= 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-action" style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.4rem 0.85rem;">
-            <i class="fa-solid fa-chevron-left"></i> Previous
-          </button>
+      <!-- Pagination Bar (ALWAYS VISIBLE) -->
+      <div class="pagination-container">
+        <button onclick="renderLeaders(${page - 1}, '${window.escapeHtml(searchVal)}')" ${page <= 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-control btn-control-refresh" style="padding: 0.4rem 0.85rem;">
+          <i class="fa-solid fa-chevron-left"></i> Previous
+        </button>
 
-          <span style="font-size: 0.75rem; font-weight: 800; color: #818cf8;">
-            Page <b style="color: #ffffff;">${page}</b> of <b>${totalPages}</b> (Total: ${totalCount})
-          </span>
+        <span style="font-size: 0.75rem; font-weight: 800; color: #818cf8;">
+          Page <b style="color: #ffffff;">${page}</b> of <b>${totalPages}</b> (Total: ${totalCount} ဦး)
+        </span>
 
-          <button onclick="renderLeaders(${page + 1}, '${window.escapeHtml(searchVal)}')" ${page >= totalPages ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-action" style="background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.4rem 0.85rem;">
-            Next <i class="fa-solid fa-chevron-right"></i>
-          </button>
-        </div>
-      ` : ''}
+        <button onclick="renderLeaders(${page + 1}, '${window.escapeHtml(searchVal)}')" ${page >= totalPages ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-control btn-control-refresh" style="padding: 0.4rem 0.85rem;">
+          Next <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
     </div>
   `;
 }
@@ -264,8 +260,8 @@ function openLeaderModal(leaderId = null) {
           </div>
 
           <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
-            <button type="button" onclick="closeLeaderModal()" class="btn-action" style="background: #1e293b; color: #cbd5e1; padding: 0.5rem 1rem;">မလုပ်တော့ပါ</button>
-            <button type="submit" class="btn-action" style="background: linear-gradient(90deg, #6366f1, #4f46e5); color: #ffffff; font-weight: 900; padding: 0.5rem 1.25rem;">သိမ်းဆည်းမည်</button>
+            <button type="button" onclick="closeLeaderModal()" class="btn-control btn-control-refresh" style="padding: 0.5rem 1rem;">မလုပ်တော့ပါ</button>
+            <button type="submit" class="btn-control" style="background: linear-gradient(90deg, #6366f1, #4f46e5); color: #ffffff; font-weight: 900; padding: 0.5rem 1.25rem;">သိမ်းဆည်းမည်</button>
           </div>
         </form>
       </div>
