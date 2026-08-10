@@ -218,3 +218,4 @@ window.renderLeaders = renderLeaders;
 window.toggleLeaderStatus = toggleLeaderStatus;
 window.deleteLeader = deleteLeader;
 window.openAddLeaderModal = openAddLeaderModal;
+
