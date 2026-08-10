@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — API Bridge
- * File: js/api.js
+ * File: js/api.js 
  */
 window.AppState = window.AppState || {
   currentUser: localStorage.getItem(window.CONFIG.STORAGE_KEY_USER) || null,
