@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Leaders Logic
- * File: js/leaders.js 
+ * File: js/leaders.js  
  */
 
 async function renderLeaders(page = 1, searchVal = "") {
