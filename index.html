@@ -86,8 +86,8 @@
 
   <!-- Main Workspace -->
   <div id="erp-workspace" class="hidden h-full w-full">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-[#0c1322] border-r border-slate-800 flex flex-col h-full shadow-2xl shrink-0">
+    <!-- Sidebar Container -->
+    <aside id="main-sidebar" class="w-64 bg-[#0c1322] border-r border-slate-800 flex flex-col h-full shadow-2xl shrink-0 transition-all duration-300 md:translate-x-0 -translate-x-full fixed md:relative z-50">
       <div class="h-[64px] px-4 border-b border-slate-800 flex items-center justify-between text-slate-200 bg-[#0e172a] shrink-0">
         <div class="flex items-center gap-2.5 font-extrabold text-sm tracking-wide">
           <i class="fa-solid fa-dharmachakra text-amber-400 text-lg"></i>
@@ -100,15 +100,23 @@
       <nav class="flex-1 px-2.5 py-2.5 space-y-0.5 overflow-y-auto" id="sidebar-nav"></nav>
     </aside>
 
+    <!-- Mobile Overlay Backdrop -->
+    <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/70 z-40 hidden md:hidden"></div>
+
     <!-- Main Workspace Right Container -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-      <header class="bg-[#0c1322] border-b border-slate-800 h-[64px] px-6 flex justify-between items-center z-10 shrink-0">
-        <h1 id="page-title" class="text-base md:text-lg font-extrabold text-slate-100 tracking-wide">ပင်မစာမျက်နှာ</h1>
+    <div class="flex-1 flex flex-col overflow-hidden w-full">
+      <header class="bg-[#0c1322] border-b border-slate-800 h-[64px] px-4 md:px-6 flex justify-between items-center z-10 shrink-0">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-slate-100 p-2 rounded-lg bg-slate-800/60 border border-slate-700/50">
+            <i class="fa-solid fa-bars text-sm"></i>
+          </button>
+          <h1 id="page-title" class="text-sm md:text-lg font-extrabold text-slate-100 tracking-wide">ပင်မစာမျက်နှာ</h1>
+        </div>
         <div class="text-xs font-bold text-emerald-400 bg-[#111c44] border border-emerald-500/20 px-3.5 py-1.5 rounded-lg">
           User: <span id="live-user-name">-</span>
         </div>
       </header>
-      <main class="p-6 overflow-y-auto flex-1 bg-[#090d16] relative">
+      <main class="p-4 md:p-6 overflow-y-auto flex-1 bg-[#090d16] relative">
         <div id="view-container"></div>
       </main>
     </div>
@@ -122,6 +130,23 @@
 
   <!-- Toast Notifications Container -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Mobile Sidebar Toggle Helper -->
+  <script>
+    function toggleMobileSidebar() {
+      var sb = document.getElementById('main-sidebar');
+      var bd = document.getElementById('sidebar-backdrop');
+      if (!sb) return;
+      var isHidden = sb.classList.contains('-translate-x-full');
+      if (isHidden) {
+        sb.classList.remove('-translate-x-full');
+        if (bd) bd.classList.remove('hidden');
+      } else {
+        sb.classList.add('-translate-x-full');
+        if (bd) bd.classList.add('hidden');
+      }
+    }
+  </script>
 
   <!-- Script Modules Execution Order -->
   <script src="js/config.js"></script>
