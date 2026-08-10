@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — App Shell (Sidebar, Routing, Modal)
- * File: js/app.js
+ * File: js/app.js 
  */
 
 const PAGE_TITLES = {
