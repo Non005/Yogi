@@ -3,16 +3,18 @@
  * File: js/yogi.js
  */
 
-// 💡 Helper: Auto Gender Detection Logic based on Name Prefix
+// 💡 Helper: Auto Gender Detection Logic based on Name Prefix (Unicode Safe)
 function detectGenderByName(name) {
   const str = String(name || "").trim();
-  // Check for Male prefixes: "ဦး", "ကို", "မောင်", "စော", "ဆရာ", "U", "Mg", "Ko", "Saw"
-  if (/^(ဦး|ကို|မောင်|စော|ဆရာ|U|Mg|Ko|Saw)\b/i.test(str) || str.startsWith("ဦး") || str.startsWith("ကို") || str.startsWith("မောင်")) {
-    return "ကျား";
-  }
-  // Check for Female prefixes: "ဒေါ်", "မ", "နော်", "မိ", "ဆရာမ", "Ma", "Daw", "Nan"
-  if (/^(ဒေါ်|မ|နော်|မိ|ဆရာမ|Ma|Daw|Nan)\b/i.test(str) || str.startsWith("ဒေါ်") || str.startsWith("မ")) {
+  // Check for Female prefixes: "ဒေါ်", "မ", "နော်", "မိ", "ဆရာမ", "Ma", "Daw", "Nan", "Naw"
+  if (/^(ဒေါ်|မ|နော်|မိ|ဆရာမ|Ma|Daw|Nan|Naw|Mi)\b/i.test(str) ||
+      str.startsWith("ဒေါ်") || str.startsWith("မ") || str.startsWith("နော်") || str.startsWith("မိ")) {
     return "မ";
+  }
+  // Check for Male prefixes: "ဦး", "ကို", "မောင်", "စော", "ဆရာ", "U", "Mg", "Ko", "Saw"
+  if (/^(ဦး|ကို|မောင်|စော|ဆရာ|U|Mg|Ko|Saw)\b/i.test(str) ||
+      str.startsWith("ဦး") || str.startsWith("ကို") || str.startsWith("မောင်") || str.startsWith("စော")) {
+    return "ကျား";
   }
   return "ကျား"; // Default fallback
 }
@@ -65,6 +67,9 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
     if (a.status === 'Inactive' && b.status === 'Active') return 1;
     return 0;
   });
+
+  // Store globally to safely lookup by ID on Edit
+  window._currentYogiRows = sortedRows;
 
   container.innerHTML = `
     <div class="space-y-5 view-panel">
@@ -178,7 +183,7 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
                   <td class="p-3 text-center whitespace-nowrap sticky right-0 bg-[#0e172a]">
                     <div class="flex items-center justify-center gap-1.5 font-sans">
                       <!-- Edit -->
-                      <button onclick="openYogiModal(${stageId}, ${JSON.stringify(y).replace(/"/g, '&quot;')})" 
+                      <button onclick="openYogiModal(${stageId}, ${y.id})" 
                         class="btn-action btn-action-edit" title="ပြင်ဆင်မည်">
                         <i class="fa-solid fa-pen-to-square"></i>
                       </button>
@@ -298,7 +303,12 @@ async function deleteYogi(id, stageId) {
 /**
  * Dynamic Modal Dialog for Adding or Editing Yogi
  */
-function openYogiModal(stageId, existingData = null) {
+function openYogiModal(stageId, yogiId = null) {
+  let existingData = null;
+  if (yogiId) {
+    existingData = (window._currentYogiRows || []).find(r => String(r.id) === String(yogiId));
+  }
+
   const isEdit = !!existingData;
   const today = getFormattedToday();
   const currentUser = window.AppState ? window.AppState.currentUser : 'Admin';
@@ -317,10 +327,13 @@ function openYogiModal(stageId, existingData = null) {
         </div>
 
         <form id="yogi-form" onsubmit="saveYogiForm(event, ${stageId}, ${isEdit ? existingData.id : 'null'})" class="space-y-3 text-xs">
+          <!-- Preserve Original RegDate on Edit -->
+          <input type="hidden" id="modal-reg-date" value="${isEdit ? (existingData.regDate || today) : today}">
+
           <div>
             <label class="block font-bold text-amber-200/80 mb-1">ယောဂီအမည် *</label>
             <input type="text" id="modal-name" required value="${isEdit ? window.escapeHtml(existingData.name) : ''}"
-              onkeyup="autoDetectGenderModal()"
+              onkeyup="${!isEdit ? 'autoDetectGenderModal()' : ''}"
               placeholder="ဥပမာ - ဦးလှမောင် / မမြစိန်..."
               class="w-full p-2.5 bg-[#070a12] border border-amber-500/30 rounded-xl text-slate-100 outline-none focus:border-amber-400">
           </div>
@@ -385,7 +398,7 @@ function openYogiModal(stageId, existingData = null) {
 
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-  // Auto-detect gender initial call
+  // Auto-detect gender on new entry
   if (!isEdit) autoDetectGenderModal();
 }
 
@@ -411,6 +424,7 @@ async function saveYogiForm(event, stageId, editId = null) {
   const address = document.getElementById("modal-address").value.trim();
   const introducer = document.getElementById("modal-introducer").value.trim();
   const email = document.getElementById("modal-email").value.trim();
+  const regDate = document.getElementById("modal-reg-date") ? document.getElementById("modal-reg-date").value : getFormattedToday();
 
   if (!name) {
     window.showToast("ERROR", "ယောဂီအမည် ရိုက်ထည့်ပါ");
@@ -429,7 +443,7 @@ async function saveYogiForm(event, stageId, editId = null) {
       address,
       introducer,
       email,
-      regDate: getFormattedToday(),
+      regDate: regDate || getFormattedToday(),
       status: "Active"
     };
 
