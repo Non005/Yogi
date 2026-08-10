@@ -1,5 +1,5 @@
 /* ========================================================================
-   YOGI MANAGEMENT SYSTEM — UNBREAKABLE NATIVE LAYOUT CSS
+   YOGI MANAGEMENT SYSTEM — COMPLETE UNBREAKABLE NATIVE CSS
    File: css/style.css
    ======================================================================== */
 
@@ -10,7 +10,7 @@
   --border-amber: rgba(245, 158, 11, 0.25);
 }
 
-/* 💡 Main Workspace Layout */
+/* 💡 1. Main Workspace Layout */
 #erp-workspace {
   display: flex !important;
   flex-direction: row !important;
@@ -43,13 +43,40 @@
   background-color: var(--bg-dark) !important;
 }
 
-/* Custom Scrollbar (Horizontal & Vertical) */
+/* 💡 2. Custom Scrollbar (Horizontal & Vertical) */
 ::-webkit-scrollbar { width: 7px; height: 7px; }
 ::-webkit-scrollbar-track { background: #070a12; }
 ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; border: 1px solid rgba(245, 158, 11, 0.2); }
 ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
 
-/* 💡 TOP 3 KPI CARDS GRID */
+/* 💡 3. Login Box Card Styling */
+#login-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background-color: rgba(7, 10, 18, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+}
+
+#login-overlay > div,
+.login-card-box {
+  width: 100% !important;
+  max-width: 420px !important;
+  background: linear-gradient(180deg, #131b2e 0%, #0a101d 100%) !important;
+  border: 1.5px solid rgba(245, 158, 11, 0.4) !important;
+  border-radius: 1.5rem !important;
+  padding: 2.25rem !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 25px rgba(245, 158, 11, 0.15) !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+/* 💡 4. Top 3 KPI Cards Grid (Horizontal 3 Columns) */
 .kpi-grid-container {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
@@ -104,7 +131,7 @@
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace !important;
 }
 
-/* 💡 CONTROL BAR & SLEEK ROUNDED BUTTONS (NO HARSH SQUARES) */
+/* 💡 5. Control Bar & Control Buttons */
 .control-bar-wrapper {
   display: flex !important;
   flex-direction: row !important;
@@ -125,7 +152,6 @@
   }
 }
 
-/* Sleek Rounded Control Buttons */
 .btn-control {
   border-radius: 0.75rem !important;
   padding: 0.55rem 1rem !important;
@@ -145,7 +171,7 @@
   color: #090d16 !important;
   box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25) !important;
 }
-.btn-action-add:hover { transform: translateY(-1px); }
+.btn-control-add:hover { transform: translateY(-1px) !important; }
 
 .btn-control-import {
   background: rgba(16, 185, 129, 0.15) !important;
@@ -168,7 +194,32 @@
 }
 .btn-control-refresh:hover { background: #334155 !important; color: #ffffff !important; }
 
-/* 💡 TABLE STYLING & HORIZONTAL SCROLL FIX */
+/* 💡 6. Search Input Box Height & Padding Fix */
+#yogi-search-input,
+#leader-search-input,
+#summary-search-input {
+  padding-top: 0.65rem !important;    
+  padding-bottom: 0.65rem !important; 
+  padding-left: 2.3rem !important;
+  padding-right: 0.85rem !important;
+  min-height: 42px !important;         
+  font-size: 0.82rem !important;      
+  background-color: #070a12 !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  border-radius: 0.75rem !important;
+  color: #f1f5f9 !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+}
+
+#yogi-search-input:focus,
+#leader-search-input:focus,
+#summary-search-input:focus {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* 💡 7. Table Styling & Horizontal Scroll Fix */
 .table-scroll-container {
   width: 100% !important;
   overflow-x: auto !important;
@@ -209,7 +260,7 @@ table tbody td {
   color: #cbd5e1 !important;
 }
 
-/* 💡 Sticky Action Column Fix */
+/* Sticky Action Column Fix */
 table th.sticky-action,
 table td.sticky-action {
   position: sticky !important;
@@ -232,7 +283,7 @@ tr.row-inactive td {
   color: #64748b !important;
 }
 
-/* 💡 SLEEK ICON-ONLY ACTION BUTTONS */
+/* 💡 8. Compact Icon-only Action Buttons */
 .btn-action-icon {
   width: 2rem !important;
   height: 2rem !important;
@@ -261,7 +312,7 @@ tr.row-inactive td {
 .btn-action-delete { background: rgba(225, 29, 72, 0.15) !important; color: #fda4af !important; border-color: rgba(225, 29, 72, 0.35) !important; }
 .btn-action-delete:hover { background: #e11d48 !important; color: #ffffff !important; }
 
-/* 💡 CENTERED MODAL DIALOG FIX */
+/* 💡 9. Centered Modal Dialog & Inputs Styling */
 .modal-overlay-bg {
   position: fixed !important;
   inset: 0 !important;
@@ -278,15 +329,51 @@ tr.row-inactive td {
   background-color: #0e172a !important;
   border: 1.5px solid rgba(245, 158, 11, 0.4) !important;
   border-radius: 1.25rem !important;
-  padding: 1.5rem !important;
+  padding: 1.75rem !important;
   width: 100% !important;
   max-width: 520px !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95) !important;
   box-sizing: border-box !important;
   margin: auto !important;
 }
 
-/* 💡 PAGINATION BAR */
+.modal-dialog-box input, 
+.modal-dialog-box select {
+  width: 100% !important;
+  height: 42px !important;
+  background-color: #080d1a !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  border-radius: 0.75rem !important;
+  padding: 0.5rem 0.85rem !important;
+  color: #f8fafc !important;
+  font-size: 0.82rem !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+.modal-dialog-box input:focus, 
+.modal-dialog-box select:focus {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25) !important;
+}
+
+/* 💡 10. Dashboard 2-Column Grid & Mindfulness Card */
+.dash-grid-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 1.25rem !important;
+  width: 100% !important;
+}
+
+.mindfulness-card {
+  background: linear-gradient(145deg, #0e172a 0%, #090f1e 100%) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  border-radius: 1.25rem !important;
+  padding: 1.5rem !important;
+}
+
+/* 💡 11. Pagination Bar */
 .pagination-container {
   display: flex !important;
   align-items: center !important;
@@ -296,14 +383,4 @@ tr.row-inactive td {
   border: 1px solid rgba(245, 158, 11, 0.25) !important;
   border-radius: 1rem !important;
   margin-top: 1rem !important;
-}
-
-/* 💡 Search Input များ အထက်အောက် အမြင့် (Height) မြှင့်ရန် */
-#yogi-search-input,
-#leader-search-input,
-#summary-search-input {
-  padding-top: 0.75rem !important;    /* အထက် နေရာလွတ် */
-  padding-bottom: 0.75rem !important; /* အောက် နေရာလွတ် */
-  min-height: 44px !important;         /* Search Box အမြင့် */
-  font-size: 0.85rem !important;      /* စာရိုက်စာလုံး အရွယ်အစား */
 }
