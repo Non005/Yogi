@@ -1,0 +1,48 @@
+<!-- views/yogi.html — Yogi Stages Management Template -->
+<div class="space-y-4">
+  <!-- Action Control Bar -->
+  <div class="flex flex-wrap items-center justify-between gap-3 bg-[#0e172a] p-4 rounded-2xl border border-slate-800">
+    <div class="flex items-center gap-2">
+      <button id="btn-add-yogi" onclick="openYogiModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition active:scale-95 shadow-lg shadow-amber-500/10">
+        <i class="fa-solid fa-user-plus"></i> ယောဂီအသစ်ထည့်မည်
+      </button>
+      <label class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs cursor-pointer flex items-center gap-2 transition active:scale-95 shadow-lg shadow-emerald-600/10">
+        <i class="fa-solid fa-file-excel"></i> Excel/CSV Import
+        <input type="file" id="yogi-file-import" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelImport(event)">
+      </label>
+    </div>
+    
+    <div class="flex items-center gap-3 w-full md:w-auto">
+      <div class="relative w-full md:w-64">
+        <input type="text" id="yogi-search-input" onkeyup="filterYogiTable()" placeholder="အမည် / ဖုန်း / လိပ်စာ ရှာပါ..." class="w-full pl-9 pr-3 py-2 bg-[#070a12] border border-slate-700/60 rounded-xl text-xs text-slate-100 placeholder:text-slate-500 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/20">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+      </div>
+      <div class="text-xs text-slate-400 font-bold whitespace-nowrap">
+        ယောဂီဦးရေ: <span id="yogi-count-badge" class="text-amber-400 font-black">0</span> ဦး
+      </div>
+    </div>
+  </div>
+
+  <!-- Yogi Table -->
+  <div class="bg-[#0e172a] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-[#070a12] text-slate-400 font-bold border-b border-slate-800 uppercase tracking-wider">
+          <tr>
+            <th class="p-3">စဉ် / ရက်စွဲ</th>
+            <th class="p-3">အမည်</th>
+            <th class="p-3">အသက်</th>
+            <th class="p-3">ကျား/မ</th>
+            <th class="p-3">ဖုန်း/လိပ်စာ</th>
+            <th class="p-3">မိတ်ဆက်ယောဂီ</th>
+            <th class="p-3 text-center">Status</th>
+            <th class="p-3 text-center sticky right-0">Action</th>
+          </tr>
+        </thead>
+        <tbody id="yogi-table-tbody" class="divide-y divide-slate-800/60">
+          <!-- JS မှတစ်ဆင့် Dynamic Render သွားမည် -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
