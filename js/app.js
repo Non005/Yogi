@@ -3,6 +3,21 @@
  * File: js/app.js
  */
 
+// Default Fallback Levels in case window.LEVELS is not loaded yet
+const DEFAULT_LEVELS = [
+  { id: 1, name: "သတိကိုယ့်စိတ်ကိုယ်သိပါ" },
+  { id: 2, name: "ရုပ် ကမ္မဋ္ဌာန်း" },
+  { id: 3, name: "နာမ် ကမ္မဋ္ဌာန်း" },
+  { id: 4, name: "ရုပ်နာမ် ကမ္မဋ္ဌာန်း" },
+  { id: 5, name: "ခန္ဓာငါးပါး ကမ္မဋ္ဌာန်း" },
+  { id: 6, name: "ဥပါဒါနက်ခန္ဓာငါးပါး ကမ္မဋ္ဌာန်း" },
+  { id: 7, name: "သိ-ပါယ်-ဆိုက်-ပွား" },
+  { id: 8, name: "ယောဂီ စာရင်းဟောင်း" }
+];
+
+/**
+ * App Initialization
+ */
 window.initApp = function () {
   const liveUserEl = document.getElementById("live-user-name");
   if (liveUserEl && window.AppState && window.AppState.currentUser) {
@@ -10,9 +25,11 @@ window.initApp = function () {
   }
 
   renderSidebar();
-  if (typeof window.renderDashboard === "function") {
-    window.renderDashboard();
-  }
+
+  // Load default home/dashboard tab
+  const currentTab = (window.AppState && window.AppState.currentTab) || "home";
+  const currentParam = (window.AppState && window.AppState.currentParam) || null;
+  window.switchTab(currentTab, currentParam);
 };
 
 /**
@@ -44,6 +61,12 @@ function updateActiveNav(tabName, param) {
  * Main Tab Router Function
  */
 window.switchTab = function (tabName, param = null) {
+  // Store navigation state
+  if (window.AppState) {
+    window.AppState.currentTab = tabName;
+    window.AppState.currentParam = param;
+  }
+
   // Update sidebar active highlight
   updateActiveNav(tabName, param);
 
@@ -83,8 +106,10 @@ function renderSidebar() {
     <p class="pt-3 pb-1 px-3 text-[10px] font-black text-amber-400/70 uppercase tracking-widest">ကမ္မဋ္ဌာန်း အဆင့်များ</p>
   `;
 
-  // Meditation Levels 1 to 7
-  const levels = (window.LEVELS || []).filter(l => l.id <= 7);
+  // Meditation Levels 1 to 7 (Using global window.LEVELS or fallback)
+  const sourceLevels = (window.LEVELS && window.LEVELS.length > 0) ? window.LEVELS : DEFAULT_LEVELS;
+  const levels = sourceLevels.filter(l => l.id <= 7);
+
   levels.forEach(l => {
     html += `
       <button data-tab="level" data-param="${l.id}" onclick="switchTab('level', ${l.id})" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
@@ -112,6 +137,11 @@ function renderSidebar() {
   `;
 
   nav.innerHTML = html;
+
+  // Sync active highlight after render
+  if (window.AppState) {
+    updateActiveNav(window.AppState.currentTab || "home", window.AppState.currentParam);
+  }
 }
 
 window.renderSidebar = renderSidebar;
