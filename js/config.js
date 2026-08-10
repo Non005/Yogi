@@ -28,12 +28,18 @@
     if (hostname === "localhost" || hostname === "127.0.0.1") {
       return localStorage.getItem("dev_api_url") || "http://localhost:8787";
     }
-    // 💡 Cloudflare Worker (yogi-list) production URL — edit if your worker URL differs
+    // 💡 Cloudflare Worker (yogi-list) production URL
     return localStorage.getItem("prod_api_url") || "https://yogi-list.kotuntunwin1985.workers.dev";
   }
 
+  // Global Function အဖြစ် အပြင်မှ တိုက်ရိုက် ခေါ်သုံးနိုင်အောင် attach လုပ်ပေးခြင်း
+  window.getApiUrl = getApiUrl;
+
   window.CONFIG = {
-    API_URL: getApiUrl(),
+    // Getter အဖြစ် ပြောင်းထားသဖြင့် localStorage ထဲမှ URL ပြောင်းလျှင် အလိုအလျောက် Update ဖြစ်ပါမည်
+    get API_URL() {
+      return getApiUrl();
+    },
     STORAGE_KEY_TOKEN: "yogi_auth_token",
     STORAGE_KEY_USER: "yogi_user_name",
     STORAGE_KEY_EXPIRES: "yogi_token_expires_at",
