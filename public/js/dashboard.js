@@ -1,6 +1,6 @@
 /**
  * YOGI MANAGEMENT SYSTEM — Home Dashboard
- * File: js/dashboard.js
+ * File: js/dashboard.js 
  */
 
 const QUOTE_BOX_HTML = `
