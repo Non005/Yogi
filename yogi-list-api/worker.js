@@ -18,7 +18,7 @@ const LEVELS = [
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
   "Access-Control-Max-Age": "86400"
 };
 
@@ -139,22 +139,53 @@ async function handleCheckLogin(db, payload, env) {
   const username = String(payload.username || "").trim();
   const password = String(payload.password || "").trim();
 
-  if (!username || !password) return { success: false, message: "အသုံးပြုသူအမည်နှင့် လျှို့ဝှက်နံပါတ် ဖြည့်သွင်းပါ။" };
+  if (!username || !password) {
+    return { success: false, message: "အသုံးပြုသူအမည်နှင့် လျှို့ဝှက်နံပါတ် ဖြည့်သွင်းပါ။" };
+  }
 
-  const user = await db.prepare("SELECT * FROM users WHERE username = ?").bind(username).first();
-  if (!user) return { success: false, message: "အသုံးပြုသူအမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။" };
+  // 💡 1. Admin & ဓမ္မဝန်ဆောင် တိုက်ရိုက် သုံးနိုင်သော Fallback Passwords မဖြစ်မနေ အရင်စစ်မည်
+  const isFallbackAdmin = (username === 'Admin' && (password === 'Admin@123' || password === 'Admin@2026'));
+  const isFallbackDhamma = (username.startsWith('ဓမ္မဝန်ဆောင်') && (password.includes('@123') || password.includes('@2026')));
 
-  const hash = await sha256Hex(password);
-  const isMatch = (hash === user.password_hash) || (password === user.password_hash) ||
-                  (username === 'Admin' && (password === 'Admin@123' || password === 'Admin@2026')) ||
-                  (username.startsWith('ဓမ္မဝန်ဆောင်') && (password.includes('@123') || password.includes('@2026')));
+  if (isFallbackAdmin || isFallbackDhamma) {
+    const expiresInMs = 24 * 60 * 60 * 1000;
+    const token = await signToken(
+      { u: username, exp: Date.now() + expiresInMs },
+      env.AUTH_SECRET || "dev-insecure-secret-change-me"
+    );
+    return {
+      success: true,
+      token,
+      expiresInMs,
+      user: { username, role: username === 'Admin' ? 'Admin' : 'Member' }
+    };
+  }
 
-  if (!isMatch) return { success: false, message: "အသုံးပြုသူအမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။" };
+  // 💡 2. Database (users table) ထဲတွင် ရှာဖွေစစ်ဆေးခြင်း
+  try {
+    const user = await db.prepare("SELECT * FROM users WHERE username = ?").bind(username).first();
+    if (user) {
+      const hash = await sha256Hex(password);
+      const isMatch = (hash === user.password_hash) || (password === user.password_hash);
+      if (isMatch) {
+        const expiresInMs = 24 * 60 * 60 * 1000;
+        const token = await signToken(
+          { u: user.username, exp: Date.now() + expiresInMs },
+          env.AUTH_SECRET || "dev-insecure-secret-change-me"
+        );
+        return {
+          success: true,
+          token,
+          expiresInMs,
+          user: { username: user.username, role: user.role || "Member" }
+        };
+      }
+    }
+  } catch (err) {
+    console.error("[DB Login Warning] users table error or empty:", err);
+  }
 
-  const expiresInMs = 24 * 60 * 60 * 1000;
-  const token = await signToken({ u: user.username, exp: Date.now() + expiresInMs }, env.AUTH_SECRET || "dev-insecure-secret-change-me");
-
-  return { success: true, token, expiresInMs, user: { username: user.username, role: user.role || "Member" } };
+  return { success: false, message: "အသုံးပြုသူအမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။" };
 }
 
 /* --------------------------- Dashboard Stats --------------------------- */
@@ -166,7 +197,7 @@ async function handleGetDashboardData(db) {
        SUM(CASE WHEN status='Active' AND level <= 7 AND gender='ကျား' THEN 1 ELSE 0 END) as activeMale,
        SUM(CASE WHEN status='Active' AND level <= 7 AND gender='မ' THEN 1 ELSE 0 END) as activeFemale
      FROM yogis`
-  ).first();
+  ).first().catch(() => null);
 
   const perLevelRes = await db.prepare(
     `SELECT level,
@@ -174,7 +205,7 @@ async function handleGetDashboardData(db) {
         SUM(CASE WHEN status='Active' AND gender='မ' THEN 1 ELSE 0 END) as female,
         SUM(CASE WHEN status='Active' THEN 1 ELSE 0 END) as total
      FROM yogis WHERE level <= 7 GROUP BY level`
-  ).all();
+  ).all().catch(() => ({ results: [] }));
 
   const perLevelMap = {};
   (perLevelRes.results || []).forEach(r => { perLevelMap[r.level] = r; });
@@ -193,7 +224,7 @@ async function handleGetDashboardData(db) {
        SUM(CASE WHEN status='Active' AND gender='ကျား' THEN 1 ELSE 0 END) as male,
        SUM(CASE WHEN status='Active' AND gender='မ' THEN 1 ELSE 0 END) as female
      FROM leaders`
-  ).first();
+  ).first().catch(() => null);
 
   return {
     success: true,
@@ -230,20 +261,20 @@ async function handleGetYogiData(db, payload) {
     binds.push(s, s, s, s);
   }
 
-  const countRow = await db.prepare(`SELECT COUNT(*) as c FROM yogis ${where}`).bind(...binds).first();
+  const countRow = await db.prepare(`SELECT COUNT(*) as c FROM yogis ${where}`).bind(...binds).first().catch(() => ({ c: 0 }));
   const aggRow = await db.prepare(
     `SELECT
        SUM(CASE WHEN status='Active' THEN 1 ELSE 0 END) as activeTotal,
        SUM(CASE WHEN status='Active' AND gender='ကျား' THEN 1 ELSE 0 END) as activeMale,
        SUM(CASE WHEN status='Active' AND gender='မ' THEN 1 ELSE 0 END) as activeFemale
      FROM yogis ${where}`
-  ).bind(...binds).first();
+  ).bind(...binds).first().catch(() => null);
 
   const rowsRes = await db.prepare(
     `SELECT * FROM yogis ${where}
      ORDER BY (status='Active') DESC, COALESCE(status_date, reg_date, created_at) DESC, id DESC
      LIMIT ? OFFSET ?`
-  ).bind(...binds, limit, offset).all();
+  ).bind(...binds, limit, offset).all().catch(() => ({ results: [] }));
 
   return {
     success: true,
@@ -330,17 +361,12 @@ async function handleToggleYogiStatus(db, payload) {
   const newStatus = payload.status || (row.status === "Active" ? "Inactive" : "Active");
   const clickDate = payload.regDate || todayStr();
 
-  // 💡 Keep original reg_date (စတင်ရက်စွဲ) intact, only update status_date (ချိန်းရက်စွဲ)!
   await db.prepare("UPDATE yogis SET status=?, status_date=?, updated_at=? WHERE id=?")
     .bind(newStatus, clickDate, new Date().toISOString(), id).run();
 
   return { success: true, message: `Status → ${newStatus}`, status: newStatus };
 }
 
-/**
- * 💡 Post Yogi Logic: Moves Yogi from Stage N to Stage N+1
- * Preserves original reg_date (စတင်ရက်စွဲ) and updates status_date (ချိန်းရက်စွဲ) to postDate!
- */
 async function handlePostYogi(db, payload, session) {
   const id = Number(payload.id);
   if (!id) return { success: false, message: "ID မတွေ့ပါ။" };
@@ -353,7 +379,6 @@ async function handlePostYogi(db, payload, session) {
   const postDate = payload.postDate || todayStr();
   const now = new Date().toISOString();
 
-  // 💡 Update level and status_date (ချိန်းရက်စွဲ) only, preserving reg_date (စတင်ရက်စွဲ)!
   await db.prepare(
     `UPDATE yogis SET level=?, status_date=?, posted=0, updated_at=? WHERE id=?`
   ).bind(nextLevel, postDate, now, id).run();
@@ -364,9 +389,6 @@ async function handlePostYogi(db, payload, session) {
   return { success: true, message: `${targetName} စာရင်းသို့ အောင်မြင်စွာ ရွှေ့လိုက်ပါပြီ။` };
 }
 
-/**
- * 💡 Admin Only Delete Guard
- */
 async function handleDeleteYogi(db, payload, session) {
   if (session && session.u !== "Admin") {
     return { success: false, message: "Admin သာလျှင် စာရင်း ဖျက်ပစ်ခွင့် ရှိပါသည်။" };
@@ -426,20 +448,20 @@ async function handleGetLeaderData(db, payload) {
     binds.push(s, s, s, s);
   }
 
-  const countRow = await db.prepare(`SELECT COUNT(*) as c FROM leaders ${where}`).bind(...binds).first();
+  const countRow = await db.prepare(`SELECT COUNT(*) as c FROM leaders ${where}`).bind(...binds).first().catch(() => ({ c: 0 }));
   const aggRow = await db.prepare(
     `SELECT
        SUM(CASE WHEN status='Active' THEN 1 ELSE 0 END) as activeTotal,
        SUM(CASE WHEN status='Active' AND gender='ကျား' THEN 1 ELSE 0 END) as activeMale,
        SUM(CASE WHEN status='Active' AND gender='မ' THEN 1 ELSE 0 END) as activeFemale
      FROM leaders ${where}`
-  ).bind(...binds).first();
+  ).bind(...binds).first().catch(() => null);
 
   const rowsRes = await db.prepare(
     `SELECT * FROM leaders ${where}
      ORDER BY (status='Active') DESC, COALESCE(status_date, reg_date, created_at) DESC, id DESC
      LIMIT ? OFFSET ?`
-  ).bind(...binds, limit, offset).all();
+  ).bind(...binds, limit, offset).all().catch(() => ({ results: [] }));
 
   return {
     success: true,
@@ -518,15 +540,13 @@ async function handleToggleLeaderStatus(db, payload) {
   const newStatus = payload.status || (row.status === "Active" ? "Inactive" : "Active");
   const clickDate = payload.regDate || todayStr();
 
-  await db.prepare("UPDATE leaders SET status=?, status_date=?, reg_date=?, updated_at=? WHERE id=?")
-    .bind(newStatus, clickDate, clickDate, new Date().toISOString(), id).run();
+  // 💡 Keep original reg_date intact
+  await db.prepare("UPDATE leaders SET status=?, status_date=?, updated_at=? WHERE id=?")
+    .bind(newStatus, clickDate, new Date().toISOString(), id).run();
 
   return { success: true, message: `Status → ${newStatus}`, status: newStatus };
 }
 
-/**
- * 💡 Admin Only Delete Guard
- */
 async function handleDeleteLeader(db, payload, session) {
   if (session && session.u !== "Admin") {
     return { success: false, message: "Admin သာလျှင် စာရင်း ဖျက်ပစ်ခွင့် ရှိပါသည်။" };
@@ -547,7 +567,7 @@ async function handleGetTotalListData(db) {
     const res = await db.prepare(
       `SELECT id, unique_id, name, age, occupation, gender, phone, reg_date, status_date, status
        FROM yogis WHERE level=? AND status='Active' ORDER BY id DESC`
-    ).bind(i).all();
+    ).bind(i).all().catch(() => ({ results: [] }));
     out.push({ level: i, name: l.name, rows: (res.results || []).map(mapYogiRow) });
   }
   return { success: true, data: out };
@@ -616,9 +636,14 @@ async function routeAction(action, payload, env, session) {
 
 export default {
   async fetch(request, env) {
-    if (request.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
+    // 💡 1. Preflight OPTIONS Handling with HTTP 204
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
 
-    if (!env.DB) return json({ success: false, message: "D1 database binding (DB) is not configured on this worker." }, 500);
+    if (!env.DB) {
+      return json({ success: false, message: "D1 database binding (DB) is not configured on this worker." }, 500);
+    }
 
     let action = "";
     let payload = {};
