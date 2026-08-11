@@ -3,15 +3,16 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ✅ FIX: Use dynamic viewport height (dvh) for mobile address bar -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Yogi App</title>
 
   <!-- 💡 PWA Web App Manifest & Theme Config -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#090d16">
+  <meta name="theme-color" content="#0c1220">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Yogi App">
+  <meta name="apple-mobile-web-app-title" content="Yogi အစီအစဥ်">
 
   <script>
     (function () {
@@ -40,10 +41,39 @@
     html.is-authed #erp-workspace { display: flex !important; }
     html.not-authed #login-overlay { display: flex !important; }
     html.not-authed #erp-workspace { display: none !important; }
+
+    /* ✅ FIX: Safe area inset for notched devices */
+    @supports (padding-left: env(safe-area-inset-left)) {
+      body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+      }
+      
+      #main-sidebar {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      
+      header {
+        padding-top: env(safe-area-inset-top);
+      }
+    }
+
+    /* ✅ FIX: Touch optimization */
+    * {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, [role="button"] {
+      user-select: none;
+      -webkit-user-select: none;
+    }
   </style>
 </head>
 
-<body class="bg-[#090d16] font-sans flex h-screen w-screen overflow-hidden text-slate-300 select-none">
+<!-- ✅ FIX: Use dvh instead of screen height -->
+<body class="bg-[#090d16] font-sans flex h-dvh w-dvw overflow-hidden text-slate-300 select-none">
 
   <!-- Login Overlay -->
   <div id="login-overlay" class="fixed inset-0 bg-[#070a12]/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
@@ -87,7 +117,8 @@
   </div>
 
   <!-- Main Workspace -->
-  <div id="erp-workspace" class="hidden h-screen w-screen flex flex-row overflow-hidden bg-[#090d16]">
+  <!-- ✅ FIX: Use dvh for dynamic viewport height -->
+  <div id="erp-workspace" class="hidden h-dvh w-dvw flex flex-row overflow-hidden bg-[#090d16]">
     
     <!-- Left Sidebar -->
     <aside id="main-sidebar" class="w-64 bg-[#0c1220] border-r border-amber-500/20 flex flex-col h-full shrink-0 z-30 transition-transform duration-300 -translate-x-full md:translate-x-0 fixed md:relative top-0 left-0 bottom-0 shadow-2xl">
@@ -103,13 +134,15 @@
       <nav class="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto" id="sidebar-nav"></nav>
     </aside>
 
+    <!-- ✅ FIX: Backdrop z-index should be 20, sidebar 30 for proper layering -->
     <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/80 z-20 hidden md:hidden"></div>
 
     <!-- Right Main Workspace Container -->
     <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-[#090d16]">
       <header class="h-[64px] bg-[#0c1220] border-b border-amber-500/20 px-4 md:px-6 flex items-center justify-between shrink-0 z-10">
         <div class="flex items-center gap-3 overflow-hidden">
-          <button onclick="toggleMobileSidebar()" class="md:hidden text-amber-400 hover:text-amber-300 p-2 rounded-xl bg-slate-800/80 border border-amber-500/20 shrink-0">
+          <!-- ✅ FIX: Increased touch target size from p-2 to p-3 and added min-h/min-w -->
+          <button onclick="toggleMobileSidebar()" class="md:hidden text-amber-400 hover:text-amber-300 p-3 rounded-xl bg-slate-800/80 border border-amber-500/20 shrink-0 min-h-12 min-w-12 flex items-center justify-center" title="Toggle Sidebar">
             <i class="fa-solid fa-bars text-sm"></i>
           </button>
           <h1 id="page-title" class="text-sm md:text-base font-black text-amber-300/90 truncate tracking-wide">ပင်မစာမျက်နှာ</h1>
