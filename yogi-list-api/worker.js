@@ -51,13 +51,14 @@ function mapYogiRow(r) {
     regDate: r.reg_date,
     name: r.name,
     age: r.age,
+    occupation: r.occupation || "",
     phone: r.phone,
     address: r.address,
     introducer: r.introducer,
     email: r.email,
     gender: r.gender,
     status: r.status,
-    statusDate: r.status_date,
+    statusDate: r.status_date || r.reg_date,
     posted: r.posted,
     createdBy: r.created_by,
     createdAt: r.created_at,
@@ -79,7 +80,7 @@ function mapLeaderRow(r) {
     email: r.email,
     gender: r.gender,
     status: r.status,
-    statusDate: r.status_date,
+    statusDate: r.status_date || r.reg_date,
     createdBy: r.created_by,
     createdAt: r.created_at,
     updatedAt: r.updated_at
@@ -150,7 +151,7 @@ async function handleCheckLogin(db, payload, env) {
 
   if (!isMatch) return { success: false, message: "အသုံးပြုသူအမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။" };
 
-  const expiresInMs = 24 * 60 * 60 * 1000; // 24 Hours
+  const expiresInMs = 24 * 60 * 60 * 1000;
   const token = await signToken({ u: user.username, exp: Date.now() + expiresInMs }, env.AUTH_SECRET || "dev-insecure-secret-change-me");
 
   return { success: true, token, expiresInMs, user: { username: user.username, role: user.role || "Member" } };
@@ -215,13 +216,11 @@ async function handleGetDashboardData(db) {
 async function handleGetYogiData(db, payload) {
   const level = Number(payload.level || 1);
   const page = Math.max(1, Number(payload.page || 1));
-  const limit = Math.max(1, Math.min(200, Number(payload.limit || 25)));
+  const limit = Math.max(1, Math.min(200, Number(payload.limit || 30)));
   const offset = (page - 1) * limit;
   const search = String(payload.searchVal || "").trim();
 
   let where = "WHERE level = ?";
-  
-  // 💡 Fixed TS2345 Error: Initialize binds as flexible array
   const binds = [];
   binds.push(level);
 
@@ -240,7 +239,6 @@ async function handleGetYogiData(db, payload) {
      FROM yogis ${where}`
   ).bind(...binds).first();
 
-  // Sort Active on TOP, Inactive at BOTTOM sorted by date
   const rowsRes = await db.prepare(
     `SELECT * FROM yogis ${where}
      ORDER BY (status='Active') DESC, COALESCE(status_date, reg_date, created_at) DESC, id DESC
@@ -273,11 +271,11 @@ async function handleSaveYogi(db, payload, session) {
 
   await db.prepare(
     `INSERT INTO yogis
-      (unique_id, group_id, level, seq_no, reg_date, name, age, phone, address, introducer, email, gender, status, status_date, posted, created_by, created_at, updated_at)
-     VALUES (?, ?, ?, (SELECT COALESCE(MAX(seq_no),0)+1 FROM yogis WHERE level=?), ?, ?, ?, ?, ?, ?, ?, ?, 'Active', ?, 0, ?, ?, ?)`
+      (unique_id, group_id, level, seq_no, reg_date, name, age, occupation, phone, address, introducer, email, gender, status, status_date, posted, created_by, created_at, updated_at)
+     VALUES (?, ?, ?, (SELECT COALESCE(MAX(seq_no),0)+1 FROM yogis WHERE level=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active', ?, 0, ?, ?, ?)`
   ).bind(
     uniqueId, groupId, level, level, regDate, name,
-    payload.age || null, payload.phone || "", payload.address || "",
+    payload.age || null, payload.occupation || "", payload.phone || "", payload.address || "",
     payload.introducer || "", payload.email || "", payload.gender || "ကျား",
     regDate, session ? session.u : "System", now, now
   ).run();
@@ -299,6 +297,7 @@ async function handleUpdateYogi(db, payload, session) {
       name = ?,
       gender = ?,
       age = ?,
+      occupation = ?,
       phone = ?,
       address = ?,
       introducer = ?,
@@ -309,6 +308,7 @@ async function handleUpdateYogi(db, payload, session) {
     name,
     payload.gender || "ကျား",
     payload.age || null,
+    payload.occupation || "",
     payload.phone || "",
     payload.address || "",
     payload.introducer || "",
@@ -330,16 +330,16 @@ async function handleToggleYogiStatus(db, payload) {
   const newStatus = payload.status || (row.status === "Active" ? "Inactive" : "Active");
   const clickDate = payload.regDate || todayStr();
 
-  // Update reg_date / status_date when toggling to Active so it moves back to the top!
-  await db.prepare("UPDATE yogis SET status=?, status_date=?, reg_date=?, updated_at=? WHERE id=?")
-    .bind(newStatus, clickDate, clickDate, new Date().toISOString(), id).run();
+  // 💡 Keep original reg_date (စတင်ရက်စွဲ) intact, only update status_date (ချိန်းရက်စွဲ)!
+  await db.prepare("UPDATE yogis SET status=?, status_date=?, updated_at=? WHERE id=?")
+    .bind(newStatus, clickDate, new Date().toISOString(), id).run();
 
   return { success: true, message: `Status → ${newStatus}`, status: newStatus };
 }
 
 /**
- * 💡 Post Yogi Logic (MOVES Yogi from Stage N to Stage N+1, or Stage 8 for Stage 7)
- * Removes Yogi from current stage page and places them ONLY in the new stage page!
+ * 💡 Post Yogi Logic: Moves Yogi from Stage N to Stage N+1
+ * Preserves original reg_date (စတင်ရက်စွဲ) and updates status_date (ချိန်းရက်စွဲ) to postDate!
  */
 async function handlePostYogi(db, payload, session) {
   const id = Number(payload.id);
@@ -349,14 +349,14 @@ async function handlePostYogi(db, payload, session) {
   if (!row) return { success: false, message: "စာရင်း မတွေ့ပါ။" };
 
   const currentLevel = Number(row.level);
-  const nextLevel = currentLevel < 7 ? currentLevel + 1 : 8; // Stage 7 posted goes to Stage 8 (Old Yogis)
+  const nextLevel = currentLevel < 7 ? currentLevel + 1 : 8;
   const postDate = payload.postDate || todayStr();
   const now = new Date().toISOString();
 
-  // 💡 MOVE LOGIC: Update level to nextLevel and reg_date to today's post date!
+  // 💡 Update level and status_date (ချိန်းရက်စွဲ) only, preserving reg_date (စတင်ရက်စွဲ)!
   await db.prepare(
-    `UPDATE yogis SET level=?, reg_date=?, status_date=?, posted=0, updated_at=? WHERE id=?`
-  ).bind(nextLevel, postDate, postDate, now, id).run();
+    `UPDATE yogis SET level=?, status_date=?, posted=0, updated_at=? WHERE id=?`
+  ).bind(nextLevel, postDate, now, id).run();
 
   const nextLevelObj = LEVELS.find(l => l.id === nextLevel);
   const targetName = nextLevelObj ? nextLevelObj.name : "ယောဂီ စာရင်းဟောင်း";
@@ -364,7 +364,14 @@ async function handlePostYogi(db, payload, session) {
   return { success: true, message: `${targetName} စာရင်းသို့ အောင်မြင်စွာ ရွှေ့လိုက်ပါပြီ။` };
 }
 
-async function handleDeleteYogi(db, payload) {
+/**
+ * 💡 Admin Only Delete Guard
+ */
+async function handleDeleteYogi(db, payload, session) {
+  if (session && session.u !== "Admin") {
+    return { success: false, message: "Admin သာလျှင် စာရင်း ဖျက်ပစ်ခွင့် ရှိပါသည်။" };
+  }
+
   const id = Number(payload.id);
   if (!id) return { success: false, message: "ID မတွေ့ပါ။" };
   await db.prepare("DELETE FROM yogis WHERE id=?").bind(id).run();
@@ -388,11 +395,11 @@ async function handleImportYogi(db, payload, session) {
     stmts.push(
       db.prepare(
         `INSERT INTO yogis
-          (unique_id, group_id, level, seq_no, reg_date, name, age, phone, address, introducer, email, gender, status, status_date, posted, created_by, created_at, updated_at)
-         VALUES (?, ?, ?, (SELECT COALESCE(MAX(seq_no),0)+1 FROM yogis WHERE level=?), ?, ?, ?, ?, ?, ?, ?, ?, 'Active', ?, 0, ?, ?, ?)`
+          (unique_id, group_id, level, seq_no, reg_date, name, age, occupation, phone, address, introducer, email, gender, status, status_date, posted, created_by, created_at, updated_at)
+         VALUES (?, ?, ?, (SELECT COALESCE(MAX(seq_no),0)+1 FROM yogis WHERE level=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active', ?, 0, ?, ?, ?)`
       ).bind(
         uniqueId, groupId, level, level, regDate, name,
-        r.age || null, r.phone || "", r.address || "", r.introducer || "",
+        r.age || null, r.occupation || "", r.phone || "", r.address || "", r.introducer || "",
         r.email || "", r.gender || "ကျား", regDate, session ? session.u : "System", now, now
       )
     );
@@ -407,7 +414,7 @@ async function handleImportYogi(db, payload, session) {
 
 async function handleGetLeaderData(db, payload) {
   const page = Math.max(1, Number(payload.page || 1));
-  const limit = Math.max(1, Math.min(200, Number(payload.limit || 25)));
+  const limit = Math.max(1, Math.min(200, Number(payload.limit || 30)));
   const offset = (page - 1) * limit;
   const search = String(payload.searchVal || "").trim();
 
@@ -517,7 +524,14 @@ async function handleToggleLeaderStatus(db, payload) {
   return { success: true, message: `Status → ${newStatus}`, status: newStatus };
 }
 
-async function handleDeleteLeader(db, payload) {
+/**
+ * 💡 Admin Only Delete Guard
+ */
+async function handleDeleteLeader(db, payload, session) {
+  if (session && session.u !== "Admin") {
+    return { success: false, message: "Admin သာလျှင် စာရင်း ဖျက်ပစ်ခွင့် ရှိပါသည်။" };
+  }
+
   const id = Number(payload.id);
   if (!id) return { success: false, message: "ID မတွေ့ပါ။" };
   await db.prepare("DELETE FROM leaders WHERE id=?").bind(id).run();
@@ -531,7 +545,7 @@ async function handleGetTotalListData(db) {
   for (let i = 1; i <= 7; i++) {
     const l = LEVELS.find(x => x.id === i);
     const res = await db.prepare(
-      `SELECT id, unique_id, name, age, gender, phone, reg_date, status
+      `SELECT id, unique_id, name, age, occupation, gender, phone, reg_date, status_date, status
        FROM yogis WHERE level=? AND status='Active' ORDER BY id DESC`
     ).bind(i).all();
     out.push({ level: i, name: l.name, rows: (res.results || []).map(mapYogiRow) });
@@ -569,7 +583,7 @@ async function routeAction(action, payload, env, session) {
       return handleUpdateYogi(db, payload, session);
 
     case "deleteYogi":
-      return handleDeleteYogi(db, payload);
+      return handleDeleteYogi(db, payload, session);
 
     case "toggleYogiStatus":
       return handleToggleYogiStatus(db, payload);
@@ -590,7 +604,7 @@ async function routeAction(action, payload, env, session) {
       return handleUpdateLeader(db, payload, session);
 
     case "deleteLeader":
-      return handleDeleteLeader(db, payload);
+      return handleDeleteLeader(db, payload, session);
 
     case "toggleLeaderStatus":
       return handleToggleLeaderStatus(db, payload);
