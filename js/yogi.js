@@ -68,6 +68,10 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
   const container = document.getElementById("view-container");
   if (!container) return;
 
+  // 💡 Admin ခွင့်ပြုချက် စစ်ဆေးခြင်း
+  const currentUser = window.AppState ? window.AppState.currentUser : localStorage.getItem("yogi_user_name");
+  const isAdmin = currentUser === "Admin";
+
   const stageInfo = (window.LEVELS || []).find(l => l.id === Number(stageId)) || {
     id: stageId, 
     name: stageId === 8 ? "ယောဂီ စာရင်းဟောင်း" : `အဆင့် (${stageId})`
@@ -78,7 +82,7 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
 
   window.toggleLoading(true);
   let data = { rows: [], total: 0, activeTotal: 0, activeMale: 0, activeFemale: 0 };
-  const limit = 30; // 💡 Default 30 items per page
+  const limit = 30;
 
   try {
     const res = await window.callApi("getYogiData", { level: stageId, page, searchVal, limit });
@@ -106,7 +110,7 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
       <!-- Top 3 KPI Cards -->
       ${statCardsYogiHtml(data.activeTotal, data.activeMale, data.activeFemale)}
 
-      <!-- Restored Control Bar Buttons -->
+      <!-- Control Bar -->
       <div class="control-bar-wrapper">
         <div style="position: relative; flex: 1; min-width: 240px; max-width: 360px;">
           <input type="text" id="yogi-search-input" value="${window.escapeHtml(searchVal)}" 
@@ -133,22 +137,22 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
         </div>
       </div>
 
-      <!-- Table Scroll Container (All 13 Columns Present, Plain Index 1, 2, 3, Sticky Action Column) -->
+      <!-- 💡 Table Scroll Container (စတင်ရက်စွဲ၊ ချိန်းရက်စွဲ၊ အလုပ်အကိုင် ကော်လံများ အစဉ်လိုက်) -->
       <div class="table-scroll-container">
         <table>
           <thead>
             <tr>
               <th>စဉ်</th>
-              <th>ရက်စွဲ</th>
+              <th>စတင်ရက်စွဲ</th>
+              <th>ချိန်းရက်စွဲ</th>
               <th>အမည်</th>
               <th style="text-align: center;">အသက်</th>
+              <th>အလုပ်အကိုင်</th>
               <th>ဖုန်းနံပါတ်</th>
               <th>နေရပ်လိပ်စာ</th>
               <th>မိတ်ဆက်ယောဂီ</th>
               <th>EMAIL</th>
               <th style="text-align: center;">GENDER</th>
-              <th>CREATED BY</th>
-              <th>CREATED AT</th>
               <th style="text-align: center;">STATUS</th>
               <th class="sticky-action" style="text-align: center;">ACTION</th>
             </tr>
@@ -158,8 +162,10 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
               <tr class="${y.status === 'Inactive' ? 'row-inactive' : ''}">
                 <td style="font-weight: bold; color: #f59e0b; white-space: nowrap;">${(page - 1) * limit + idx + 1}</td>
                 <td style="white-space: nowrap;">${y.regDate || '-'}</td>
+                <td style="white-space: nowrap; color: #38bdf8; font-weight: bold;">${y.statusDate || y.regDate || '-'}</td>
                 <td style="font-weight: 800; color: #f8fafc; white-space: nowrap;">${window.escapeHtml(y.name)}</td>
                 <td style="text-align: center; white-space: nowrap;">${y.age || '-'}</td>
+                <td style="white-space: nowrap;">${window.escapeHtml(y.occupation) || '-'}</td>
                 <td style="white-space: nowrap;">${y.phone || '-'}</td>
                 <td style="white-space: nowrap;">${window.escapeHtml(y.address) || '-'}</td>
                 <td style="white-space: nowrap;">${window.escapeHtml(y.introducer) || '-'}</td>
@@ -169,8 +175,6 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
                     ${y.gender || 'ကျား'}
                   </span>
                 </td>
-                <td style="white-space: nowrap;">${y.createdBy || 'System'}</td>
-                <td style="white-space: nowrap;">${y.createdAt ? y.createdAt.slice(0, 10) : '-'}</td>
                 <td style="text-align: center; white-space: nowrap;">
                   <span style="padding: 3px 8px; border-radius: 6px; font-weight: bold; ${y.status === 'Active' ? 'background: rgba(16,185,129,0.2); color: #34d399;' : 'background: rgba(244,63,94,0.2); color: #f87171;'}">
                     ${y.status || 'Active'}
@@ -181,7 +185,11 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
                     <button onclick="openYogiModal(${stageId}, ${y.id})" class="btn-action-icon btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
                     <button onclick="postYogiToNextStage(${y.id}, ${stageId})" class="btn-action-icon btn-action-post" title="${stageId === 7 ? 'ယောဂီ စာရင်းဟောင်းသို့ ရွှေ့မည် (Post)' : 'နောက်တစ်ဆင့်သို့ ရွှေ့မည် (Post)'}"><i class="fa-solid fa-paper-plane"></i></button>
                     <button onclick="toggleYogiStatus(${y.id}, '${y.status}', ${stageId})" class="btn-action-icon ${y.status === 'Active' ? 'btn-action-inactive' : 'btn-action-active'}" title="${y.status === 'Active' ? 'Inactive ပြုလုပ်မည်' : 'Active ပြုလုပ်မည်'}"><i class="fa-solid ${y.status === 'Active' ? 'fa-user-xmark' : 'fa-user-check'}"></i></button>
-                    <button onclick="deleteYogi(${y.id}, ${stageId})" class="btn-action-icon btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
+                    
+                    <!-- 💡 Admin ဝင်မှသာ Delete Icon ခလုတ် ပေါ်မည် -->
+                    ${isAdmin ? `
+                      <button onclick="deleteYogi(${y.id}, ${stageId})" class="btn-action-icon btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
+                    ` : ''}
                   </div>
                 </td>
               </tr>
@@ -192,7 +200,7 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
         </table>
       </div>
 
-      <!-- Pagination Bar (ALWAYS VISIBLE) -->
+      <!-- Pagination Bar -->
       <div class="pagination-container">
         <button onclick="renderYogiStage(${stageId}, ${page - 1}, '${window.escapeHtml(searchVal)}')" ${page <= 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-control btn-control-refresh" style="padding: 0.4rem 0.85rem;">
           <i class="fa-solid fa-chevron-left"></i> Previous
@@ -211,7 +219,7 @@ async function renderYogiStage(stageId, page = 1, searchVal = "") {
 }
 
 /**
- * Centered Pop-up Modal Window for Adding / Editing Yogi
+ * 💡 Centered Pop-up Modal Window with "အလုပ်အကိုင်" Field
  */
 function openYogiModal(stageId, yogiId = null) {
   let existingData = null;
@@ -256,6 +264,12 @@ function openYogiModal(stageId, yogiId = null) {
             </div>
           </div>
 
+          <!-- 💡 "အလုပ်အကိုင်" Input Field -->
+          <div>
+            <label style="display: block; font-weight: bold; color: #fef08a; margin-bottom: 0.3rem; font-size: 0.75rem;">အလုပ်အကိုင်</label>
+            <input type="text" id="modal-occupation" value="${isEdit ? window.escapeHtml(existingData.occupation || '') : ''}" placeholder="ဥပမာ - ဝန်ထမ်း / စီးပွားရေး...">
+          </div>
+
           <div>
             <label style="display: block; font-weight: bold; color: #fef08a; margin-bottom: 0.3rem; font-size: 0.75rem;">ဖုန်းနံပါတ် (၂ လိုင်းအထိ ထည့်နိုင်သည်)</label>
             <input type="text" id="modal-phone" value="${isEdit ? window.escapeHtml(existingData.phone || '') : ''}" placeholder="09-123456789, 09-987654321">
@@ -278,7 +292,7 @@ function openYogiModal(stageId, yogiId = null) {
           </div>
 
           <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.5rem;">
-            <span>ရက်စွဲ: <b style="color: #fbbf24;">${isEdit ? (existingData.regDate || today) : today}</b></span>
+            <span>စတင်ရက်စွဲ: <b style="color: #fbbf24;">${isEdit ? (existingData.regDate || today) : today}</b></span>
             <span>Created By: <b style="color: #34d399;">${isEdit ? (existingData.createdBy || currentUser) : currentUser}</b></span>
           </div>
 
@@ -314,6 +328,7 @@ async function saveYogiForm(event, stageId, editId = null) {
   const name = document.getElementById("modal-name").value.trim();
   const gender = document.getElementById("modal-gender").value;
   const age = document.getElementById("modal-age").value.trim();
+  const occupation = document.getElementById("modal-occupation").value.trim();
   const phone = document.getElementById("modal-phone").value.trim();
   const address = document.getElementById("modal-address").value.trim();
   const introducer = document.getElementById("modal-introducer").value.trim();
@@ -333,6 +348,7 @@ async function saveYogiForm(event, stageId, editId = null) {
       name,
       gender,
       age,
+      occupation,
       phone,
       address,
       introducer,
@@ -365,7 +381,7 @@ async function toggleYogiStatus(id, currentStatus, stageId) {
     });
 
     if (res.success) {
-      window.showToast("SUCCESS", nextStatus === 'Active' ? `Active ပြုလုပ်ပြီး ဒီနေ့ရက်စွဲ (${newDate}) ဖြင့် အပေါ်သို့ ပို့လိုက်ပါပြီ။` : "Inactive ပြုလုပ်ပြီး အောက်သို့ ရွှေ့လိုက်ပါပြီ။");
+      window.showToast("SUCCESS", nextStatus === 'Active' ? `Active ပြုလုပ်ပြီး ချိန်းရက်စွဲ (${newDate}) ဖြင့် အပေါ်သို့ ပို့လိုက်ပါပြီ။` : "Inactive ပြုလုပ်ပြီး အောက်သို့ ရွှေ့လိုက်ပါပြီ။");
       renderYogiStage(stageId);
     }
   } catch (e) { console.error(e); } finally { window.toggleLoading(false); }
@@ -435,12 +451,13 @@ function handleExcelImport(e, stageId) {
         return {
           name: nameVal,
           age: r["အသက်"] || r["Age"] || "",
+          occupation: r["အလုပ်အကိုင်"] || r["Occupation"] || "",
           phone: r["ဖုန်းနံပါတ်"] || r["Phone"] || "",
           address: r["နေရပ်လိပ်စာ"] || r["Address"] || "",
           introducer: r["မိတ်ဆက်ယောဂီ"] || r["Introducer"] || "",
           email: r["EMAIL"] || r["Email"] || "",
           gender: r["GENDER"] || r["Gender"] || detectGenderByName(nameVal),
-          regDate: r["ရက်စွဲ"] || getFormattedToday()
+          regDate: r["စတင်ရက်စွဲ"] || r["ရက်စွဲ"] || getFormattedToday()
         };
       }).filter(r => r.name);
 
