@@ -43,33 +43,21 @@
    */
   function getApiUrl() {
     const hostname = window.location.hostname;
-    const protocol = window.location.protocol;
     
-    // ✅ Local Development
+    // ✅ Local Development Mode
     if (hostname === "localhost" || hostname === "127.0.0.1") {
       const devUrl = localStorage.getItem("dev_api_url");
-      if (devUrl) return devUrl;
+      if (devUrl) return devUrl.replace(/\/$/, "");
       return "http://localhost:8787"; // Wrangler dev server
     }
     
-    // ✅ Production Environment
-    // Check if custom production URL is set
+    // ✅ Custom Override (if set in localStorage)
     const prodUrl = localStorage.getItem("prod_api_url");
-    if (prodUrl) return prodUrl;
+    if (prodUrl) return prodUrl.replace(/\/$/, "");
     
-    // ✅ AUTO-DETECT PRODUCTION API (MODIFY THIS)
-    // If hosted on GitHub Pages: https://yourusername.github.io/yogi-app
-    if (hostname.includes("github.io")) {
-      return "https://yogi-api-YOUR-SUBDOMAIN.workers.dev";
-    }
-    
-    // ✅ If hosted on Cloudflare Pages
-    if (hostname.includes("pages.dev")) {
-      return "https://yogi-api-YOUR-SUBDOMAIN.workers.dev";
-    }
-    
-    // ✅ If hosted on custom domain
-    return "https://yogi-api-YOUR-SUBDOMAIN.workers.dev";
+    // ✅ Production Cloudflare Worker API Endpoint
+    // GitHub Pages, Cloudflare Pages သို့မဟုတ် Custom Domain အားလုံးအတွက် 
+    return "https://yogi-list.kotuntunwin1985.workers.dev";
   }
 
   /**
