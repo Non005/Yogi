@@ -437,3 +437,27 @@ tr.row-inactive td {
     justify-content: center !important;
   }
 }
+
+/* ========================================================================
+   💡 LEFT SIDEBAR ACTIVE MENU HIGHLIGHT (ရွေးချယ်ထားသော မီနူး ထင်ရှားစေရန်)
+   ======================================================================== */
+
+.nav-btn.active, 
+.nav-btn-active { 
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.3) 0%, rgba(245, 158, 11, 0.05) 100%) !important; 
+  color: #fbbf24 !important; 
+  font-weight: 900 !important; 
+  border-left: 4px solid #f59e0b !important; 
+  border-radius: 0 0.75rem 0.75rem 0 !important;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ရွေးထားသော မီနူး၏ အဆင့်နံပါတ် [ 1 ] ဘောက်စ်လေးကို ရွှေဝါရောင် လင်းစေရန် */
+.nav-btn.active span.font-mono,
+.nav-btn-active span.font-mono {
+  background-color: #f59e0b !important;
+  color: #090d16 !important;
+  font-weight: 900 !important;
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6) !important;
+}
