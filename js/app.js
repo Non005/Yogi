@@ -1,5 +1,5 @@
 /**
- * YOGI MANAGEMENT SYSTEM — Main Router & Navigation Logic
+ * YOGI MANAGEMENT SYSTEM — Main Router & Navigation Logic (FULL FIXED WITH LIVE SYNC)
  * File: js/app.js  
  */
 
@@ -14,6 +14,57 @@ const DEFAULT_LEVELS = [
   { id: 7, name: "သိ-ပါယ်-ဆိုက်-ပွား" },
   { id: 8, name: "ယောဂီ စာရင်းဟောင်း" }
 ];
+
+let liveSyncInterval = null;
+
+/**
+ * 💡 Smart Live Sync Auto-Refresh Manager
+ * ၅ စက္ကန့်တစ်ကြိမ် နောက်ကွယ်မှ အလိုအလျောက် ဒေတာ အသစ် ရယူပေးမည့် စနစ်
+ */
+window.startLiveSync = function () {
+  if (liveSyncInterval) clearInterval(liveSyncInterval);
+
+  liveSyncInterval = setInterval(() => {
+    // ၁။ User Login မဝင်ထားလျှင် သို့မဟုတ် Token မရှိလျှင် Auto Sync မလုပ်ပါ
+    const token = localStorage.getItem("yogi_auth_token");
+    if (!token) return;
+
+    // ၂။ ဖုန်း/ကွန်ပျူတာ Screen မီးပိတ်ထားလျှင် သို့မဟုတ် အခြား Tab သို့ ရောက်နေလျှင် မလုပ်ပါ
+    if (document.hidden) return;
+
+    // ၃။ စာရင်းသွင်းနေချိန် / ပြင်နေချိန် (Modal ပွင့်နေချိန်) စာရိုက်မပျက်အောင် Auto Sync ခဏ ရပ်မည်
+    const isModalOpen = document.querySelector('.modal-overlay-bg:not(.hidden)');
+    if (isModalOpen) return;
+
+    // ၄။ လက်ရှိ AppState တွင် ရောက်နေသော စာမျက်နှာအလိုက် Silent Auto Refresh ပြုလုပ်ပေးမည်
+    if (!window.AppState) return;
+    const currentTab = window.AppState.currentTab || "home";
+    const currentParam = window.AppState.currentParam;
+
+    if (currentTab === "home" || currentTab === "dashboard") {
+      if (typeof window.renderDashboard === "function") {
+        window.renderDashboard(true); // silent refresh
+      }
+    } else if (currentTab === "level" || currentTab === "yogi" || currentTab === "stage") {
+      const levelId = Number(currentParam || 1);
+      if (typeof window.renderYogiStage === "function") {
+        const page = window.currentYogiPage || 1;
+        const search = window.currentYogiSearch || "";
+        window.renderYogiStage(levelId, page, search, true); // silent refresh
+      }
+    } else if (currentTab === "total_summary") {
+      if (typeof window.renderTotalSummary === "function") {
+        window.renderTotalSummary(true); // silent refresh
+      }
+    } else if (currentTab === "leaders" || currentTab === "leader") {
+      if (typeof window.renderLeaders === "function") {
+        const page = window.currentLeaderPage || 1;
+        const search = window.currentLeaderSearch || "";
+        window.renderLeaders(page, search, true); // silent refresh
+      }
+    }
+  }, 5000); // ၅ စက္ကန့်တစ်ကြိမ် Auto-Sync
+};
 
 /**
  * App Initialization
@@ -30,6 +81,11 @@ window.initApp = function () {
   const currentTab = (window.AppState && window.AppState.currentTab) || "home";
   const currentParam = (window.AppState && window.AppState.currentParam) || null;
   window.switchTab(currentTab, currentParam);
+
+  // 💡 Start Live Sync Timer
+  if (typeof window.startLiveSync === "function") {
+    window.startLiveSync();
+  }
 };
 
 /**
@@ -149,5 +205,9 @@ window.renderSidebar = renderSidebar;
 document.addEventListener("DOMContentLoaded", () => {
   if (typeof window.checkExistingSession === "function") {
     window.checkExistingSession();
+  }
+  // 💡 Start Live Sync Timer on page load
+  if (typeof window.startLiveSync === "function") {
+    window.startLiveSync();
   }
 });
