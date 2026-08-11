@@ -1,7 +1,7 @@
 {
-  "name": "Yogi App - Zoom ယောဂီစာရင်း စီမံခန့်ခွဲမှုစနစ်",
+  "name": "Yogi App",
   "short_name": "Yogi App",
-  "description": "Zoom ယောဂီများ အဆင့်လိုက် စီမံခန့်ခွဲရေးစနစ် (Yogi Management System)",
+  "description": "Yogi Management System",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
