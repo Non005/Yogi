@@ -39,7 +39,7 @@ function genId(prefix) {
   return `${prefix}-${t}-${r}`.toUpperCase();
 }
 
-// 💡 Map D1 snake_case columns to Frontend camelCase
+// Map D1 snake_case columns to Frontend camelCase
 function mapYogiRow(r) {
   if (!r) return r;
   return {
