@@ -31,9 +31,9 @@ function statCardsLeadersHtml(total, male, female) {
         <div style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
           <i class="fa-solid fa-user-tie"></i>
         </div>
-        <div>
-          <p>TOTAL LEADERS</p>
-          <h3 style="color: #818cf8;">${total || 0} ဦး</h3>
+        <div style="display: flex; flex-direction: column;">
+          <p style="margin: 0; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">TOTAL LEADERS</p>
+          <h3 style="margin: 0; font-size: 1.35rem; font-weight: 900; color: #818cf8; font-family: monospace;">${total || 0} ဦး</h3>
         </div>
       </div>
 
@@ -41,9 +41,9 @@ function statCardsLeadersHtml(total, male, female) {
         <div style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
           <i class="fa-solid fa-mars"></i>
         </div>
-        <div>
-          <p>MALE LEADERS</p>
-          <h3 style="color: #818cf8;">${male || 0} ဦး</h3>
+        <div style="display: flex; flex-direction: column;">
+          <p style="margin: 0; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">MALE LEADERS</p>
+          <h3 style="margin: 0; font-size: 1.35rem; font-weight: 900; color: #818cf8; font-family: monospace;">${male || 0} ဦး</h3>
         </div>
       </div>
 
@@ -51,9 +51,9 @@ function statCardsLeadersHtml(total, male, female) {
         <div style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);">
           <i class="fa-solid fa-venus"></i>
         </div>
-        <div>
-          <p>FEMALE LEADERS</p>
-          <h3 style="color: #f472b6;">${female || 0} ဦး</h3>
+        <div style="display: flex; flex-direction: column;">
+          <p style="margin: 0; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">FEMALE LEADERS</p>
+          <h3 style="margin: 0; font-size: 1.35rem; font-weight: 900; color: #f472b6; font-family: monospace;">${female || 0} ဦး</h3>
         </div>
       </div>
     </div>
@@ -68,12 +68,16 @@ async function renderLeaders(page = 1, searchVal = "") {
   const container = document.getElementById("view-container");
   if (!container) return;
 
+  // 💡 Admin ခွင့်ပြုချက် စစ်ဆေးခြင်း
+  const currentUser = window.AppState ? window.AppState.currentUser : localStorage.getItem("yogi_user_name");
+  const isAdmin = currentUser === "Admin";
+
   const titleEl = document.getElementById("page-title");
   if (titleEl) titleEl.innerText = "ဦးဆောင်ဆွေးနွေး ယောဂီများ";
 
   window.toggleLoading(true);
   let data = { rows: [], total: 0, activeTotal: 0, activeMale: 0, activeFemale: 0 };
-  const limit = 30; // 💡 Default 30 items per page
+  const limit = 30;
 
   try {
     const res = await window.callApi("getLeaderData", { page, searchVal, limit });
@@ -143,7 +147,7 @@ async function renderLeaders(page = 1, searchVal = "") {
           </thead>
           <tbody>
             ${sortedRows.length > 0 ? sortedRows.map((l, idx) => `
-              <tr class="${l.status === 'Inactive' ? 'row-inactive' : ''}">
+              <tr class="${l.status === 'Inactive' ? 'row-inactive' : ''}" style="border-bottom: 1px solid rgba(30, 41, 59, 0.5);">
                 <td style="padding: 11px 14px; font-weight: bold; color: #818cf8; white-space: nowrap;">${(page - 1) * limit + idx + 1}</td>
                 <td style="white-space: nowrap;">${l.regDate || '-'}</td>
                 <td style="font-weight: 800; color: #f8fafc; white-space: nowrap;">${window.escapeHtml(l.name)}</td>
@@ -161,12 +165,15 @@ async function renderLeaders(page = 1, searchVal = "") {
                     ${l.status || 'Active'}
                   </span>
                 </td>
-                <td class="sticky-action" style="text-align: center; white-space: nowrap;">
+                <td class="sticky-action" style="text-align: center; white-space: nowrap; background-color: #0e172a;">
                   <div style="display: flex; gap: 6px; justify-content: center;">
-                    <!-- Restored Sleek Icon-only Action Buttons -->
                     <button onclick="openLeaderModal(${l.id})" class="btn-action-icon btn-action-edit" title="ပြင်ဆင်မည်"><i class="fa-solid fa-pen-to-square"></i></button>
                     <button onclick="toggleLeaderStatus(${l.id}, '${l.status}')" class="btn-action-icon ${l.status === 'Active' ? 'btn-action-inactive' : 'btn-action-active'}" title="${l.status === 'Active' ? 'Inactive ပြုလုပ်မည်' : 'Active ပြုလုပ်မည်'}"><i class="fa-solid ${l.status === 'Active' ? 'fa-user-xmark' : 'fa-user-check'}"></i></button>
-                    <button onclick="deleteLeader(${l.id})" class="btn-action-icon btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
+                    
+                    <!-- 💡 Admin ဝင်မှသာ Delete Icon ခလုတ် ပေါ်မည် -->
+                    ${isAdmin ? `
+                      <button onclick="deleteLeader(${l.id})" class="btn-action-icon btn-action-delete" title="ဖျက်ပါ"><i class="fa-solid fa-trash"></i></button>
+                    ` : ''}
                   </div>
                 </td>
               </tr>
@@ -177,7 +184,7 @@ async function renderLeaders(page = 1, searchVal = "") {
         </table>
       </div>
 
-      <!-- Pagination Bar (ALWAYS VISIBLE) -->
+      <!-- Pagination Bar -->
       <div class="pagination-container">
         <button onclick="renderLeaders(${page - 1}, '${window.escapeHtml(searchVal)}')" ${page <= 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} class="btn-control btn-control-refresh" style="padding: 0.4rem 0.85rem;">
           <i class="fa-solid fa-chevron-left"></i> Previous
@@ -196,7 +203,7 @@ async function renderLeaders(page = 1, searchVal = "") {
 }
 
 /**
- * Centered Modal with EMAIL field included
+ * Centered Modal for Leaders (Includes EMAIL field)
  */
 function openLeaderModal(leaderId = null) {
   let existingData = null;
