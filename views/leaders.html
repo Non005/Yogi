@@ -1,81 +1,78 @@
-<!-- views/leaders.html — Leader Discussion Yogis Template --> 
+<!-- views/leaders.html — Leader Discussion Yogis Template -->
 
 <div class="space-y-5 view-panel">
   <!-- Top 3 KPI Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="leader-kpi-cards">
+  <div class="kpi-grid-container" id="leader-kpi-cards">
     <div class="stats-card">
-      <div class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+      <div style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
         <i class="fa-solid fa-user-tie"></i>
       </div>
       <div>
         <p>TOTAL LEADERS</p>
-        <h3 class="text-indigo-400" id="leader-total-count">0 ဦး</h3>
+        <h3 style="color: #818cf8;" id="leader-total-count">0 ဦး</h3>
       </div>
     </div>
     <div class="stats-card">
-      <div class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+      <div style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
         <i class="fa-solid fa-mars"></i>
       </div>
       <div>
         <p>MALE LEADERS</p>
-        <h3 class="text-indigo-400" id="leader-male-count">0 ဦး</h3>
+        <h3 style="color: #818cf8;" id="leader-male-count">0 ဦး</h3>
       </div>
     </div>
     <div class="stats-card">
-      <div class="bg-pink-500/10 text-pink-400 border border-pink-500/20">
+      <div style="background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3);">
         <i class="fa-solid fa-venus"></i>
       </div>
       <div>
         <p>FEMALE LEADERS</p>
-        <h3 class="text-pink-400" id="leader-female-count">0 ဦး</h3>
+        <h3 style="color: #f472b6;" id="leader-female-count">0 ဦး</h3>
       </div>
     </div>
   </div>
 
   <!-- Action Control Bar -->
-  <div class="flex flex-col md:flex-row items-center justify-between gap-3 bg-[#0e172a] p-3.5 rounded-2xl border border-indigo-500/20 shadow-md">
-    <div class="relative w-full md:w-80">
+  <div class="control-bar-wrapper">
+    <div style="position: relative; flex: 1; min-width: 240px; max-width: 360px;">
       <input type="text" id="leader-search-input" onkeyup="filterLeaderTable()" placeholder="အမည် / ဖုန်း ရှာဖွေရန်..." 
-        class="w-full pl-9 pr-3 py-2 bg-[#070a12] border border-indigo-500/30 rounded-xl text-xs text-slate-100 placeholder:text-slate-500 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/20">
-      <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+        style="width: 100%; padding-left: 2.2rem; background: #070a12; border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 0.75rem; color: #f1f5f9; font-size: 0.8rem; outline: none;">
+      <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.75rem;"></i>
     </div>
 
-    <div class="flex flex-wrap items-center justify-between md:justify-end gap-2.5 w-full md:w-auto">
-      <button onclick="renderLeaders(1, '')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold border border-slate-700/60 flex items-center gap-1.5 transition active:scale-95" title="ပြန်လည်ရယူပါ">
-        <i class="fa-solid fa-rotate text-xs"></i> <span>Refresh</span>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+      <button onclick="renderLeaders(1, '')" class="btn-control btn-control-refresh" title="ပြန်လည်ရယူပါ">
+        <i class="fa-solid fa-rotate"></i> Refresh
       </button>
-
-      <button onclick="exportLeaderToExcel()" class="px-3 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/40 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95" title="Excel ထုတ်ယူမည်">
-        <i class="fa-solid fa-file-excel text-xs"></i> <span>Export Excel</span>
+      <button onclick="exportLeaderToExcel()" class="btn-control btn-control-export" title="Excel ထုတ်ယူမည်">
+        <i class="fa-solid fa-file-excel"></i> Export Excel
       </button>
-
-      <button id="btn-add-leader" onclick="openLeaderModal()" class="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-extrabold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-indigo-600/20 transition active:scale-95">
-        <i class="fa-solid fa-plus text-xs"></i> <span>+ ဦးဆောင်ယောဂီ အသစ်ထည့်မည်</span>
+      <button id="btn-add-leader" onclick="openLeaderModal()" class="btn-control" style="background: linear-gradient(90deg, #6366f1, #4f46e5); color: #ffffff; font-weight: 900; padding: 0.5rem 1rem;">
+        <i class="fa-solid fa-plus"></i> + ဦးဆောင်ယောဂီ အသစ်ထည့်မည်
       </button>
     </div>
   </div>
 
   <!-- Leader Table -->
-  <div class="bg-[#0e172a] border border-indigo-500/20 rounded-2xl overflow-hidden shadow-2xl">
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-xs border-collapse">
-        <thead>
-          <tr>
-            <th>စဉ်</th>
-            <th>ရက်စွဲ</th>
-            <th>အမည်</th>
-            <th class="text-center">အသက်</th>
-            <th class="text-center">GENDER</th>
-            <th class="font-mono">ဖုန်းနံပါတ်</th>
-            <th>နေရပ်လိပ်စာ</th>
-            <th class="text-center">STATUS</th>
-            <th class="text-center sticky right-0">ACTION</th>
-          </tr>
-        </thead>
-        <tbody id="leader-table-tbody" class="divide-y divide-slate-800/60">
-          <!-- JS မှတစ်ဆင့် Dynamic Render သွားမည် -->
-        </tbody>
-      </table>
-    </div>
+  <div class="table-scroll-container">
+    <table>
+      <thead>
+        <tr style="background-color: #080d1a; border-bottom: 2px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-size: 0.72rem; font-weight: 800;">
+          <th style="padding: 12px 14px; white-space: nowrap;">စဉ်</th>
+          <th style="padding: 12px 14px; white-space: nowrap;">ရက်စွဲ</th>
+          <th style="padding: 12px 14px; white-space: nowrap;">အမည်</th>
+          <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">အသက်</th>
+          <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">GENDER</th>
+          <th style="padding: 12px 14px; white-space: nowrap;">ဖုန်းနံပါတ်</th>
+          <th style="padding: 12px 14px; white-space: nowrap;">နေရပ်လိပ်စာ</th>
+          <th style="padding: 12px 14px; white-space: nowrap;">EMAIL</th>
+          <th style="padding: 12px 14px; white-space: nowrap; text-align: center;">STATUS</th>
+          <th class="sticky-action" style="padding: 12px 14px; white-space: nowrap; text-align: center;">ACTION</th>
+        </tr>
+      </thead>
+      <tbody id="leader-table-tbody">
+        <!-- JS မှတစ်ဆင့် Dynamic Render သွားမည် -->
+      </tbody>
+    </table>
   </div>
 </div>
