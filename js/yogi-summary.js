@@ -42,7 +42,17 @@ function statCardsSummaryHtml(total, male, female) {
 /**
  * Render Total Summary 7-Column Matrix Table (Matching User's Hand-Drawn Image 3)
  */
-async function renderTotalSummary(searchVal = "") {
+async function renderTotalSummary(searchVal = "", silentRefresh = false) {
+  // Auto-sync previously passed `true` as the first argument, which turned into the search text "true".
+  // Treat boolean calls as silent refreshes and preserve the current summary search instead.
+  if (typeof searchVal === "boolean") {
+    silentRefresh = searchVal;
+    searchVal = window.currentSummarySearch || "";
+  } else if (!silentRefresh) {
+    searchVal = String(searchVal || "");
+    window.currentSummarySearch = searchVal;
+  }
+
   const container = document.getElementById("view-container");
   if (!container) return;
 
@@ -148,7 +158,11 @@ async function renderTotalSummary(searchVal = "") {
 
 function triggerSummarySearch() {
   const input = document.getElementById("summary-search-input");
-  if (input) renderTotalSummary(input.value.trim());
+  if (input) {
+    const value = input.value.trim();
+    window.currentSummarySearch = value;
+    renderTotalSummary(value);
+  }
 }
 
 // Global Window Exports
