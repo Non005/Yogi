@@ -54,7 +54,7 @@ window.startLiveSync = function () {
       }
     } else if (currentTab === "total_summary") {
       if (typeof window.renderTotalSummary === "function") {
-        window.renderTotalSummary(true); // silent refresh
+        window.renderTotalSummary(window.currentSummarySearch || "", true); // silent refresh
       }
     } else if (currentTab === "leaders" || currentTab === "leader") {
       if (typeof window.renderLeaders === "function") {
