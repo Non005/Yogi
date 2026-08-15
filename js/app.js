@@ -1,5 +1,5 @@
 /**
- * YOGI MANAGEMENT SYSTEM — Main Router & Navigation Logic (FULL FIXED WITH LIVE SYNC & MOBILE SIDEBAR)
+ * YOGI MANAGEMENT SYSTEM — Main Router & Navigation Logic (FULL FIXED & COMPLETE)
  * File: js/app.js  
  */
 
@@ -18,7 +18,7 @@ const DEFAULT_LEVELS = [
 let liveSyncInterval = null;
 
 /**
- * 💡 Mobile Sidebar Controls (Android / iPhone အတွက် တိကျသော အဖွင့်/အပိတ် Logic)
+ * 💡 Mobile & Tablet Sidebar Controls (Android / iPhone / Tablet အဖွင့်/အပိတ် Logic)
  */
 window.toggleMobileSidebar = function (forceClose = false) {
   const sidebar = document.getElementById("main-sidebar");
@@ -102,9 +102,11 @@ window.startLiveSync = function () {
  * App Initialization
  */
 window.initApp = function () {
+  // Live User Display ချိတ်ဆက်ခြင်း (AppState မရှိပါက LocalStorage မှ fallback ယူမည်)
   const liveUserEl = document.getElementById("live-user-name");
-  if (liveUserEl && window.AppState && window.AppState.currentUser) {
-    liveUserEl.innerText = String(window.AppState.currentUser);
+  if (liveUserEl) {
+    const activeUser = (window.AppState && window.AppState.currentUser) || localStorage.getItem("yogi_user_name") || localStorage.getItem("yogi_user") || "Admin";
+    liveUserEl.innerText = String(activeUser);
   }
 
   renderSidebar();
@@ -155,8 +157,8 @@ window.switchTab = function (tabName, param = null) {
   // Active Highlight ညှိခြင်း
   updateActiveNav(tabName, param);
 
-  // ဖုန်း screen တွင် menu item တစ်ခုခုကို နှိပ်လိုက်ပါက Sidebar ကို အလိုအလျောက် ပိတ်ပေးခြင်း
-  if (window.innerWidth < 768) {
+  // 💡 ဖုန်း သို့မဟုတ် Tablet (Screen width < 1024px) တွင် Menu တစ်ခုခုနှိပ်လိုက်ပါက Sidebar ကို အလိုအလျောက် ပိတ်ပေးမည်
+  if (window.innerWidth < 1024) {
     window.closeMobileSidebar();
   }
 
@@ -242,7 +244,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof window.checkExistingSession === "function") {
     window.checkExistingSession();
   } else if (typeof window.initApp === "function") {
-    // Session စစ်စရာမလိုဘဲ AppState ရှိပါက တိုက်ရိုက် Init လုပ်မည်
     const token = localStorage.getItem("yogi_auth_token");
     if (token) window.initApp();
   }
@@ -250,4 +251,19 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof window.startLiveSync === "function") {
     window.startLiveSync();
   }
+
+  // 💡 Screen အကျယ်ပြောင်းလဲသည့်အခါ (Tablet Screen လှည့်သည့်အခါ) Drawer အလိုအလျောက် ညှိပေးခြင်း
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 1024) {
+      const backdrop = document.getElementById("sidebar-backdrop");
+      if (backdrop) backdrop.classList.add("hidden");
+    }
+  });
+
+  // 💡 Keyboard မှ Escape (Esc) နှိပ်လျှင် Sidebar ပိတ်ပေးခြင်း
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      window.closeMobileSidebar();
+    }
+  });
 });
