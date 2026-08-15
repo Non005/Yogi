@@ -18,11 +18,11 @@ const DEFAULT_LEVELS = [
 let liveSyncInterval = null;
 
 /**
- * 💡 Mobile Sidebar Toggle (Android / iPhone အတွက် Sidebar အဖွင့်/အပိတ် Logic)
+ * 💡 Mobile Sidebar Controls (Android / iPhone အတွက် တိကျသော အဖွင့်/အပိတ် Logic)
  */
 window.toggleMobileSidebar = function (forceClose = false) {
   const sidebar = document.getElementById("main-sidebar");
-  const backdrop = document.getElementById("mobile-sidebar-backdrop") || document.getElementById("sidebar-backdrop");
+  const backdrop = document.getElementById("sidebar-backdrop") || document.getElementById("mobile-sidebar-backdrop");
 
   if (!sidebar) return;
 
@@ -35,7 +35,6 @@ window.toggleMobileSidebar = function (forceClose = false) {
     sidebar.classList.remove("translate-x-0");
     if (backdrop) {
       backdrop.classList.add("hidden");
-      backdrop.classList.remove("opacity-100");
     }
   } else {
     // ဖွင့်မည်
@@ -43,33 +42,40 @@ window.toggleMobileSidebar = function (forceClose = false) {
     sidebar.classList.add("translate-x-0");
     if (backdrop) {
       backdrop.classList.remove("hidden");
-      backdrop.classList.add("opacity-100");
     }
   }
 };
 
+window.closeMobileSidebar = function () {
+  window.toggleMobileSidebar(true);
+};
+
 /**
- * 💡 Smart Live Sync Auto-Refresh Manager
+ * 💡 Smart Live Sync Auto-Refresh Manager (၅ စက္ကန့်တစ်ကြိမ် နောက်ကွယ်မှ Auto Refresh လုပ်ပေးမည်)
  */
 window.startLiveSync = function () {
   if (liveSyncInterval) clearInterval(liveSyncInterval);
 
   liveSyncInterval = setInterval(() => {
+    // ၁။ Token မရှိလျှင် မလုပ်ပါ
     const token = localStorage.getItem("yogi_auth_token");
     if (!token) return;
 
+    // ၂။ Screen မီးပိတ်ထားလျှင် သို့မဟုတ် အခြား Tab သို့ ရောက်နေလျှင် မလုပ်ပါ
     if (document.hidden) return;
 
-    const isModalOpen = document.querySelector('.modal-overlay-bg:not(.hidden)');
+    // ၃။ Modal ပွင့်နေချိန် စာရိုက်မပျက်အောင် Auto Sync ခဏ ရပ်မည်
+    const isModalOpen = document.querySelector('.modal-overlay-bg:not(.hidden), #loading-overlay:not(.hidden)');
     if (isModalOpen) return;
 
+    // ၄။ ရောက်နေသော Tab အလိုက် Silent Refresh ခေါ်ယူခြင်း
     if (!window.AppState) return;
     const currentTab = window.AppState.currentTab || "home";
     const currentParam = window.AppState.currentParam;
 
     if (currentTab === "home" || currentTab === "dashboard") {
       if (typeof window.renderDashboard === "function") {
-        window.renderDashboard(true);
+        window.renderDashboard(true); // silent refresh
       }
     } else if (currentTab === "level" || currentTab === "yogi" || currentTab === "stage") {
       const levelId = Number(currentParam || 1);
@@ -121,24 +127,24 @@ function updateActiveNav(tabName, param) {
 
   const btns = nav.querySelectorAll(".nav-btn");
   btns.forEach(b => {
-    b.classList.remove("nav-btn-active");
+    b.classList.remove("nav-btn-active", "bg-amber-500/20", "text-amber-300");
     const btnTab = b.getAttribute("data-tab");
     const btnParam = b.getAttribute("data-param");
 
     if (btnTab === tabName) {
       if (param !== null && param !== undefined) {
         if (String(btnParam) === String(param)) {
-          b.classList.add("nav-btn-active");
+          b.classList.add("nav-btn-active", "bg-amber-500/20", "text-amber-300");
         }
       } else if (!btnParam) {
-        b.classList.add("nav-btn-active");
+        b.classList.add("nav-btn-active", "bg-amber-500/20", "text-amber-300");
       }
     }
   });
 }
 
 /**
- * Main Tab Router Function
+ * Main Tab Router Function (စာမျက်နှာ ကူးပြောင်းခြင်း)
  */
 window.switchTab = function (tabName, param = null) {
   if (window.AppState) {
@@ -146,21 +152,33 @@ window.switchTab = function (tabName, param = null) {
     window.AppState.currentParam = param;
   }
 
+  // Active Highlight ညှိခြင်း
   updateActiveNav(tabName, param);
 
   // ဖုန်း screen တွင် menu item တစ်ခုခုကို နှိပ်လိုက်ပါက Sidebar ကို အလိုအလျောက် ပိတ်ပေးခြင်း
   if (window.innerWidth < 768) {
-    window.toggleMobileSidebar(true);
+    window.closeMobileSidebar();
   }
 
+  // Header Title ကို သက်ဆိုင်ရာ နာမည်အလိုက် ပြောင်းလဲပေးခြင်း
+  const pageTitleEl = document.getElementById("page-title");
+  const sourceLevels = (window.LEVELS && window.LEVELS.length > 0) ? window.LEVELS : DEFAULT_LEVELS;
+
   if (tabName === "home" || tabName === "dashboard") {
+    if (pageTitleEl) pageTitleEl.innerText = "ပင်မစာမျက်နှာ";
     if (typeof window.renderDashboard === "function") window.renderDashboard();
   } else if (tabName === "level" || tabName === "yogi" || tabName === "stage") {
     const levelId = Number(param || 1);
+    const currentLevelObj = sourceLevels.find(l => l.id === levelId);
+    if (pageTitleEl && currentLevelObj) {
+      pageTitleEl.innerText = levelId === 8 ? "ယောဂီ စာရင်းဟောင်း" : `အဆင့် (${levelId}) - ${currentLevelObj.name}`;
+    }
     if (typeof window.renderYogiStage === "function") window.renderYogiStage(levelId);
   } else if (tabName === "total_summary") {
+    if (pageTitleEl) pageTitleEl.innerText = "ယောဂီ စုစုပေါင်း စာရင်း";
     if (typeof window.renderTotalSummary === "function") window.renderTotalSummary();
   } else if (tabName === "leaders" || tabName === "leader") {
+    if (pageTitleEl) pageTitleEl.innerText = "ဦးဆောင်ဆွေးနွေး ယောဂီများ";
     if (typeof window.renderLeaders === "function") window.renderLeaders();
   }
 };
@@ -173,7 +191,7 @@ function renderSidebar() {
   if (!nav) return;
 
   let html = `
-    <button data-tab="home" onclick="switchTab('home')" class="nav-btn nav-btn-active w-full text-left p-2.5 rounded-xl font-extrabold text-xs flex items-center gap-2.5">
+    <button data-tab="home" onclick="switchTab('home')" class="nav-btn w-full text-left p-2.5 rounded-xl font-extrabold text-xs flex items-center gap-2.5 hover:bg-slate-800/80 transition cursor-pointer">
       <i class="fa-solid fa-house text-amber-400 text-sm shrink-0"></i>
       <span class="truncate">ပင်မစာမျက်နှာ</span>
     </button>
@@ -185,7 +203,7 @@ function renderSidebar() {
 
   levels.forEach(l => {
     html += `
-      <button data-tab="level" data-param="${l.id}" onclick="switchTab('level', ${l.id})" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+      <button data-tab="level" data-param="${l.id}" onclick="switchTab('level', ${l.id})" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5 hover:bg-slate-800/80 transition cursor-pointer">
         <span class="w-5 h-5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-[10px] shrink-0 font-mono font-extrabold">${l.id}</span>
         <span class="truncate">${l.name}</span>
       </button>
@@ -194,15 +212,15 @@ function renderSidebar() {
 
   html += `
     <p class="pt-3 pb-1 px-3 text-[10px] font-black text-amber-400/70 uppercase tracking-widest">အခြား စာရင်းများ</p>
-    <button data-tab="total_summary" onclick="switchTab('total_summary')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+    <button data-tab="total_summary" onclick="switchTab('total_summary')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5 hover:bg-slate-800/80 transition cursor-pointer">
       <i class="fa-solid fa-list-check text-emerald-400 text-sm shrink-0"></i>
       <span class="truncate">ယောဂီ စုစုပေါင်း စာရင်း</span>
     </button>
-    <button data-tab="level" data-param="8" onclick="switchTab('level', 8)" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+    <button data-tab="level" data-param="8" onclick="switchTab('level', 8)" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5 hover:bg-slate-800/80 transition cursor-pointer">
       <i class="fa-solid fa-box-archive text-purple-400 text-sm shrink-0"></i>
       <span class="truncate">ယောဂီ စာရင်းဟောင်း</span>
     </button>
-    <button data-tab="leaders" onclick="switchTab('leaders')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
+    <button data-tab="leaders" onclick="switchTab('leaders')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5 hover:bg-slate-800/80 transition cursor-pointer">
       <i class="fa-solid fa-user-tie text-indigo-400 text-sm shrink-0"></i>
       <span class="truncate">ဦးဆောင်ဆွေးနွေး ယောဂီ</span>
     </button>
@@ -217,20 +235,19 @@ function renderSidebar() {
 
 window.renderSidebar = renderSidebar;
 
+/**
+ * DOMContentLoaded Event
+ */
 document.addEventListener("DOMContentLoaded", () => {
   if (typeof window.checkExistingSession === "function") {
     window.checkExistingSession();
+  } else if (typeof window.initApp === "function") {
+    // Session စစ်စရာမလိုဘဲ AppState ရှိပါက တိုက်ရိုက် Init လုပ်မည်
+    const token = localStorage.getItem("yogi_auth_token");
+    if (token) window.initApp();
   }
+
   if (typeof window.startLiveSync === "function") {
     window.startLiveSync();
   }
-
-  // Hamburger Menu ခလုတ်များအား အလိုအလျောက် Event Listener ချိတ်ပေးခြင်း
-  const mobileMenuBtns = document.querySelectorAll("#mobile-menu-btn, .mobile-menu-btn, [data-action='toggle-sidebar']");
-  mobileMenuBtns.forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      window.toggleMobileSidebar();
-    });
-  });
 });
