@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Yogi App</title>
 
-  <!-- 💡 PWA Web App Manifest & Theme Config -->
+  <!-- PWA Web App Manifest & Theme Config -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0c1220">
   <meta name="mobile-web-app-capable" content="yes">
@@ -26,7 +26,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="favicon.svg">
   
-  <!-- 💡 Tailwind Runtime Engine -->
+  <!-- Tailwind Engine -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -65,7 +65,7 @@
   </style>
 </head>
 
-<body class="bg-[#090d16] font-sans flex h-dvh w-dvw overflow-hidden text-slate-300 select-none">
+<body class="bg-[#090d16] font-sans flex h-screen w-screen overflow-hidden text-slate-300 select-none">
 
   <!-- Login Overlay -->
   <div id="login-overlay" class="fixed inset-0 bg-[#070a12]/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
@@ -108,19 +108,20 @@
     </div>
   </div>
 
-  <!-- Main Workspace -->
-  <div id="erp-workspace" class="hidden h-dvh w-dvw flex flex-row overflow-hidden bg-[#090d16] relative">
+  <!-- Main Workspace (Phone, Tablet & Laptop 3-in-1 Adaptive Container) -->
+  <div id="erp-workspace" class="hidden h-screen w-screen flex flex-row overflow-hidden bg-[#090d16] relative">
     
-    <!-- Left Sidebar Drawer -->
-    <aside id="main-sidebar" class="w-64 bg-[#0c1220] border-r border-amber-500/20 flex flex-col h-full shrink-0 z-50 transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0 fixed md:relative top-0 left-0 bottom-0 shadow-2xl">
+    <!-- 💡 Left Sidebar (Laptop တွင် အမြဲပွင့်နေမည် / Phone & Tablet တွင် နှိပ်မှ ထွက်လာမည်) -->
+    <aside id="main-sidebar" 
+      class="w-64 bg-[#0c1220] border-r border-amber-500/20 flex flex-col h-full shrink-0 z-50 transition-transform duration-300 ease-in-out fixed inset-y-0 left-0 -translate-x-full lg:static lg:translate-x-0 lg:z-0 shadow-2xl">
       <div class="h-[64px] px-4 border-b border-amber-500/20 flex items-center justify-between bg-[#0e172a] shrink-0">
         <div class="flex items-center gap-2 font-black text-xs sm:text-sm text-amber-400 min-w-0 overflow-hidden">
           <i class="fa-solid fa-dharmachakra text-amber-400 text-base shrink-0 filter drop-shadow-[0_0_6px_rgba(245,158,11,0.4)]"></i>
           <span class="truncate font-extrabold whitespace-nowrap tracking-wide">Zoom ယောဂီစာရင်း</span>
         </div>
         <div class="flex items-center gap-1">
-          <!-- Sidebar ပိတ်မည့် SVG (X) ခလုတ် -->
-          <button onclick="toggleMobileSidebar(true)" class="md:hidden text-slate-400 hover:text-white p-2 rounded-lg cursor-pointer hover:bg-slate-800/60" title="Close Sidebar">
+          <!-- Phone & Tablet အတွက် Sidebar ပိတ်မည့် (X) ခလုတ် -->
+          <button onclick="toggleMobileSidebar(true)" class="lg:hidden text-slate-400 hover:text-white p-2 rounded-lg cursor-pointer hover:bg-slate-800/60" title="Close Sidebar">
             <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -133,35 +134,38 @@
       <nav class="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto" id="sidebar-nav"></nav>
     </aside>
 
-    <!-- Mobile Backdrop Overlay -->
-    <div id="sidebar-backdrop" onclick="toggleMobileSidebar(true)" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-40 hidden md:hidden cursor-pointer transition-opacity"></div>
+    <!-- Phone & Tablet Backdrop Overlay -->
+    <div id="sidebar-backdrop" onclick="toggleMobileSidebar(true)" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-40 hidden lg:hidden cursor-pointer transition-opacity"></div>
 
-    <!-- Right Main Workspace Container -->
+    <!-- Right Content Area -->
     <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-[#090d16]">
+      
+      <!-- Top Navigation Header -->
       <header class="h-[64px] bg-[#0c1220] border-b border-amber-500/20 px-3 sm:px-6 flex items-center justify-between shrink-0 z-30 gap-2">
-        <div class="flex items-center gap-2.5 min-w-0">
+        <div class="flex items-center gap-3 min-w-0">
           
-          <!-- 💡 လက်သုံးချောင်း Hamburger Menu ခလုတ် (SVG သုံးထား၍ မည်သည့်ဖုန်းတွင်မဆို ၁၀၀% အမြဲပေါ်ပါသည်) -->
+          <!-- 💡 လက်သုံးချောင်း Hamburger Menu ခလုတ် (Phone နှင့် Tablet များတွင်သာ ပေါ်မည်၊ Laptop တွင် အလိုအလျောက် ပုန်းနေမည်) -->
           <button id="mobile-menu-btn" onclick="toggleMobileSidebar()" 
-            class="md:hidden flex items-center justify-center w-11 h-11 rounded-xl bg-amber-500/15 border-2 border-amber-400/50 text-amber-400 active:scale-95 transition shadow-lg shrink-0 cursor-pointer" 
+            class="lg:hidden flex items-center justify-center w-11 h-11 rounded-xl bg-amber-500/20 border-2 border-amber-400/80 text-amber-400 active:scale-95 transition shadow-lg shrink-0 cursor-pointer hover:bg-amber-500/30" 
             title="Open Menu" aria-label="Open Menu">
             <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
           </button>
 
-          <h1 id="page-title" class="text-sm sm:text-base font-black text-amber-300/90 truncate tracking-wide">ပင်မစာမျက်နှာ</h1>
+          <h1 id="page-title" class="text-base sm:text-lg font-black text-amber-300/90 truncate tracking-wide">ပင်မစာမျက်နှာ</h1>
         </div>
 
-        <!-- ဖုန်း screen ပေါ်တွင် မညှပ်စေရန် ပြင်ဆင်ထားသော User / Date Info -->
-        <div class="text-[11px] sm:text-xs font-bold text-amber-300 bg-[#070d18] border border-amber-500/30 px-2.5 sm:px-3.5 py-1.5 rounded-xl shrink-0 shadow-inner flex items-center gap-1.5 font-mono tracking-wide">
+        <!-- User Badge & Live Clock (Screen အကျယ်အလိုက် အလိုအလျောက် ညှိပေးသည်) -->
+        <div class="text-[11px] sm:text-xs font-bold text-amber-300 bg-[#070d18] border border-amber-500/30 px-3 py-1.5 rounded-xl shrink-0 shadow-inner flex items-center gap-2 font-mono tracking-wide">
           <span id="header-live-datetime" class="text-amber-300/90 font-extrabold hidden sm:inline">--</span>
           <span class="text-amber-500/60 font-black hidden sm:inline">|</span>
           <i class="fa-solid fa-user text-emerald-400 text-xs sm:hidden"></i>
-          <span id="live-user-name" class="text-emerald-400 font-extrabold truncate max-w-[90px] sm:max-w-none">Admin</span>
+          <span id="live-user-name" class="text-emerald-400 font-extrabold truncate max-w-[100px] sm:max-w-none">Admin</span>
         </div>
       </header>
 
+      <!-- Main Dashboard / Views Container -->
       <main class="flex-1 p-3 sm:p-6 overflow-y-auto relative bg-[#090d16]">
         <div id="view-container" class="max-w-7xl mx-auto w-full"></div>
       </main>
@@ -169,6 +173,7 @@
 
   </div>
 
+  <!-- Global Overlays -->
   <div id="loading-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[150] flex flex-col items-center justify-center hidden">
     <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-amber-400 mb-3"></div>
     <p class="text-xs font-bold text-amber-200 tracking-wide">ဆောင်ရွက်နေပါသည် ခဏစောင့်ပါ...</p>
