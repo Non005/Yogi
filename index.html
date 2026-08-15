@@ -42,14 +42,23 @@
     html.not-authed #login-overlay { display: flex !important; }
     html.not-authed #erp-workspace { display: none !important; }
 
-    @supports (padding-left: env(safe-area-inset-left)) {
-      body {
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
+    /* 💡 Phone နှင့် Tablet အားလုံးတွင် လက်သုံးချောင်းခလုတ် မဖြစ်မနေ ပေါ်စေမည့် စည်းမျဉ်း */
+    #mobile-menu-btn {
+      display: inline-flex !important;
+    }
+    
+    /* 🖥️ 1280px အထက် Laptop အကြီးများတွင်သာ ခလုတ်ကို ဖျောက်ပြီး Sidebar အမြဲဖွင့်ထားမည် */
+    @media (min-width: 1280px) {
+      #mobile-menu-btn {
+        display: none !important;
       }
       #main-sidebar {
-        padding-top: env(safe-area-inset-top);
-        padding-bottom: env(safe-area-inset-bottom);
+        transform: translateX(0) !important;
+        position: relative !important;
+        z-index: 10 !important;
+      }
+      #sidebar-backdrop {
+        display: none !important;
       }
     }
 
@@ -108,20 +117,20 @@
     </div>
   </div>
 
-  <!-- Main Workspace (Phone, Tablet & Laptop 3-in-1 Adaptive Container) -->
+  <!-- Main Workspace -->
   <div id="erp-workspace" class="hidden h-screen w-screen flex flex-row overflow-hidden bg-[#090d16] relative">
     
-    <!-- 💡 Left Sidebar (Laptop တွင် အမြဲပွင့်နေမည် / Phone & Tablet တွင် နှိပ်မှ ထွက်လာမည်) -->
+    <!-- 💡 Left Sidebar Drawer -->
     <aside id="main-sidebar" 
-      class="w-64 bg-[#0c1220] border-r border-amber-500/20 flex flex-col h-full shrink-0 z-50 transition-transform duration-300 ease-in-out fixed inset-y-0 left-0 -translate-x-full lg:static lg:translate-x-0 lg:z-0 shadow-2xl">
+      class="w-64 bg-[#0c1220] border-r border-amber-500/20 flex flex-col h-full shrink-0 z-50 transition-transform duration-300 ease-in-out fixed inset-y-0 left-0 -translate-x-full shadow-2xl">
       <div class="h-[64px] px-4 border-b border-amber-500/20 flex items-center justify-between bg-[#0e172a] shrink-0">
         <div class="flex items-center gap-2 font-black text-xs sm:text-sm text-amber-400 min-w-0 overflow-hidden">
           <i class="fa-solid fa-dharmachakra text-amber-400 text-base shrink-0 filter drop-shadow-[0_0_6px_rgba(245,158,11,0.4)]"></i>
           <span class="truncate font-extrabold whitespace-nowrap tracking-wide">Zoom ယောဂီစာရင်း</span>
         </div>
         <div class="flex items-center gap-1">
-          <!-- Phone & Tablet အတွက် Sidebar ပိတ်မည့် (X) ခလုတ် -->
-          <button onclick="toggleMobileSidebar(true)" class="lg:hidden text-slate-400 hover:text-white p-2 rounded-lg cursor-pointer hover:bg-slate-800/60" title="Close Sidebar">
+          <!-- Sidebar ပိတ်မည့် (X) ခလုတ် -->
+          <button onclick="toggleMobileSidebar(true)" class="xl:hidden text-slate-400 hover:text-white p-2 rounded-lg cursor-pointer hover:bg-slate-800/60" title="Close Sidebar">
             <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -134,8 +143,8 @@
       <nav class="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto" id="sidebar-nav"></nav>
     </aside>
 
-    <!-- Phone & Tablet Backdrop Overlay -->
-    <div id="sidebar-backdrop" onclick="toggleMobileSidebar(true)" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-40 hidden lg:hidden cursor-pointer transition-opacity"></div>
+    <!-- Backdrop Overlay -->
+    <div id="sidebar-backdrop" onclick="toggleMobileSidebar(true)" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-40 hidden cursor-pointer transition-opacity"></div>
 
     <!-- Right Content Area -->
     <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-[#090d16]">
@@ -144,11 +153,11 @@
       <header class="h-[64px] bg-[#0c1220] border-b border-amber-500/20 px-3 sm:px-6 flex items-center justify-between shrink-0 z-30 gap-2">
         <div class="flex items-center gap-3 min-w-0">
           
-          <!-- 💡 လက်သုံးချောင်း Hamburger Menu ခလုတ် (Phone နှင့် Tablet များတွင်သာ ပေါ်မည်၊ Laptop တွင် အလိုအလျောက် ပုန်းနေမည်) -->
+          <!-- 💡 လက်သုံးချောင်း Hamburger Menu ခလုတ် (Phone ရော Tablet ပါ ၁၀၀% အမြဲပေါ်မည့်ခလုတ်) -->
           <button id="mobile-menu-btn" onclick="toggleMobileSidebar()" 
-            class="lg:hidden flex items-center justify-center w-11 h-11 rounded-xl bg-amber-500/20 border-2 border-amber-400/80 text-amber-400 active:scale-95 transition shadow-lg shrink-0 cursor-pointer hover:bg-amber-500/30" 
+            class="flex items-center justify-center w-11 h-11 rounded-xl bg-amber-500/25 border-2 border-amber-400 text-amber-400 active:scale-95 transition shadow-lg shrink-0 cursor-pointer hover:bg-amber-500/40" 
             title="Open Menu" aria-label="Open Menu">
-            <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-amber-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
           </button>
@@ -156,7 +165,7 @@
           <h1 id="page-title" class="text-base sm:text-lg font-black text-amber-300/90 truncate tracking-wide">ပင်မစာမျက်နှာ</h1>
         </div>
 
-        <!-- User Badge & Live Clock (Screen အကျယ်အလိုက် အလိုအလျောက် ညှိပေးသည်) -->
+        <!-- User Badge & Live Clock -->
         <div class="text-[11px] sm:text-xs font-bold text-amber-300 bg-[#070d18] border border-amber-500/30 px-3 py-1.5 rounded-xl shrink-0 shadow-inner flex items-center gap-2 font-mono tracking-wide">
           <span id="header-live-datetime" class="text-amber-300/90 font-extrabold hidden sm:inline">--</span>
           <span class="text-amber-500/60 font-black hidden sm:inline">|</span>
@@ -165,7 +174,7 @@
         </div>
       </header>
 
-      <!-- Main Dashboard / Views Container -->
+      <!-- Main Content -->
       <main class="flex-1 p-3 sm:p-6 overflow-y-auto relative bg-[#090d16]">
         <div id="view-container" class="max-w-7xl mx-auto w-full"></div>
       </main>
@@ -173,7 +182,6 @@
 
   </div>
 
-  <!-- Global Overlays -->
   <div id="loading-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[150] flex flex-col items-center justify-center hidden">
     <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-amber-400 mb-3"></div>
     <p class="text-xs font-bold text-amber-200 tracking-wide">ဆောင်ရွက်နေပါသည် ခဏစောင့်ပါ...</p>
@@ -181,7 +189,7 @@
 
   <div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Global Scripts -->
+  <!-- Global Header Clock & PWA Register -->
   <script>
     function startHeaderClock() {
       function updateClock() {
