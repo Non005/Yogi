@@ -10,6 +10,7 @@
   <!-- 💡 PWA Web App Manifest & Theme Config -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0c1220">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Yogi အစီအစဥ်">
@@ -26,10 +27,11 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="favicon.svg">
   
-  <!-- 💡 Tailwind Runtime Engine (Ensures GitHub Pages renders all utility classes 100%) -->
+  <!-- 💡 Tailwind Runtime Engine -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <link rel="stylesheet" href="css/fontawesome.min.css">
+  <!-- FontAwesome CDN (Icon များ မပျောက်စေရန်) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,24 +44,22 @@
     html.not-authed #login-overlay { display: flex !important; }
     html.not-authed #erp-workspace { display: none !important; }
 
-    /* ✅ FIX: Safe area inset for notched devices */
+    /* Safe area inset for notched devices (iPhone X and later) */
     @supports (padding-left: env(safe-area-inset-left)) {
       body {
         padding-left: env(safe-area-inset-left);
         padding-right: env(safe-area-inset-right);
       }
-      
       #main-sidebar {
         padding-top: env(safe-area-inset-top);
         padding-bottom: env(safe-area-inset-bottom);
       }
-      
       header {
         padding-top: env(safe-area-inset-top);
       }
     }
 
-    /* ✅ FIX: Touch optimization */
+    /* Touch optimization */
     * {
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
@@ -72,7 +72,6 @@
   </style>
 </head>
 
-<!-- ✅ FIX: Use dvh instead of screen height -->
 <body class="bg-[#090d16] font-sans flex h-dvh w-dvw overflow-hidden text-slate-300 select-none">
 
   <!-- Login Overlay -->
@@ -100,7 +99,7 @@
         </div>
         <div id="login-error" class="hidden text-rose-400 font-semibold text-[11px] bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-xl text-center"></div>
         <button type="submit"
-          class="w-full py-3.5 mt-2 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 text-xs tracking-wider active:scale-[0.99]">
+          class="w-full py-3.5 mt-2 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 text-xs tracking-wider active:scale-[0.99] cursor-pointer">
           <span>စနစ်အတွင်းသို့ ဝင်မည်</span>
           <i class="fa-solid fa-arrow-right-to-bracket text-sm"></i>
         </button>
@@ -117,42 +116,47 @@
   </div>
 
   <!-- Main Workspace -->
-  <!-- ✅ FIX: Use dvh for dynamic viewport height -->
   <div id="erp-workspace" class="hidden h-dvh w-dvw flex flex-row overflow-hidden bg-[#090d16]">
     
     <!-- Left Sidebar -->
-    <aside id="main-sidebar" class="w-64 bg-[#0c1220] border-r border-amber-500/20 flex flex-col h-full shrink-0 z-30 transition-transform duration-300 -translate-x-full md:translate-x-0 fixed md:relative top-0 left-0 bottom-0 shadow-2xl">
+    <aside id="main-sidebar" class="w-64 bg-[#0c1220] border-r border-amber-500/20 flex flex-col h-full shrink-0 z-40 transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0 fixed md:relative top-0 left-0 bottom-0 shadow-2xl">
       <div class="h-[64px] px-4 border-b border-amber-500/20 flex items-center justify-between bg-[#0e172a] shrink-0">
-        <div class="flex items-center gap-2.5 font-black text-xs sm:text-sm text-amber-400 min-w-0 overflow-hidden">
+        <div class="flex items-center gap-2 font-black text-xs sm:text-sm text-amber-400 min-w-0 overflow-hidden">
           <i class="fa-solid fa-dharmachakra text-amber-400 text-base shrink-0 filter drop-shadow-[0_0_6px_rgba(245,158,11,0.4)]"></i>
           <span class="truncate font-extrabold whitespace-nowrap tracking-wide">Zoom ယောဂီစာရင်း</span>
         </div>
-        <button onclick="handleLogout()" class="text-slate-400 hover:text-rose-400 transition p-1.5 rounded-lg shrink-0 hover:bg-slate-800/60" title="Logout">
-          <i class="fa-solid fa-power-off text-xs"></i>
-        </button>
+        <div class="flex items-center gap-1">
+          <!-- Mobile Sidebar Close (X) Button -->
+          <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-white p-2 rounded-lg cursor-pointer hover:bg-slate-800/60" title="Close Sidebar">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+          <button onclick="handleLogout()" class="text-slate-400 hover:text-rose-400 transition p-2 rounded-lg shrink-0 hover:bg-slate-800/60 cursor-pointer" title="Logout">
+            <i class="fa-solid fa-power-off text-xs"></i>
+          </button>
+        </div>
       </div>
       <nav class="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto" id="sidebar-nav"></nav>
     </aside>
 
-    <!-- ✅ FIX: Backdrop z-index should be 20, sidebar 30 for proper layering -->
-    <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/80 z-20 hidden md:hidden"></div>
+    <!-- Mobile Backdrop Overlay (iOS click bug fix: cursor-pointer & touch event included) -->
+    <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-30 hidden md:hidden cursor-pointer transition-opacity"></div>
 
     <!-- Right Main Workspace Container -->
     <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-[#090d16]">
-      <header class="h-[64px] bg-[#0c1220] border-b border-amber-500/20 px-4 md:px-6 flex items-center justify-between shrink-0 z-10">
-        <div class="flex items-center gap-3 overflow-hidden">
-          <!-- ✅ FIX: Increased touch target size from p-2 to p-3 and added min-h/min-w -->
-          <button onclick="toggleMobileSidebar()" class="md:hidden text-amber-400 hover:text-amber-300 p-3 rounded-xl bg-slate-800/80 border border-amber-500/20 shrink-0 min-h-12 min-w-12 flex items-center justify-center" title="Toggle Sidebar">
-            <i class="fa-solid fa-bars text-sm"></i>
+      <header class="h-[64px] bg-[#0c1220] border-b border-amber-500/20 px-4 md:px-6 flex items-center justify-between shrink-0 z-10 gap-2">
+        <div class="flex items-center gap-3 min-w-0">
+          <!-- Hamburger Button (Fixed Touch Area) -->
+          <button id="mobile-menu-btn" onclick="toggleMobileSidebar()" class="md:hidden text-amber-400 hover:text-amber-300 h-10 w-10 rounded-xl bg-slate-800/80 border border-amber-500/30 shrink-0 flex items-center justify-center cursor-pointer active:scale-95 transition" title="Toggle Sidebar">
+            <i class="fa-solid fa-bars text-base"></i>
           </button>
           <h1 id="page-title" class="text-sm md:text-base font-black text-amber-300/90 truncate tracking-wide">ပင်မစာမျက်နှာ</h1>
         </div>
 
-        <div class="text-[11px] md:text-xs font-bold text-amber-300 bg-[#070d18] border border-amber-500/30 px-3.5 py-1.5 rounded-xl shrink-0 shadow-inner flex items-center gap-1.5 font-mono tracking-wide">
-          <span class="text-slate-400">Date:</span>
-          <span id="header-live-datetime" class="text-amber-300 font-extrabold">Mon 10 Aug 26 | 10:35 pm</span>
+        <div class="text-[11px] md:text-xs font-bold text-amber-300 bg-[#070d18] border border-amber-500/30 px-3 py-1.5 rounded-xl shrink-0 shadow-inner flex items-center gap-1.5 font-mono tracking-wide">
+          <span class="text-slate-400 hidden sm:inline">Date:</span>
+          <span id="header-live-datetime" class="text-amber-300 font-extrabold">--</span>
           <span class="text-amber-500/60 font-black mx-1">|</span>
-          <span id="live-user-name" class="text-emerald-400 font-extrabold">Admin</span>
+          <span id="live-user-name" class="text-emerald-400 font-extrabold truncate max-w-[80px] sm:max-w-none">Admin</span>
         </div>
       </header>
 
@@ -170,19 +174,28 @@
 
   <div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 pointer-events-none"></div>
 
+  <!-- Global Responsive Sidebar & Clock Scripts -->
   <script>
-    function toggleMobileSidebar() {
+    // Bulletproof Sidebar Toggle for iOS & Android
+    window.toggleMobileSidebar = function(forceClose = false) {
       var sb = document.getElementById('main-sidebar');
       var bd = document.getElementById('sidebar-backdrop');
       if (!sb) return;
-      if (sb.classList.contains('-translate-x-full')) {
-        sb.classList.remove('-translate-x-full');
-        if (bd) bd.classList.remove('hidden');
-      } else {
+
+      var isClosed = sb.classList.contains('-translate-x-full');
+
+      if (forceClose || !isClosed) {
+        // Close
         sb.classList.add('-translate-x-full');
+        sb.classList.remove('translate-x-0');
         if (bd) bd.classList.add('hidden');
+      } else {
+        // Open
+        sb.classList.remove('-translate-x-full');
+        sb.classList.add('translate-x-0');
+        if (bd) bd.classList.remove('hidden');
       }
-    }
+    };
 
     function startHeaderClock() {
       function updateClock() {
@@ -223,7 +236,18 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', startHeaderClock);
+    document.addEventListener('DOMContentLoaded', () => {
+      startHeaderClock();
+
+      // iOS Safari Tap Listener fallback
+      const btn = document.getElementById('mobile-menu-btn');
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.toggleMobileSidebar();
+        });
+      }
+    });
   </script>
 
   <!-- Script Inclusions -->
