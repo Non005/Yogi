@@ -1,5 +1,5 @@
 /**
- * YOGI MANAGEMENT SYSTEM — Main Router & Navigation Logic (FULL FIXED WITH LIVE SYNC)
+ * YOGI MANAGEMENT SYSTEM — Main Router & Navigation Logic (FULL FIXED WITH LIVE SYNC & MOBILE SIDEBAR)
  * File: js/app.js  
  */
 
@@ -18,52 +18,78 @@ const DEFAULT_LEVELS = [
 let liveSyncInterval = null;
 
 /**
+ * 💡 Mobile Sidebar Toggle (Android / iPhone အတွက် Sidebar အဖွင့်/အပိတ် Logic)
+ */
+window.toggleMobileSidebar = function (forceClose = false) {
+  const sidebar = document.getElementById("main-sidebar");
+  const backdrop = document.getElementById("mobile-sidebar-backdrop") || document.getElementById("sidebar-backdrop");
+
+  if (!sidebar) return;
+
+  // Sidebar လက်ရှိ ပိတ်ထားသလား စစ်ဆေးခြင်း
+  const isClosed = sidebar.classList.contains("-translate-x-full");
+
+  if (forceClose || !isClosed) {
+    // ပိတ်မည်
+    sidebar.classList.add("-translate-x-full");
+    sidebar.classList.remove("translate-x-0");
+    if (backdrop) {
+      backdrop.classList.add("hidden");
+      backdrop.classList.remove("opacity-100");
+    }
+  } else {
+    // ဖွင့်မည်
+    sidebar.classList.remove("-translate-x-full");
+    sidebar.classList.add("translate-x-0");
+    if (backdrop) {
+      backdrop.classList.remove("hidden");
+      backdrop.classList.add("opacity-100");
+    }
+  }
+};
+
+/**
  * 💡 Smart Live Sync Auto-Refresh Manager
- * ၅ စက္ကန့်တစ်ကြိမ် နောက်ကွယ်မှ အလိုအလျောက် ဒေတာ အသစ် ရယူပေးမည့် စနစ်
  */
 window.startLiveSync = function () {
   if (liveSyncInterval) clearInterval(liveSyncInterval);
 
   liveSyncInterval = setInterval(() => {
-    // ၁။ User Login မဝင်ထားလျှင် သို့မဟုတ် Token မရှိလျှင် Auto Sync မလုပ်ပါ
     const token = localStorage.getItem("yogi_auth_token");
     if (!token) return;
 
-    // ၂။ ဖုန်း/ကွန်ပျူတာ Screen မီးပိတ်ထားလျှင် သို့မဟုတ် အခြား Tab သို့ ရောက်နေလျှင် မလုပ်ပါ
     if (document.hidden) return;
 
-    // ၃။ စာရင်းသွင်းနေချိန် / ပြင်နေချိန် (Modal ပွင့်နေချိန်) စာရိုက်မပျက်အောင် Auto Sync ခဏ ရပ်မည်
     const isModalOpen = document.querySelector('.modal-overlay-bg:not(.hidden)');
     if (isModalOpen) return;
 
-    // ၄။ လက်ရှိ AppState တွင် ရောက်နေသော စာမျက်နှာအလိုက် Silent Auto Refresh ပြုလုပ်ပေးမည်
     if (!window.AppState) return;
     const currentTab = window.AppState.currentTab || "home";
     const currentParam = window.AppState.currentParam;
 
     if (currentTab === "home" || currentTab === "dashboard") {
       if (typeof window.renderDashboard === "function") {
-        window.renderDashboard(true); // silent refresh
+        window.renderDashboard(true);
       }
     } else if (currentTab === "level" || currentTab === "yogi" || currentTab === "stage") {
       const levelId = Number(currentParam || 1);
       if (typeof window.renderYogiStage === "function") {
         const page = window.currentYogiPage || 1;
         const search = window.currentYogiSearch || "";
-        window.renderYogiStage(levelId, page, search, true); // silent refresh
+        window.renderYogiStage(levelId, page, search, true);
       }
     } else if (currentTab === "total_summary") {
       if (typeof window.renderTotalSummary === "function") {
-        window.renderTotalSummary(window.currentSummarySearch || "", true); // silent refresh
+        window.renderTotalSummary(window.currentSummarySearch || "", true);
       }
     } else if (currentTab === "leaders" || currentTab === "leader") {
       if (typeof window.renderLeaders === "function") {
         const page = window.currentLeaderPage || 1;
         const search = window.currentLeaderSearch || "";
-        window.renderLeaders(page, search, true); // silent refresh
+        window.renderLeaders(page, search, true);
       }
     }
-  }, 5000); // ၅ စက္ကန့်တစ်ကြိမ် Auto-Sync
+  }, 5000);
 };
 
 /**
@@ -77,12 +103,10 @@ window.initApp = function () {
 
   renderSidebar();
 
-  // Load default home/dashboard tab
   const currentTab = (window.AppState && window.AppState.currentTab) || "home";
   const currentParam = (window.AppState && window.AppState.currentParam) || null;
   window.switchTab(currentTab, currentParam);
 
-  // 💡 Start Live Sync Timer
   if (typeof window.startLiveSync === "function") {
     window.startLiveSync();
   }
@@ -117,24 +141,18 @@ function updateActiveNav(tabName, param) {
  * Main Tab Router Function
  */
 window.switchTab = function (tabName, param = null) {
-  // Store navigation state
   if (window.AppState) {
     window.AppState.currentTab = tabName;
     window.AppState.currentParam = param;
   }
 
-  // Update sidebar active highlight
   updateActiveNav(tabName, param);
 
-  // Auto-close mobile sidebar on selection if open
-  const sidebar = document.getElementById("main-sidebar");
-  if (sidebar && !sidebar.classList.contains("-translate-x-full") && window.innerWidth < 768) {
-    if (typeof window.toggleMobileSidebar === "function") {
-      window.toggleMobileSidebar();
-    }
+  // ဖုန်း screen တွင် menu item တစ်ခုခုကို နှိပ်လိုက်ပါက Sidebar ကို အလိုအလျောက် ပိတ်ပေးခြင်း
+  if (window.innerWidth < 768) {
+    window.toggleMobileSidebar(true);
   }
 
-  // Render view panels
   if (tabName === "home" || tabName === "dashboard") {
     if (typeof window.renderDashboard === "function") window.renderDashboard();
   } else if (tabName === "level" || tabName === "yogi" || tabName === "stage") {
@@ -162,7 +180,6 @@ function renderSidebar() {
     <p class="pt-3 pb-1 px-3 text-[10px] font-black text-amber-400/70 uppercase tracking-widest">ကမ္မဋ္ဌာန်း အဆင့်များ</p>
   `;
 
-  // Meditation Levels 1 to 7 (Using global window.LEVELS or fallback)
   const sourceLevels = (window.LEVELS && window.LEVELS.length > 0) ? window.LEVELS : DEFAULT_LEVELS;
   const levels = sourceLevels.filter(l => l.id <= 7);
 
@@ -175,7 +192,6 @@ function renderSidebar() {
     `;
   });
 
-  // Other Lists
   html += `
     <p class="pt-3 pb-1 px-3 text-[10px] font-black text-amber-400/70 uppercase tracking-widest">အခြား စာရင်းများ</p>
     <button data-tab="total_summary" onclick="switchTab('total_summary')" class="nav-btn w-full text-left p-2 rounded-xl font-bold text-xs flex items-center gap-2.5">
@@ -194,7 +210,6 @@ function renderSidebar() {
 
   nav.innerHTML = html;
 
-  // Sync active highlight after render
   if (window.AppState) {
     updateActiveNav(window.AppState.currentTab || "home", window.AppState.currentParam);
   }
@@ -206,8 +221,16 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof window.checkExistingSession === "function") {
     window.checkExistingSession();
   }
-  // 💡 Start Live Sync Timer on page load
   if (typeof window.startLiveSync === "function") {
     window.startLiveSync();
   }
+
+  // Hamburger Menu ခလုတ်များအား အလိုအလျောက် Event Listener ချိတ်ပေးခြင်း
+  const mobileMenuBtns = document.querySelectorAll("#mobile-menu-btn, .mobile-menu-btn, [data-action='toggle-sidebar']");
+  mobileMenuBtns.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      window.toggleMobileSidebar();
+    });
+  });
 });
